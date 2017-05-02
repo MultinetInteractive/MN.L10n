@@ -1,7 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Company>MultiNet Interactive AB</Company>
+    <Authors>Chris Gårdenberg</Authors>
+    <Description>MultiNet L10n
+Översättningspaket</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommonMark.NET" Version="0.15.1" />
+  </ItemGroup>
 
 </Project>
