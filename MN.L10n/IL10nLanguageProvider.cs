@@ -4,7 +4,8 @@ using System.Text;
 
 namespace MN.L10n
 {
-    interface IL10nLanguageProvider
+    public interface IL10nLanguageProvider
     {
+		string GetLanguage();
     }
 }
