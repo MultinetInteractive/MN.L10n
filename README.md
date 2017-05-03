@@ -5,6 +5,10 @@ Install the nuget-package `MN.L10n`.
 
 _More info will come, when I've actually coded some. :)_
 
+See [phrases.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/5), 
+[language-sv-SE.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/6),
+[language-en-GB.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/7) for json format
+
 ## Example usage
 ```csharp
 using MN.L10n.NullProviders;
