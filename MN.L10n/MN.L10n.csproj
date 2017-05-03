@@ -7,6 +7,11 @@
     <Authors>Chris Gårdenberg</Authors>
     <Description>MultiNet L10n
 Översättningspaket</Description>
+    <PackageTags>L10n translation</PackageTags>
+    <RepositoryUrl>http://phoenix.net.multinet.se/general/mn-l10n</RepositoryUrl>
+    <PackageProjectUrl>http://phoenix.net.multinet.se/general/mn-l10n</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>© 20XX MultiNet Interactive AB</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

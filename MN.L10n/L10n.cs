@@ -5,13 +5,13 @@ using System.Linq;
 
 namespace MN.L10n
 {
-	public class L10n
+	public partial class L10n
 	{
 		private IL10nDataProvider DataProvider { get; set; }
 		private IL10nLanguageProvider LanguageProvider { get; set; }
 
 		internal static L10n Instance;
-		
+
 		public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider)
 		{
 			var l10n = dataProvider.LoadL10n();
@@ -50,21 +50,22 @@ namespace MN.L10n
 				Phrases.Add(phrase, new L10nPhrase());
 			}
 
-			if (IsPluralized(args))
+			var selectedLang = LanguageProvider.GetLanguage();
+			var isPluralized = IsPluralized(args);
+
+			if (LanguagePhrases.ContainsKey(selectedLang))
 			{
-				var selectedLang = LanguageProvider.GetLanguage();
-
-				if (LanguagePhrases.ContainsKey(selectedLang))
+				if (LanguagePhrases[selectedLang].Phrases.ContainsKey(phrase))
 				{
-					if (LanguagePhrases[selectedLang].Phrases.ContainsKey(phrase))
+					var phr = LanguagePhrases[selectedLang].Phrases[phrase];
+
+					if (phr.r.ContainsKey("x"))
 					{
-						var phr = LanguagePhrases[selectedLang].Phrases[phrase];
+						phrase = phr.r["x"];
+					}
 
-						if (phr.r.ContainsKey("x"))
-						{
-							phrase = phr.r["x"];
-						}
-
+					if (isPluralized)
+					{
 						foreach (var rule in phr.r)
 						{
 							if (rule.Key == GetCount(args).ToString())
@@ -72,6 +73,26 @@ namespace MN.L10n
 								phrase = rule.Value;
 							}
 						}
+					}
+				}
+				else
+				{
+					if (!isPluralized)
+					{
+						LanguagePhrases[selectedLang].Phrases.Add(phrase, new L10nPhraseObject
+						{
+							r = new Dictionary<string, string> { { "x", phrase } }
+						});
+					}
+					else
+					{
+						var rules = LanguagePhrases[selectedLang].PluralizationRules;
+						var lpo = new L10nPhraseObject();
+						foreach (var ru in rules)
+						{
+							lpo.r.Add(ru, phrase);
+						}
+						LanguagePhrases[selectedLang].Phrases.Add(phrase, lpo);
 					}
 				}
 			}

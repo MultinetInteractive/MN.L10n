@@ -1,0 +1,12 @@
+﻿{
+  "LanguageName": "Svenska",
+  "Locale": "sv-SE",
+  "PluralizationRules": [ "0", "1", "x" ],
+  "Phrases": {
+	"Hej Världen": {
+	  "r": {
+		"x": "Hej Världen"
+	  }
+	}
+  }
+}
