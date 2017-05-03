@@ -10,7 +10,7 @@ namespace MN.L10n.DefaultProviders
 	{
 		public string GetLanguage()
 		{
-			throw new NotImplementedException();
+			return "sv-SE";
 		}
 	}
 }

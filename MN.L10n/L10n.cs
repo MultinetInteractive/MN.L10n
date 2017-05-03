@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MN.L10n
 {
@@ -22,16 +23,29 @@ namespace MN.L10n
 
 		public static string _s(string phrase, object args = null)
 		{
-			return phrase;
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+			return Instance.__getPhrase(phrase, args);
 		}
 
 		public static string _m(string phrase, object args = null)
 		{
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+
 			var settings = CommonMark.CommonMarkSettings.Default.Clone();
 			settings.OutputFormat = CommonMark.OutputFormat.Html;
 			settings.RenderSoftLineBreaksAsLineBreaks = true;
 
-			return CommonMark.CommonMarkConverter.Convert(phrase, settings);
+			return CommonMark.CommonMarkConverter.Convert(Instance.__getPhrase(phrase), settings);
+		}
+
+		internal string __getPhrase(string phrase, object args = null)
+		{
+			if (!Phrases.ContainsKey(phrase))
+			{
+				Phrases.Add(phrase, new L10nPhrase());
+			}
+
+			return FormatNamed(phrase, args);
 		}
 
 		internal bool IsPluralized(object args = null)

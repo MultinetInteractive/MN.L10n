@@ -5,6 +5,6 @@ namespace MN.L10n
 	public class L10nPhrase
 	{
 		public string Comment { get; set; }
-		public DateTime Created { get; set; }
+		public DateTime Created { get; set; } = DateTime.Now;
 	}
 }
