@@ -12,18 +12,30 @@ using static MN.L10n.L10n;
 
 void Main()
 {
-	var l10n = MN.L10n.L10n.CreateInstance(
-	   new NullLanguageProvider(), 
-	   new NullDataProvider()
-	);
+	var l10n = MN.L10n.L10n.CreateInstance(new NullLanguageProvider("en-GB"), new FileDataProvider(@"C:\temp\phrase"));
 
 	Console.WriteLine(
-	   _s(
-	      "Det finns $__count$ meddelanden", // Det finns $__count$ meddelanden
-	      new { __count = 10 })
-	);
+		_s("Det finns $__count$ meddelanden", 
+			new { __count = 0 }
+		)
+	); // There are no messages
+	
 	Console.WriteLine(
-	   _m("[Hejsan](Text)") // <p><a href="Text">Hejsan</a></p>
-	);
+		_s("Det finns $__count$ meddelanden", 
+			new { __count = 1 }
+		)
+	); // There is one message
+	
+	Console.WriteLine(
+		_s("Det finns $__count$ meddelanden", 
+			new { __count = 2 }
+		)
+	); // There are 2 messages
+	
+	Console.WriteLine(
+		_m("[Hejsan $name$](http://www.multinet.se)", 
+			new { name = "Anders" }
+		)
+	); // <p><a href="http://www.multinet.se">Hejsan Anders</a></p>
 }
 ```

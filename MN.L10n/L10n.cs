@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MN.L10n
 {
@@ -21,6 +23,9 @@ namespace MN.L10n
 		public List<string> Languages { get; set; } = new List<string>();
 		public Dictionary<string, L10nPhrase> Phrases { get; set; } = new Dictionary<string, L10nPhrase>();
 
+		[JsonIgnore]
+		public Dictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new Dictionary<string, L10nLanguage>();
+
 		public static string _s(string phrase, object args = null)
 		{
 			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
@@ -35,7 +40,7 @@ namespace MN.L10n
 			settings.OutputFormat = CommonMark.OutputFormat.Html;
 			settings.RenderSoftLineBreaksAsLineBreaks = true;
 
-			return CommonMark.CommonMarkConverter.Convert(Instance.__getPhrase(phrase), settings);
+			return CommonMark.CommonMarkConverter.Convert(Instance.__getPhrase(phrase, args), settings);
 		}
 
 		internal string __getPhrase(string phrase, object args = null)
@@ -43,6 +48,32 @@ namespace MN.L10n
 			if (!Phrases.ContainsKey(phrase))
 			{
 				Phrases.Add(phrase, new L10nPhrase());
+			}
+
+			if (IsPluralized(args))
+			{
+				var selectedLang = LanguageProvider.GetLanguage();
+
+				if (LanguagePhrases.ContainsKey(selectedLang))
+				{
+					if (LanguagePhrases[selectedLang].Phrases.ContainsKey(phrase))
+					{
+						var phr = LanguagePhrases[selectedLang].Phrases[phrase];
+
+						if (phr.r.ContainsKey("x"))
+						{
+							phrase = phr.r["x"];
+						}
+
+						foreach (var rule in phr.r)
+						{
+							if (rule.Key == GetCount(args).ToString())
+							{
+								phrase = rule.Value;
+							}
+						}
+					}
+				}
 			}
 
 			return FormatNamed(phrase, args);
@@ -56,10 +87,11 @@ namespace MN.L10n
 			{
 				if (p.Name == "__count") return true;
 			}
+
 			return false;
 		}
 
-		internal int getCount(object args = null)
+		internal int GetCount(object args = null)
 		{
 			if (args == null) return 0;
 			var t = args.GetType();
@@ -67,6 +99,7 @@ namespace MN.L10n
 			{
 				if (p.Name == "__count") return (int)p.GetValue(args);
 			}
+
 			return 0;
 		}
 
@@ -80,6 +113,7 @@ namespace MN.L10n
 			{
 				tmpVal = tmpVal.Replace("$" + p.Name + "$", p.GetValue(parameters).ToString());
 			}
+
 			return tmpVal;
 		}
 	}
