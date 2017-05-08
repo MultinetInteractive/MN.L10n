@@ -20,8 +20,21 @@ namespace MN.L10n.FileProviders
 		}
 		public L10n LoadL10n()
 		{
-			var l10nFileContents = File.ReadAllText(Path.Combine(FilePath, PhraseFile));
-			var l10n = Newtonsoft.Json.JsonConvert.DeserializeObject<L10n>(l10nFileContents);
+			var phrasePath = Path.Combine(FilePath, PhraseFile);
+			L10n l10n;
+			if (File.Exists(phrasePath))
+			{
+				var l10nFileContents = File.ReadAllText(phrasePath);
+				l10n = Newtonsoft.Json.JsonConvert.DeserializeObject<L10n>(l10nFileContents);
+			}
+			else
+			{
+				l10n = new L10n
+				{
+					Languages = new List<string> { "default" }
+				};
+				File.WriteAllText(phrasePath, Newtonsoft.Json.JsonConvert.SerializeObject(l10n));
+			}
 
 			foreach (var lang in l10n.Languages)
 			{
