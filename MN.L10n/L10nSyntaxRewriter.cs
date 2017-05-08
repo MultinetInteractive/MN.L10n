@@ -15,6 +15,8 @@ namespace MN.L10n
 		internal L10n _phrases;
 		internal Dictionary<string, Dictionary<object, L10nPhraseObject>> _phraseDic = new Dictionary<string, Dictionary<object, L10nPhraseObject>>();
 		internal string LanguageIdentifier;
+
+		internal List<string> unusedPhrases = new List<string>();
 		public PhrasesRewriter(string className, string languageIdentifier, L10n phraseRepo, params string[] methods) : base()
 		{
 			if (!string.IsNullOrWhiteSpace(className))
@@ -26,6 +28,8 @@ namespace MN.L10n
 			foreach (var p in allPhrases)
 			{
 				_phraseDic.Add(p, new Dictionary<object, L10nPhraseObject>());
+				unusedPhrases.Add(p);
+				_phrases.Phrases[p].Usages = 0;
 			}
 
 			foreach (var fLang in _phrases.LanguagePhrases)
@@ -34,6 +38,10 @@ namespace MN.L10n
 				var translatedPhrases = fLang.Value.Phrases;
 				foreach (var trpr in translatedPhrases)
 				{
+					if (!_phraseDic.ContainsKey(trpr.Key))
+					{
+						_phraseDic.Add(trpr.Key, new Dictionary<object, L10nPhraseObject>());
+					}
 					_phraseDic[trpr.Key].Add(langKey, trpr.Value);
 				}
 			}
@@ -44,6 +52,10 @@ namespace MN.L10n
 
 		public bool SavePhrasesToFile()
 		{
+			foreach (var unused in unusedPhrases)
+			{
+				_phrases.Phrases.Remove(unused);
+			}
 			return L10n.SaveDataProvider();
 		}
 
@@ -56,11 +68,16 @@ namespace MN.L10n
 				var inv = node as InvocationExpressionSyntax;
 				if (PhraseMethods.Contains(inv.Expression.ToString()))
 				{
-					if (_PhraseKeys.ContainsKey(inv.ToString()))
-						return _PhraseKeys[inv.ToString()];
 					var arguments = inv.ArgumentList.Arguments;
 					var propertyName = inv.Expression.ToString().Replace(".", "_") + "_" + Guid.NewGuid().ToString().Replace("-", "");
-					_Class.Add(_AddProperty(propertyName, arguments));
+					var property = _AddProperty(propertyName, arguments);
+
+					if (_PhraseKeys.ContainsKey(inv.ToString()))
+					{
+						return _PhraseKeys[inv.ToString()];
+					}
+
+					_Class.Add(property);
 					var objItem = arguments.Where(a => a.Expression is AnonymousObjectCreationExpressionSyntax || a.Expression is InvocationExpressionSyntax);
 					var argList = SeparatedList(objItem);
 					var n = InvocationExpression(IdentifierName($"{phraseClassName}.{propertyName}"), ArgumentList(argList)).NormalizeWhitespace();
@@ -82,6 +99,20 @@ namespace MN.L10n
 
 			bool isMarkDown = propName.StartsWith("_m");
 			bool isPluralized = arguments.Any(i => i == "__count");
+
+			if (!_phrases.Phrases.ContainsKey(phraseText))
+			{
+				_phrases.Phrases.Add(phraseText, new L10nPhrase());
+			}
+			else
+			{
+				_phrases.Phrases[phraseText].Usages++;
+			}
+
+			if (unusedPhrases.Contains(phraseText))
+			{
+				unusedPhrases.Remove(phraseText);
+			}
 
 			if (isMarkDown)
 			{
@@ -166,7 +197,7 @@ namespace MN.L10n
 				}
 				else
 				{
-					_phrases.Phrases.Add(phrase.Token.ValueText, new L10nPhrase { });
+					//_phrases.Phrases.Add(phrase.Token.ValueText, new L10nPhrase { });
 					var tokens = new List<SyntaxToken>();
 					if (isPluralized)
 					{

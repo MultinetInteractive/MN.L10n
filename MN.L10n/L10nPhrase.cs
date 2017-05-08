@@ -6,5 +6,6 @@ namespace MN.L10n
 	{
 		public string Comment { get; set; }
 		public DateTime Created { get; set; } = DateTime.Now;
+		public long Usages { get; set; } = 1;
 	}
 }

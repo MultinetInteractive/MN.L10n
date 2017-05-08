@@ -22,8 +22,16 @@ namespace MN.L10n
 			var solutionDir = baseDir.FullName;
 
 			PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
+
+			var methods = new[] 
+			{
+				"_s",
+				"_m",
+				"MN.L10n.L10n._s",
+				"MN.L10n.L10n._m"
+			};
 			
-			var phraseRewriter = new PhrasesRewriter("L10n_rw", "MN.L10n.L10n.GetLanguage()", PhraseInstance, "_s", "_m");
+			var phraseRewriter = new PhrasesRewriter("L10n_rw", "MN.L10n.L10n.GetLanguage()", PhraseInstance, methods);
 
 			foreach (var st in context.Compilation.SyntaxTrees)
 			{
