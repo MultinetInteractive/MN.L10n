@@ -26,6 +26,7 @@ namespace MN.L10n.FileProviders
 			{
 				var l10nFileContents = File.ReadAllText(phrasePath);
 				l10n = Newtonsoft.Json.JsonConvert.DeserializeObject<L10n>(l10nFileContents);
+				l10n.Phrases.Clear();
 			}
 			else
 			{
