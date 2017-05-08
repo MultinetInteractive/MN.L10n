@@ -26,6 +26,12 @@ namespace MN.L10n
 		[JsonIgnore]
 		public Dictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new Dictionary<string, L10nLanguage>();
 
+		public static bool SaveDataProvider()
+		{
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+			return Instance.DataProvider.SaveL10n(Instance);
+		}
+
 		public static string _s(string phrase, object args = null)
 		{
 			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
@@ -36,11 +42,18 @@ namespace MN.L10n
 		{
 			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
 
-			var settings = CommonMark.CommonMarkSettings.Default.Clone();
-			settings.OutputFormat = CommonMark.OutputFormat.Html;
-			settings.RenderSoftLineBreaksAsLineBreaks = true;
+			return Instance.ConvertFromMarkdown(Instance.__getPhrase(phrase, args));
+		}
+		
+		public string ConvertFromMarkdown(string phrase)
+		{
+			return CommonMark.CommonMarkConverter.Convert(phrase);
+		}
 
-			return CommonMark.CommonMarkConverter.Convert(Instance.__getPhrase(phrase, args), settings);
+		public static string GetLanguage()
+		{
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+			return Instance.LanguageProvider.GetLanguage();
 		}
 
 		internal string __getPhrase(string phrase, object args = null)
@@ -100,7 +113,7 @@ namespace MN.L10n
 			return FormatNamed(phrase, args);
 		}
 
-		internal bool IsPluralized(object args = null)
+		public static bool IsPluralized(object args = null)
 		{
 			if (args == null) return false;
 			var t = args.GetType();
@@ -112,7 +125,7 @@ namespace MN.L10n
 			return false;
 		}
 
-		internal int GetCount(object args = null)
+		public static int GetCount(object args = null)
 		{
 			if (args == null) return 0;
 			var t = args.GetType();
@@ -124,15 +137,15 @@ namespace MN.L10n
 			return 0;
 		}
 
-		internal string FormatNamed(string formatString, object parameters = null)
+		public static string FormatNamed(string formatString, object args = null)
 		{
-			if (parameters == null) return formatString;
+			if (args == null) return formatString;
 
-			var t = parameters.GetType();
+			var t = args.GetType();
 			var tmpVal = formatString;
 			foreach (var p in t.GetProperties())
 			{
-				tmpVal = tmpVal.Replace("$" + p.Name + "$", p.GetValue(parameters).ToString());
+				tmpVal = tmpVal.Replace("$" + p.Name + "$", p.GetValue(args).ToString());
 			}
 
 			return tmpVal;

@@ -25,9 +25,25 @@ namespace MN.L10n.FileProviders
 
 			foreach (var lang in l10n.Languages)
 			{
-				var phraseFileContents = File.ReadAllText(Path.Combine(FilePath, string.Format(LanguageFile, lang)));
-				var langPhrases = Newtonsoft.Json.JsonConvert.DeserializeObject<L10nLanguage>(phraseFileContents);
-				l10n.LanguagePhrases.Add(lang, langPhrases);
+				var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang));
+				if (File.Exists(langFileName))
+				{
+					var phraseFileContents = File.ReadAllText(langFileName);
+					var langPhrases = Newtonsoft.Json.JsonConvert.DeserializeObject<L10nLanguage>(phraseFileContents);
+					l10n.LanguagePhrases.Add(lang, langPhrases);
+				}
+				else
+				{
+					var nLang = new L10nLanguage
+					{
+						LanguageName = lang,
+						Locale = lang,
+						Phrases = new Dictionary<string, L10nPhraseObject>(),
+						PluralizationRules = new List<string> { "x" }
+					};
+					File.WriteAllText(langFileName, Newtonsoft.Json.JsonConvert.SerializeObject(nLang));
+					l10n.LanguagePhrases.Add(lang, nLang);
+				}
 			}
 
 			return l10n;
