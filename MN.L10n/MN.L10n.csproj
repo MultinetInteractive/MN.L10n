@@ -12,13 +12,15 @@
     <PackageProjectUrl>http://phoenix.net.multinet.se/general/mn-l10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.20</Version>
+    <Version>1.0.29</Version>
+	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-    <PackageReference Include="StackExchange.Precompilation.Metaprogramming" Version="3.3.0" />
+    <PackageReference Include="StackExchange.Precompilation.Build" Version="3.3.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="1.2.0" />
   </ItemGroup>
 
 </Project>

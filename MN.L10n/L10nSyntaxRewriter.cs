@@ -15,14 +15,17 @@ namespace MN.L10n
 		internal L10n _phrases;
 		internal Dictionary<string, Dictionary<object, L10nPhraseObject>> _phraseDic = new Dictionary<string, Dictionary<object, L10nPhraseObject>>();
 		internal string LanguageIdentifier;
+		internal string _BuildNumber;
 
 		internal List<string> unusedPhrases = new List<string>();
-		public PhrasesRewriter(string className, string languageIdentifier, L10n phraseRepo, params string[] methods) : base()
+		public PhrasesRewriter(string className, string languageIdentifier, L10n phraseRepo, string buildNumber, params string[] methods) : base()
 		{
 			if (!string.IsNullOrWhiteSpace(className))
 				phraseClassName = className.Trim();
 			LanguageIdentifier = languageIdentifier.Trim();
 			_phrases = phraseRepo;
+
+			_BuildNumber = buildNumber;
 
 			var allPhrases = _phrases.Phrases.Keys;
 			foreach (var p in allPhrases)
@@ -54,8 +57,17 @@ namespace MN.L10n
 		{
 			foreach (var unused in unusedPhrases)
 			{
-				_phrases.Phrases.Remove(unused);
+				if (_phrases.Phrases[unused].LatestBuildUsage != _BuildNumber)
+				{
+					_phrases.Phrases.Remove(unused);
+				}
 			}
+
+			foreach (var _ph in _phrases.Phrases.Keys)
+			{
+				_phrases.Phrases[_ph].LatestBuildUsage = _BuildNumber;
+			}
+
 			return L10n.SaveDataProvider();
 		}
 

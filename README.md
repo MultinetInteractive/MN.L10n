@@ -86,4 +86,13 @@ protected void Application_Start(object sender, EventArgs e)
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
     <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
   </Target>
+  ...
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)language-*.json" />
+    </ItemGroup>
+    <Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)App_Data\" />
+    <Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)App_Data\" />
+    <Message Importance="high" Text="Files copied to $(ProjectDir)App_Data\" />
+  </Target>
 ```
