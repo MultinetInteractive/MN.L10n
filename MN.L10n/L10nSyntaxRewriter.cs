@@ -150,7 +150,7 @@ namespace MN.L10n
 					.WithTokens(
 						TokenList(
 							Token(SyntaxKind.ReturnKeyword),
-							Identifier("FormatNamed"),
+							Identifier("MN.L10n.L10n.FormatNamed"),
 							Token(SyntaxKind.OpenParenToken),
 							Identifier("arg"),
 							Token(SyntaxKind.CloseParenToken)
@@ -221,7 +221,7 @@ namespace MN.L10n
 						.WithTokens(
 							TokenList(
 								Token(SyntaxKind.ReturnKeyword),
-								Identifier("FormatNamed"),
+								Identifier("MN.L10n.L10n.FormatNamed"),
 								Token(SyntaxKind.OpenParenToken),
 								Literal(phraseText),
 								Token(SyntaxKind.CommaToken),
