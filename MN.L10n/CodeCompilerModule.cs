@@ -5,6 +5,7 @@ using StackExchange.Precompilation;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MN.L10n
 {
@@ -38,6 +39,10 @@ namespace MN.L10n
 
 			PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
 
+			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx" };
+			var fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+			.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
+
 			var methods = new[] 
 			{
 				"_s",
@@ -47,6 +52,34 @@ namespace MN.L10n
 			};
 			
 			var phraseRewriter = new PhrasesRewriter("L10n_rw", "MN.L10n.L10n.GetLanguage()", PhraseInstance, bpIdentifier, methods);
+			
+			var r = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_s\(""(.*)""(?:,)?(.*?)\)", RegexOptions.Compiled);
+			foreach (var file in fileList)
+			{
+				var m = r.Matches(File.ReadAllText(file));
+				if (m.Count > 0)
+				{
+					foreach (Match match in m)
+					{
+						var phraseText = match.Groups[1].Value.Trim();
+						var args = match.Groups[2].Value.Trim();
+
+						if (!PhraseInstance.Phrases.ContainsKey(phraseText))
+						{
+							PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { LatestBuildUsage = bpIdentifier });
+						}
+						else
+						{
+							PhraseInstance.Phrases[phraseText].Usages++;
+						}
+
+						if (phraseRewriter.unusedPhrases.Contains(phraseText))
+						{
+							phraseRewriter.unusedPhrases.Remove(phraseText);
+						}
+					}
+				}
+			}
 
 			foreach (var st in context.Compilation.SyntaxTrees)
 			{
