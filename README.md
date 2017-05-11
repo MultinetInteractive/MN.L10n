@@ -9,6 +9,10 @@ See [phrases.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/5),
 [language-sv-SE.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/6),
 [language-en-GB.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/7) for json format
 
+You must implement your `IL10nLanguageProvider` yourself. :) (Basically just `string GetLanguage()`)
+
+There's also a custom mvc webview `MN.L10n.Mvc.L10nWebView`.
+
 ## Example usage (Phrasing)
 ```csharp
 using MN.L10n.NullProviders;
@@ -55,6 +59,8 @@ protected void Application_Start(object sender, EventArgs e)
   ViewEngines.Engines.Add(new PrecompiledViewEngine());
 #endif
   ViewEngines.Engines.Add(new RoslynRazorViewEngine());
+  ...
+  MN.L10n.L10n.CreateInstance(new IL10nLanguageProvider(), new FileDataProvider(@"C:\temp\phrase"));
   ...
 }
 ```
