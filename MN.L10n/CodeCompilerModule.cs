@@ -1,10 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Microsoft.Ajax.Utilities;
+using Microsoft.CodeAnalysis;
 using MN.L10n.FileProviders;
 using MN.L10n.NullProviders;
 using StackExchange.Precompilation;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MN.L10n
@@ -50,32 +52,66 @@ namespace MN.L10n
 				"MN.L10n.L10n._s",
 				"MN.L10n.L10n._m"
 			};
-			
+
 			var phraseRewriter = new PhrasesRewriter("L10n_rw", "MN.L10n.L10n.GetLanguage()", PhraseInstance, bpIdentifier, methods);
-			
+
+			var jsp = new JSParser();
+			var set = new CodeSettings { IgnoreAllErrors = false, MinifyCode = false, OutputMode = OutputMode.MultipleLines, BlocksStartOnSameLine = BlockStart.UseSource };
+
 			var r = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_s\(""(.*)""(?:,)?(.*?)\)", RegexOptions.Compiled);
 			foreach (var file in fileList)
 			{
-				var m = r.Matches(File.ReadAllText(file));
-				if (m.Count > 0)
+				if (file.EndsWith(".js"))
 				{
-					foreach (Match match in m)
+					foreach (var lang in PhraseInstance.Languages)
 					{
-						var phraseText = match.Groups[1].Value.Trim();
-						var args = match.Groups[2].Value.Trim();
-
-						if (!PhraseInstance.Phrases.ContainsKey(phraseText))
+						var jsRewriter = new JSL10nTreeVisitor(PhraseInstance, lang);
+						var astBlock = jsp.Parse(File.ReadAllText(file), set);
+						jsRewriter.Visit(astBlock);
+						StringBuilder _code = new StringBuilder();
+						using (StringWriter sw = new StringWriter(_code))
 						{
-							PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { LatestBuildUsage = bpIdentifier });
+							OutputVisitor.Apply(sw, astBlock, set);
 						}
-						else
-						{
-							PhraseInstance.Phrases[phraseText].Usages++;
-						}
+						var code = _code.ToString();
 
-						if (phraseRewriter.unusedPhrases.Contains(phraseText))
+						var jsExt = file.LastIndexOf(".js");
+
+						var newFileName = string.Format("{0}-{1}.js", file.Substring(0, jsExt), lang);
+
+						File.WriteAllText(newFileName, code);
+						foreach (var up in jsRewriter.unusedPhrases)
 						{
-							phraseRewriter.unusedPhrases.Remove(phraseText);
+							if (phraseRewriter.unusedPhrases.Contains(up))
+							{
+								phraseRewriter.unusedPhrases.Remove(up);
+							}
+						}
+					}
+				}
+				else
+				{
+					var m = r.Matches(File.ReadAllText(file));
+					if (m.Count > 0)
+					{
+						foreach (Match match in m)
+						{
+							var phraseText = match.Groups[1].Value.Trim();
+							var args = match.Groups[2].Value.Trim();
+
+							if (!PhraseInstance.Phrases.ContainsKey(phraseText))
+							{
+								PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { LatestBuildUsage = bpIdentifier });
+							}
+							else
+							{
+								PhraseInstance.Phrases[phraseText].Usages++;
+							}
+
+							if (phraseRewriter.unusedPhrases.Contains(phraseText))
+							{
+								phraseRewriter.unusedPhrases.Remove(phraseText);
+							}
 						}
 					}
 				}

@@ -126,17 +126,12 @@ namespace MN.L10n
 				unusedPhrases.Remove(phraseText);
 			}
 
-			if (isMarkDown)
-			{
-				phraseText = _phrases.ConvertFromMarkdown(phraseText);
-			}
-
 			SyntaxTrivia argToken =
 			Trivia(
 				SkippedTokensTrivia()
 				.WithTokens(
 					TokenList(
-						Literal(phraseText),
+						Literal(isMarkDown ? _phrases.ConvertFromMarkdown(phraseText) : phraseText),
 						Token(SyntaxKind.CommaToken),
 						Identifier("arg")
 					)
@@ -181,23 +176,23 @@ namespace MN.L10n
 							foreach (var r in langItem.Value.r.Where(k => k.Key != "x"))
 							{
 								tokens.AddRange(ParseTokens("if(count == " + r.Key + ") { return MN.L10n.L10n.FormatNamed("));
-								tokens.Add(Literal(langItem.Value.r[r.Key]));
+								tokens.Add(Literal(isMarkDown ? _phrases.ConvertFromMarkdown(langItem.Value.r[r.Key]) : langItem.Value.r[r.Key]));
 								tokens.AddRange(ParseTokens("); }"));
 							}
 							tokens.AddRange(ParseTokens("return MN.L10n.L10n.FormatNamed("));
-							tokens.Add(Literal(langItem.Value.r["x"]));
+							tokens.Add(Literal(isMarkDown ? _phrases.ConvertFromMarkdown(langItem.Value.r["x"]) : langItem.Value.r["x"]));
 							tokens.AddRange(ParseTokens(", arg);"));
 						}
 						else
 						{
 							tokens.AddRange(ParseTokens("return MN.L10n.L10n.FormatNamed("));
-							tokens.Add(Literal(langItem.Value.r["x"]));
+							tokens.Add(Literal(isMarkDown ? _phrases.ConvertFromMarkdown(langItem.Value.r["x"]) : langItem.Value.r["x"]));
 							tokens.AddRange(ParseTokens(", arg);"));
 						}
 
 					}
 					tokens.AddRange(ParseTokens("default: return MN.L10n.L10n.FormatNamed("));
-					tokens.Add(Literal(phraseText));
+					tokens.Add(Literal(isMarkDown ? _phrases.ConvertFromMarkdown(phraseText) : phraseText));
 					tokens.AddRange(ParseTokens(", arg);"));
 					tokens.Add(ParseToken("}"));
 					argToken = Trivia(
@@ -223,7 +218,7 @@ namespace MN.L10n
 								Token(SyntaxKind.ReturnKeyword),
 								Identifier("MN.L10n.L10n.FormatNamed"),
 								Token(SyntaxKind.OpenParenToken),
-								Literal(phraseText),
+								Literal(isMarkDown ? _phrases.ConvertFromMarkdown(phraseText) : phraseText),
 								Token(SyntaxKind.CommaToken),
 								Identifier("arg"),
 								Token(SyntaxKind.CloseParenToken)
