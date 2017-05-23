@@ -12,7 +12,7 @@
     <PackageProjectUrl>http://phoenix.net.multinet.se/general/mn-l10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.34</Version>
+    <Version>1.0.39</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
 
@@ -30,6 +30,21 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="StackExchange.Precompilation.Build" Version="3.3.0" />
     <PackageReference Include="System.Reflection.Metadata" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
