@@ -13,7 +13,7 @@ You must implement your `IL10nLanguageProvider` yourself. :) (Basically just `st
 
 There's also a custom mvc webview `MN.L10n.Mvc.L10nWebView`.
 
-## Example usage (Phrasing)
+## Example usage (C#)
 ```csharp
 using MN.L10n.NullProviders;
 using MN.L10n.FileProviders;
@@ -47,6 +47,41 @@ void Main()
 		)
 	); // <p><a href="http://www.multinet.se">Hejsan Anders</a></p>
 }
+```
+
+## Example usage (Javascript)
+First you need to link our javascript into the pages where you want to enable global usage of `_s` and `_m`.
+```csharp
+<%
+Response.Write("<script type=\"text/javascript\">" + 
+  MN.L10n.Properties.Resources.L10n + 
+"</script>");
+%>
+```
+
+```javascript
+DealDetails.ShowNotification(
+  _s('Sparade en ny notering på $companyName$', 
+    { companyName: DealDetails.DealInfo.CompanyName }
+  )
+);
+```
+
+## Linking javascript
+```html
+...
+<script type="text/javascript" src="<%=
+ResolveUrl(
+  MN.L10n.Javascript
+  .Loader.LoadL10nJavascript(
+    "~/path/file.js", 
+    (file) => 
+    { 
+      // Check if a translationfile is available, otherwise default is returned
+      return System.IO.File.Exists(Server.MapPath(file)); 
+    }
+)%>"></script>
+...
 ```
 
 ## Global.asax.cs
@@ -88,10 +123,6 @@ protected void Application_Start(object sender, EventArgs e)
   <PropertyGroup>
     <SEPrecompilerIncludeRazor>true</SEPrecompilerIncludeRazor>
   </PropertyGroup>
-  ...
-  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
-  </Target>
   ...
   <Target Name="AfterBuild">
     <ItemGroup>

@@ -42,7 +42,7 @@ namespace MN.L10n
 			PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx" };
-			var fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+			var fileList = Directory.EnumerateFiles(context.Arguments.BaseDirectory, "*.*", SearchOption.AllDirectories)
 			.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
 
 			var methods = new[] 
