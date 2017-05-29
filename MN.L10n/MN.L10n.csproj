@@ -12,7 +12,7 @@
     <PackageProjectUrl>http://phoenix.net.multinet.se/general/mn-l10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.40</Version>
+    <Version>1.0.42</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
 
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Javascript\L10n.js" />
+    <Content Include="Javascript\L10n.js" />
   </ItemGroup>
 
   <ItemGroup>

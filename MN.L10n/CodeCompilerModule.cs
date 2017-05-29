@@ -18,18 +18,6 @@ namespace MN.L10n
 
 		public void BeforeCompile(BeforeCompileContext context)
 		{
-			var bpIdentifier = Environment.GetEnvironmentVariable("__l10n_build", EnvironmentVariableTarget.Machine);
-			if (string.IsNullOrWhiteSpace(bpIdentifier) || !IsValidBuildIdentifier(bpIdentifier))
-			{
-				bpIdentifier = Guid.NewGuid().ToString() + "|" + DateTime.Now.ToString();
-				Environment.SetEnvironmentVariable("__l10n_build", bpIdentifier, EnvironmentVariableTarget.Machine);
-			}
-
-			context.Diagnostics.Add(
-						Diagnostic.Create(
-							new DiagnosticDescriptor("L10n", "TEST", "BuildIdentifier: " + bpIdentifier, "Translated", DiagnosticSeverity.Info, true),
-							Location.None));
-
 			var baseDir = new DirectoryInfo(context.Arguments.BaseDirectory);
 
 			while (!baseDir.GetFiles("*.sln").Any())
@@ -39,6 +27,20 @@ namespace MN.L10n
 
 			var solutionDir = baseDir.FullName;
 
+			var bpEnvName = solutionDir + "__l10n_build";
+			
+			var bpIdentifier = Environment.GetEnvironmentVariable(bpEnvName, EnvironmentVariableTarget.Machine);
+			if (string.IsNullOrWhiteSpace(bpIdentifier) || !IsValidBuildIdentifier(bpIdentifier))
+			{
+				bpIdentifier = Guid.NewGuid().ToString() + "|" + DateTime.Now.ToString();
+				Environment.SetEnvironmentVariable(bpEnvName, bpIdentifier, EnvironmentVariableTarget.Machine);
+			}
+
+			context.Diagnostics.Add(
+						Diagnostic.Create(
+							new DiagnosticDescriptor("L10n", "TEST", "BuildIdentifier: " + bpIdentifier, "Translated", DiagnosticSeverity.Info, true),
+							Location.None));
+			
 			PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx" };
