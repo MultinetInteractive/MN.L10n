@@ -12,7 +12,7 @@
     <PackageProjectUrl>http://phoenix.net.multinet.se/general/mn-l10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.42</Version>
+    <Version>1.0.46</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
 
@@ -27,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="AjaxMin" Version="5.14.5506.26202" />
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Jil" Version="2.15.0" />
     <PackageReference Include="StackExchange.Precompilation.Build" Version="3.3.0" />
     <PackageReference Include="System.Reflection.Metadata" Version="1.2.0" />
   </ItemGroup>

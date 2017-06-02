@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace MN.L10n
 {
@@ -61,15 +62,15 @@ namespace MN.L10n
 			var set = new CodeSettings { IgnoreAllErrors = false, MinifyCode = false, OutputMode = OutputMode.MultipleLines, BlocksStartOnSameLine = BlockStart.UseSource };
 
 			var r = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*)['""](?:,)?(.*?)\)", RegexOptions.Compiled);
-			foreach (var file in fileList)
+			foreach(var file in fileList)
 			{
 				if (file.EndsWith(".js"))
 				{
 					var m = r.Matches(File.ReadAllText(file));
 					if (m.Count > 0)
 					{
-						
-						foreach (var lang in PhraseInstance.Languages)
+
+						foreach(var lang in PhraseInstance.Languages)
 						{
 							var jsRewriter = new JSL10nTreeVisitor(PhraseInstance, lang);
 							var origSource = File.ReadAllText(file);
@@ -96,7 +97,7 @@ namespace MN.L10n
 									}
 								}
 							}
-						}
+						};
 						context.Diagnostics.Add(
 						Diagnostic.Create(
 							new DiagnosticDescriptor("L10n", "TEST", "Checked phrases in: " + file, "Translated", DiagnosticSeverity.Info, true),
@@ -129,9 +130,9 @@ namespace MN.L10n
 						}
 					}
 				}
-			}
+			};
 
-			foreach (var st in context.Compilation.SyntaxTrees)
+			foreach(var st in context.Compilation.SyntaxTrees)
 			{
 				phraseRewriter._Class.Clear();
 				var model = context.Compilation.GetSemanticModel(st);

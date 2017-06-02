@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Jil;
 
 namespace MN.L10n.FileProviders
 {
 	public class FileDataProvider : IL10nDataProvider
 	{
+		private Options SerializerOptions = Options.ISO8601;
+
 		private string FilePath { get; set; }
 		private string PhraseFile { get; set; }
 		private string LanguageFile { get; set; }
@@ -25,7 +24,7 @@ namespace MN.L10n.FileProviders
 			if (File.Exists(phrasePath))
 			{
 				var l10nFileContents = File.ReadAllText(phrasePath);
-				l10n = Newtonsoft.Json.JsonConvert.DeserializeObject<L10n>(l10nFileContents);
+				l10n = JSON.Deserialize<L10n>(l10nFileContents, SerializerOptions);
 			}
 			else
 			{
@@ -33,7 +32,7 @@ namespace MN.L10n.FileProviders
 				{
 					Languages = new List<string> { "default" }
 				};
-				File.WriteAllText(phrasePath, Newtonsoft.Json.JsonConvert.SerializeObject(l10n));
+				File.WriteAllText(phrasePath, JSON.Serialize(l10n, SerializerOptions));
 			}
 
 			foreach (var lang in l10n.Languages)
@@ -42,7 +41,7 @@ namespace MN.L10n.FileProviders
 				if (File.Exists(langFileName))
 				{
 					var phraseFileContents = File.ReadAllText(langFileName);
-					var langPhrases = Newtonsoft.Json.JsonConvert.DeserializeObject<L10nLanguage>(phraseFileContents);
+					var langPhrases = JSON.Deserialize<L10nLanguage>(phraseFileContents, SerializerOptions);
 					l10n.LanguagePhrases.Add(lang, langPhrases);
 				}
 				else
@@ -54,7 +53,7 @@ namespace MN.L10n.FileProviders
 						Phrases = new Dictionary<string, L10nPhraseObject>(),
 						PluralizationRules = new List<string> { "x" }
 					};
-					File.WriteAllText(langFileName, Newtonsoft.Json.JsonConvert.SerializeObject(nLang));
+					File.WriteAllText(langFileName, JSON.Serialize(nLang, SerializerOptions));
 					l10n.LanguagePhrases.Add(lang, nLang);
 				}
 			}
@@ -64,7 +63,7 @@ namespace MN.L10n.FileProviders
 
 		public bool SaveL10n(L10n l10n)
 		{
-			var l10nFileContents = Newtonsoft.Json.JsonConvert.SerializeObject(l10n);
+			var l10nFileContents = JSON.Serialize(l10n, SerializerOptions);
 			File.WriteAllText(Path.Combine(FilePath, PhraseFile), l10nFileContents);
 			return true;
 		}

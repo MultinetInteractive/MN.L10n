@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Jil;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MN.L10n
 {
@@ -23,7 +22,7 @@ namespace MN.L10n
 		public List<string> Languages { get; set; } = new List<string>();
 		public Dictionary<string, L10nPhrase> Phrases { get; set; } = new Dictionary<string, L10nPhrase>();
 
-		[JsonIgnore]
+		[JilDirective(Ignore = true)]
 		public Dictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new Dictionary<string, L10nLanguage>();
 
 		public static bool SaveDataProvider()
