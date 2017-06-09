@@ -20,8 +20,6 @@ namespace MN.L10n
 
 		public void BeforeCompile(BeforeCompileContext context)
 		{
-			if (context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Release) return;
-
 			var baseDir = new DirectoryInfo(context.Arguments.BaseDirectory);
 
 			while (!baseDir.GetFiles("*.sln").Any())
