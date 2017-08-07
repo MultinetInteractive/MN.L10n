@@ -4,6 +4,7 @@ using MN.L10n.FileProviders;
 using MN.L10n.NullProviders;
 using StackExchange.Precompilation;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,13 +25,21 @@ namespace MN.L10n
 
 			var baseDir = new DirectoryInfo(context.Arguments.BaseDirectory);
 
+			L10nConfig config = null;
+
 			while (!baseDir.GetFiles("*.sln").Any())
 			{
+				var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
+				if (cfgFile != null)
+				{
+					config = Newtonsoft.Json.JsonConvert.DeserializeObject<L10nConfig>(File.ReadAllText(cfgFile.FullName));
+					break;
+				}
 				baseDir = baseDir.Parent;
 			}
 
 			var solutionDir = baseDir.FullName;
-
+			
 			var bpEnvName = solutionDir + "__l10n_build";
 
 			var bpIdentifier = Environment.GetEnvironmentVariable(bpEnvName, EnvironmentVariableTarget.Machine);
@@ -48,8 +57,26 @@ namespace MN.L10n
 			PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx" };
-			var fileList = Directory.EnumerateFiles(context.Arguments.BaseDirectory, "*.*", SearchOption.AllDirectories)
-			.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
+
+			List<string> fileList = new List<string>();
+
+			if (config != null)
+			{
+				foreach (var pattern in config.IncludePatterns)
+				{
+					fileList.AddRange(Glob.Glob.ExpandNames(pattern));
+				}
+
+				foreach (var pattern in config.ExcludePatterns)
+				{
+					Glob.Glob.ExpandNames(pattern).ForEach(s => fileList.Remove(s));
+				}
+			}
+			else
+			{
+				fileList = Directory.EnumerateFiles(context.Arguments.BaseDirectory, "*.*", SearchOption.AllDirectories)
+				.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))).ToList();
+			}
 
 			var methods = new[]
 			{
@@ -67,6 +94,7 @@ namespace MN.L10n
 			var r = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*)['""](?:,)?(.*?)\)", RegexOptions.Compiled);
 			foreach (var file in fileList)
 			{
+				// Vi kör bara översättning på rena javascriptfiler
 				if (file.EndsWith(".js"))
 				{
 					var m = r.Matches(File.ReadAllText(file));
@@ -109,6 +137,7 @@ namespace MN.L10n
 				}
 				else
 				{
+					// Här matchar vi bara antalet användningar av fraser
 					var m = r.Matches(File.ReadAllText(file));
 					if (m.Count > 0)
 					{
@@ -135,6 +164,7 @@ namespace MN.L10n
 				}
 			};
 
+			// Här händer all magi med koden som ska kompileras
 			foreach (var st in context.Compilation.SyntaxTrees)
 			{
 				phraseRewriter._Class.Clear();
