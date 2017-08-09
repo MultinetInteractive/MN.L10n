@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace MN.L10n.Javascript
 {
