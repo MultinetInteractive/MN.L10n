@@ -1,13 +1,5 @@
-# MN.L10n
+# MN.L10n [![Build status](https://ci.appveyor.com/api/projects/status/y5uh8gvxm29v90rk?svg=true)](https://ci.appveyor.com/project/itssimple/mn-l10n)
 Translation-thingy for all our products
-
-Install the nuget-package `MN.L10n`.
-
-_More info will come, when I've actually coded some. :)_
-
-See [phrases.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/5), 
-[language-sv-SE.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/6),
-[language-en-GB.json](http://phoenix.net.multinet.se/general/mn-l10n/snippets/7) for json format
 
 You must implement your `IL10nLanguageProvider` yourself. :) (Basically just `string GetLanguage()`)
 
@@ -113,6 +105,22 @@ protected void Application_Start(object sender, EventArgs e)
     <add type="MN.L10n.CodeCompilerModule, MN.L10n" />
   </modules>
 </stackExchange.precompiler>
+...
+```
+
+## web.config (In MVC Views)
+```xml
+...
+<system.web.webPages.razor>
+  ...
+  <pages pageBaseType="MN.L10n.Mvc.L10nWebView">
+    <namespaces>
+      ...
+      <add namespace="MN.L10n"/>
+      ...
+    </namespaces>
+  </pages>
+</system.web.webPages.razor>
 ...
 ```
 

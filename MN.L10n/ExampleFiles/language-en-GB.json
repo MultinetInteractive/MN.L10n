@@ -1,0 +1,12 @@
+﻿{
+  "LanguageName": "English",
+  "Locale": "en-GB",
+  "PluralizationRules": [ "0", "1", "x" ],
+  "Phrases": {
+    "Hej Världen": {
+      "r": {
+        "x": "Hello World"
+      }
+    }
+  }
+}
