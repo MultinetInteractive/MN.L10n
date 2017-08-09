@@ -141,3 +141,12 @@ protected void Application_Start(object sender, EventArgs e)
     <Message Importance="high" Text="Files copied to $(ProjectDir)App_Data\" />
   </Target>
 ```
+
+---
+
+#### Things we use in the code to make the magic happen
+- [StackExchange.Precompilation](https://github.com/StackExchange/StackExchange.Precompilation)
+- [Glob.cs](https://github.com/mganss/Glob.cs)
+- [CommonMark.NET](https://github.com/Knagis/CommonMark.NET)
+- [Jil](https://github.com/kevin-montrose/Jil)
+- [WebGrease](https://github.com/Licshee/WebGrease)

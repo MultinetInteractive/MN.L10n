@@ -6,7 +6,7 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
-
+// Taken from https://github.com/mganss/Glob.cs
 namespace Glob
 {
 	/// <summary>
