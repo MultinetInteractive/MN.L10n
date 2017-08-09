@@ -19,9 +19,9 @@ namespace MN.L10n
 
 		public void BeforeCompile(BeforeCompileContext context)
 		{
-			var runPhrase = true;
-			try { runPhrase = context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Debug; } catch { }
-			if (!runPhrase) return;
+			//var runPhrase = true;
+			//try { runPhrase = context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Debug; } catch { }
+			//if (!runPhrase) return;
 
 			var baseDir = new DirectoryInfo(context.Arguments.BaseDirectory);
 
@@ -91,13 +91,15 @@ namespace MN.L10n
 			var jsp = new JSParser();
 			var set = new CodeSettings { IgnoreAllErrors = false, MinifyCode = false, OutputMode = OutputMode.MultipleLines, BlocksStartOnSameLine = BlockStart.UseSource };
 
-			var r = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*)['""](?:,)?(.*?)\)", RegexOptions.Compiled);
+			var noParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""]\)", RegexOptions.Compiled);
+			var withParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""],.*?{(.*?)}\)", RegexOptions.Compiled);
 			foreach (var file in fileList)
 			{
 				// Vi kör bara översättning på rena javascriptfiler
 				if (file.EndsWith(".js"))
 				{
-					var m = r.Matches(File.ReadAllText(file));
+					var m = noParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList();
+					m.AddRange(withParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList());
 					if (m.Count > 0)
 					{
 
@@ -138,7 +140,8 @@ namespace MN.L10n
 				else
 				{
 					// Här matchar vi bara antalet användningar av fraser
-					var m = r.Matches(File.ReadAllText(file));
+					var m = noParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList();
+					m.AddRange(withParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList());
 					if (m.Count > 0)
 					{
 						foreach (Match match in m)
