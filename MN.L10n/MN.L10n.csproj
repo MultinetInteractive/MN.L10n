@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-    <PackageReference Include="Jil" Version="2.15.0" />
+    <PackageReference Include="Jil" Version="2.15.2" />
     <PackageReference Include="StackExchange.Precompilation.Build" Version="4.0.0" />
     <PackageReference Include="WebGrease" Version="1.6.0" />
   </ItemGroup>
