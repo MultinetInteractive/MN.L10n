@@ -14,7 +14,6 @@ namespace MN.L10n
 {
 	public class CodeCompilerModule : ICompileModule
 	{
-		public L10n PhraseInstance { get; set; }
 		public void AfterCompile(AfterCompileContext context) { }
 
 		public void BeforeCompile(BeforeCompileContext context)
@@ -39,7 +38,7 @@ namespace MN.L10n
 			}
 
 			var solutionDir = baseDir.FullName;
-			
+
 			var bpEnvName = solutionDir + "__l10n_build";
 
 			var bpIdentifier = Environment.GetEnvironmentVariable(bpEnvName, EnvironmentVariableTarget.Machine);
@@ -54,7 +53,7 @@ namespace MN.L10n
 							new DiagnosticDescriptor("L10n", "TEST", "BuildIdentifier: " + bpIdentifier, "Translated", DiagnosticSeverity.Info, true),
 							Location.None));
 
-			PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
+			L10n PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx" };
 
@@ -62,6 +61,12 @@ namespace MN.L10n
 
 			if (config != null)
 			{
+				if (config.IncludePatterns.Count == 0)
+				{
+					fileList = Directory.EnumerateFiles(context.Arguments.BaseDirectory, "*.*", SearchOption.AllDirectories)
+					.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))).ToList();
+				}
+
 				foreach (var pattern in config.IncludePatterns)
 				{
 					fileList.AddRange(Glob.Glob.ExpandNames(pattern));
