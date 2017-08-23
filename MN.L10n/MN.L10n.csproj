@@ -12,7 +12,7 @@
     <PackageProjectUrl>http://phoenix.net.multinet.se/general/mn-l10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.56</Version>
+    <Version>1.0.60</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
 
@@ -26,9 +26,9 @@
 
   <ItemGroup>
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-    <PackageReference Include="Jil" Version="2.15.2" />
     <PackageReference Include="StackExchange.Precompilation.Build" Version="4.0.0" />
     <PackageReference Include="WebGrease" Version="1.6.0" />
+	<PackageReference Include="Jil" Version="2.15.2" />
   </ItemGroup>
 
   <ItemGroup>

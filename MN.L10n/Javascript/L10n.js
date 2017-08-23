@@ -1,5 +1,7 @@
-﻿window._s = function (_phrase, _args) { if ('undefined' === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } return _phrase; };
-window._m = function (_phrase, _args) { _phrase = micromarkdown.parse(_phrase); if ('undefined' === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } return _phrase; }
+﻿function _s(_phrase, _args) { if ('undefined' === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } return _phrase; };
+function _m(_phrase, _args) { _phrase = micromarkdown.parse(_phrase); if ('undefined' === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } return _phrase; };
+window._s = _s;
+window._m = _m;
 
 /* * * * * * * * * * * *
  *  micromarkdown .js  *

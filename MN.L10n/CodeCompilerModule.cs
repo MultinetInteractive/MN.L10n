@@ -98,20 +98,22 @@ namespace MN.L10n
 
 			var noParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""]\)", RegexOptions.Compiled);
 			var withParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""],.*?{(.*?)}\)", RegexOptions.Compiled);
-			foreach (var file in fileList)
+			foreach (var file in fileList.Distinct())
 			{
 				// Vi kör bara översättning på rena javascriptfiler
+				var fileContents = File.ReadAllText(file);
 				if (file.EndsWith(".js"))
 				{
-					var m = noParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList();
-					m.AddRange(withParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList());
+					
+					var m = noParam.Matches(fileContents).Cast<Match>().ToList();
+					m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
 					if (m.Count > 0)
 					{
 
 						foreach (var lang in PhraseInstance.Languages)
 						{
 							var jsRewriter = new JSL10nTreeVisitor(PhraseInstance, lang);
-							var origSource = File.ReadAllText(file);
+							var origSource = fileContents;
 							var astBlock = jsp.Parse(origSource, set);
 							jsRewriter.Visit(astBlock);
 							StringBuilder _code = new StringBuilder();
@@ -145,8 +147,8 @@ namespace MN.L10n
 				else
 				{
 					// Här matchar vi bara antalet användningar av fraser
-					var m = noParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList();
-					m.AddRange(withParam.Matches(File.ReadAllText(file)).Cast<Match>().ToList());
+					var m = noParam.Matches(fileContents).Cast<Match>().ToList();
+					m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
 					if (m.Count > 0)
 					{
 						foreach (Match match in m)

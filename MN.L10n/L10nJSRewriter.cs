@@ -22,8 +22,12 @@ namespace MN.L10n
 			var allPhrases = _phrases.Phrases.Keys;
 			foreach (var p in allPhrases)
 			{
-				_phraseDic.Add(p, new Dictionary<object, L10nPhraseObject>());
-				unusedPhrases.Add(p);
+				if (!_phraseDic.ContainsKey(p))
+				{
+					_phraseDic.Add(p, new Dictionary<object, L10nPhraseObject>());
+				}
+				if(!unusedPhrases.Contains(p))
+					unusedPhrases.Add(p);
 				_phrases.Phrases[p].Usages = 0;
 			}
 
@@ -37,7 +41,10 @@ namespace MN.L10n
 					{
 						_phraseDic.Add(trpr.Key, new Dictionary<object, L10nPhraseObject>());
 					}
-					_phraseDic[trpr.Key].Add(langKey, trpr.Value);
+					if (!_phraseDic[trpr.Key].ContainsKey(langKey))
+					{
+						_phraseDic[trpr.Key].Add(langKey, trpr.Value);
+					}
 				}
 			}
 		}
@@ -85,34 +92,33 @@ namespace MN.L10n
 			}
 			
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine();
-			sb.AppendLine("(function() {");
+			sb.Append("(function() { ");
 			if (args != null)
 			{
-				sb.AppendLine("var _args = " + (args?.Context.Code ?? "{}") + ";");
+				sb.Append("var _args = " + (args?.Context.Code ?? "{}") + "; ");
 			}
 			if (_phraseDic.ContainsKey(phrase) && _phraseDic[phrase].ContainsKey(_currentLang))
 			{
 				var langItem = _phraseDic[phrase][_currentLang];
-				sb.AppendLine("var _phrase = '" + (isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r["x"]) : langItem.r["x"]) + "';");
+				sb.Append("var _phrase = '" + (isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r["x"]) : langItem.r["x"]).Replace("\n", "\\n") + "'; ");
 				
 				foreach (var r in langItem.r.Where(k => k.Key != "x"))
 				{
-					sb.AppendLine("if(_args.__count == " + r.Key + ") { _phrase = ");
-					sb.Append("'" + (isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r[r.Key]) : langItem.r[r.Key]) + "'");
+					sb.Append("if(_args.__count == " + r.Key + ") { _phrase = ");
+					sb.Append("'" + (isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r[r.Key]) : langItem.r[r.Key]).Replace("\n", "\\n") + "'");
 					sb.Append("; }");
 				}
 			}
 			else
 			{
-				sb.AppendLine("var _phrase = '" + (isMarkDown ? _phrases.ConvertFromMarkdown(phrase) : phrase) + "';");
+				sb.Append("var _phrase = '" + (isMarkDown ? _phrases.ConvertFromMarkdown(phrase) : phrase).Replace("\n", "\\n") + "';");
 			}
 			
 			if(args != null)
 			{
-				sb.AppendLine("for(var p in _args) { if(_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } }");
+				sb.Append("for(var p in _args) { if(_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } ");
 			}
-			sb.AppendLine("return _phrase; })()");
+			sb.Append("return _phrase; })()");
 			return sb.ToString();
 		}
 	}
