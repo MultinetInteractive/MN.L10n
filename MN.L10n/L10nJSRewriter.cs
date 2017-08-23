@@ -75,8 +75,7 @@ namespace MN.L10n
 		public string GeneratePhraseJS(string method, string phrase, ObjectLiteral args = null)
 		{
 			bool isMarkDown = method == "_m";
-			bool isPluralized = (args?.Context.Code ?? "{}").Contains("__count");
-
+			
 			if (!_phrases.Phrases.ContainsKey(phrase))
 			{
 				_phrases.Phrases.Add(phrase, new L10nPhrase());
@@ -90,7 +89,10 @@ namespace MN.L10n
 			{
 				unusedPhrases.Remove(phrase);
 			}
-			
+
+			if (!_phraseDic.ContainsKey(phrase) && !phrase.Contains("$") && args == null)
+				return EncodeJsString(phrase);
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("(function() { ");
 			if (args != null)
@@ -100,18 +102,26 @@ namespace MN.L10n
 			if (_phraseDic.ContainsKey(phrase) && _phraseDic[phrase].ContainsKey(_currentLang))
 			{
 				var langItem = _phraseDic[phrase][_currentLang];
-				sb.Append("var _phrase = '" + (isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r["x"]) : langItem.r["x"]).Replace("\n", "\\n") + "'; ");
+				if (!phrase.Contains("$") && args == null)
+				{
+					return EncodeJsString(isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r["x"]) : langItem.r["x"]);
+				}
+				sb.Append("var _phrase = " + EncodeJsString(isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r["x"]) : langItem.r["x"]) + "; ");
 				
 				foreach (var r in langItem.r.Where(k => k.Key != "x"))
 				{
 					sb.Append("if(_args.__count == " + r.Key + ") { _phrase = ");
-					sb.Append("'" + (isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r[r.Key]) : langItem.r[r.Key]).Replace("\n", "\\n") + "'");
+					sb.Append(EncodeJsString(isMarkDown ? _phrases.ConvertFromMarkdown(langItem.r[r.Key]) : langItem.r[r.Key]));
 					sb.Append("; }");
 				}
 			}
 			else
 			{
-				sb.Append("var _phrase = '" + (isMarkDown ? _phrases.ConvertFromMarkdown(phrase) : phrase).Replace("\n", "\\n") + "';");
+				if (!phrase.Contains("$") && args == null)
+				{
+					return EncodeJsString(isMarkDown ? _phrases.ConvertFromMarkdown(phrase) : phrase);
+				}
+				sb.Append("var _phrase = " + EncodeJsString(isMarkDown ? _phrases.ConvertFromMarkdown(phrase) : phrase) + ";");
 			}
 			
 			if(args != null)
@@ -119,6 +129,53 @@ namespace MN.L10n
 				sb.Append("for(var p in _args) { if(_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } ");
 			}
 			sb.Append("return _phrase; })()");
+			return sb.ToString();
+		}
+
+		private string EncodeJsString(string s)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append("\"");
+			foreach (char c in s)
+			{
+				switch (c)
+				{
+					case '\"':
+						sb.Append("\\\"");
+						break;
+					case '\\':
+						sb.Append("\\\\");
+						break;
+					case '\b':
+						sb.Append("\\b");
+						break;
+					case '\f':
+						sb.Append("\\f");
+						break;
+					case '\n':
+						sb.Append("\\n");
+						break;
+					case '\r':
+						sb.Append("\\r");
+						break;
+					case '\t':
+						sb.Append("\\t");
+						break;
+					default:
+						int i = (int)c;
+						if (i < 32 || i > 127)
+						{
+							sb.AppendFormat("\\u{0:X04}", i);
+						}
+						else
+						{
+							sb.Append(c);
+						}
+						break;
+				}
+			}
+			sb.Append("\"");
+
 			return sb.ToString();
 		}
 	}

@@ -31,7 +31,7 @@ namespace MN.L10n
 				var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
 				if (cfgFile != null)
 				{
-					config = Newtonsoft.Json.JsonConvert.DeserializeObject<L10nConfig>(File.ReadAllText(cfgFile.FullName));
+					config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
 					break;
 				}
 				baseDir = baseDir.Parent;
