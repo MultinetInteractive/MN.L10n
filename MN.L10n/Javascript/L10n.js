@@ -1,5 +1,38 @@
-﻿function _s(_phrase, _args) { if ('undefined' === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } return _phrase; };
-function _m(_phrase, _args) { _phrase = micromarkdown.parse(_phrase); if ('undefined' === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace('$' + p + '$', _args[p]); } } return _phrase; };
+﻿/**
+ * Translates code compile-time as a pre-compile step.
+ * @param {string} _phrase
+ * @param {object} [_args]
+ * @returns {string}
+ */
+function _s(_phrase, _args) {
+	if ('undefined' === typeof (_args))
+		_args = {};
+
+	for (var p in _args) {
+		if (_args.hasOwnProperty(p)) {
+			_phrase = _phrase.replace('$' + p + '$', _args[p]);
+		}
+	}
+	return _phrase;
+};
+/**
+ * Translates code + markdown compile-time as a pre-compile step.
+ * @param {string} _phrase
+ * @param {object} [_args]
+ * @returns {string}
+ */
+function _m(_phrase, _args) {
+	_phrase = micromarkdown.parse(_phrase);
+	if ('undefined' === typeof (_args))
+		_args = {};
+
+	for (var p in _args) {
+		if (_args.hasOwnProperty(p)) {
+			_phrase = _phrase.replace('$' + p + '$', _args[p]);
+		}
+	}
+	return _phrase;
+};
 window._s = _s;
 window._m = _m;
 

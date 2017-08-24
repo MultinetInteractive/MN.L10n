@@ -8,11 +8,11 @@
     <Description>MultiNet L10n
 Översättningspaket</Description>
     <PackageTags>L10n translation</PackageTags>
-    <RepositoryUrl>http://phoenix.net.multinet.se/general/mn-l10n</RepositoryUrl>
-    <PackageProjectUrl>http://phoenix.net.multinet.se/general/mn-l10n</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.67</Version>
+    <Version>1.0.68</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
 

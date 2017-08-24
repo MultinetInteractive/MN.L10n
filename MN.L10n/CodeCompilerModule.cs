@@ -5,6 +5,7 @@ using MN.L10n.NullProviders;
 using StackExchange.Precompilation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,7 @@ namespace MN.L10n
 			//var runPhrase = true;
 			//try { runPhrase = context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Debug; } catch { }
 			//if (!runPhrase) return;
+			Debugger.Break();
 
 			var baseDir = new DirectoryInfo(context.Arguments.BaseDirectory);
 
@@ -28,16 +30,16 @@ namespace MN.L10n
 
 			while (!baseDir.GetFiles("*.sln").Any())
 			{
-				var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
-				if (cfgFile != null)
-				{
-					config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
-					break;
-				}
 				baseDir = baseDir.Parent;
 			}
 
 			var solutionDir = baseDir.FullName;
+
+			var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
+			if (cfgFile != null)
+			{
+				config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
+			}
 
 			var bpEnvName = solutionDir + "__l10n_build";
 
@@ -69,12 +71,12 @@ namespace MN.L10n
 
 				foreach (var pattern in config.IncludePatterns)
 				{
-					fileList.AddRange(Glob.Glob.ExpandNames(pattern));
+					fileList.AddRange(Glob.Glob.ExpandNames(context.Arguments.BaseDirectory + pattern));
 				}
 
 				foreach (var pattern in config.ExcludePatterns)
 				{
-					Glob.Glob.ExpandNames(pattern).ForEach(s => fileList.Remove(s));
+					Glob.Glob.ExpandNames(context.Arguments.BaseDirectory + pattern).ForEach(s => fileList.Remove(s));
 				}
 			}
 			else
