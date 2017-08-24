@@ -19,10 +19,14 @@ namespace MN.L10n
 
 		public void BeforeCompile(BeforeCompileContext context)
 		{
+			bool isBuildEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("is_build_environment"));
+
 			//var runPhrase = true;
 			//try { runPhrase = context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Debug; } catch { }
 			//if (!runPhrase) return;
 			Debugger.Break();
+			Stopwatch stw = new Stopwatch();
+			stw.Start();
 
 			var baseDir = new DirectoryInfo(context.Arguments.BaseDirectory);
 
@@ -34,6 +38,11 @@ namespace MN.L10n
 			}
 
 			var solutionDir = baseDir.FullName;
+			var hashPath = Path.Combine(solutionDir, "l10n-hash.json");
+			if (!FileHashHelper.HashesLoaded)
+			{
+				FileHashHelper.LoadFileHashes(hashPath);
+			}
 
 			var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
 			if (cfgFile != null)
@@ -50,10 +59,7 @@ namespace MN.L10n
 				Environment.SetEnvironmentVariable(bpEnvName, bpIdentifier, EnvironmentVariableTarget.Machine);
 			}
 
-			context.Diagnostics.Add(
-						Diagnostic.Create(
-							new DiagnosticDescriptor("L10n", "TEST", "BuildIdentifier: " + bpIdentifier, "Translated", DiagnosticSeverity.Info, true),
-							Location.None));
+			Console.WriteLine("info l10n: BuildIdentifier: " + bpIdentifier);
 
 			L10n PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
 
@@ -100,83 +106,90 @@ namespace MN.L10n
 
 			var noParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""]\)", RegexOptions.Compiled);
 			var withParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""],.*?{(.*?)}\)", RegexOptions.Compiled);
-			foreach (var file in fileList.Distinct())
+			if (!isBuildEnvironment)
 			{
-				// Vi kör bara översättning på rena javascriptfiler
-				var fileContents = File.ReadAllText(file);
-				if (file.EndsWith(".js"))
+				foreach (var file in fileList.Distinct())
 				{
-					
-					var m = noParam.Matches(fileContents).Cast<Match>().ToList();
-					m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
-					if (m.Count > 0)
+					var fileContents = File.ReadAllText(file);
+					var fileHash = FileHashHelper.GetHash(fileContents);
+					if (FileHashHelper.FileHashes.ContainsKey(file) && FileHashHelper.FileHashes[file] == fileHash)
+						continue;
+
+					FileHashHelper.FileHashes[file] = fileHash;
+					if (file.EndsWith(".js"))
 					{
 
-						foreach (var lang in PhraseInstance.Languages)
+						var m = noParam.Matches(fileContents).Cast<Match>().ToList();
+						m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
+						if (m.Count > 0)
 						{
-							var jsRewriter = new JSL10nTreeVisitor(PhraseInstance, lang);
-							var origSource = fileContents;
-							var astBlock = jsp.Parse(origSource, set);
-							jsRewriter.Visit(astBlock);
-							StringBuilder _code = new StringBuilder();
-							using (StringWriter sw = new StringWriter(_code))
-							{
-								OutputVisitor.Apply(sw, astBlock, set);
-							}
-							var code = _code.ToString();
-							if (code != origSource)
-							{
-								var jsExt = file.LastIndexOf(".js");
 
-								var newFileName = string.Format("{0}-{1}.js", file.Substring(0, jsExt), lang);
-
-								File.WriteAllText(newFileName, code);
-								foreach (var up in jsRewriter.unusedPhrases)
+							foreach (var lang in PhraseInstance.Languages)
+							{
+								var jsRewriter = new JSL10nTreeVisitor(PhraseInstance, lang);
+								var origSource = fileContents;
+								var astBlock = jsp.Parse(origSource, set);
+								jsRewriter.Visit(astBlock);
+								StringBuilder _code = new StringBuilder();
+								using (StringWriter sw = new StringWriter(_code))
 								{
-									if (phraseRewriter.unusedPhrases.Contains(up))
+									OutputVisitor.Apply(sw, astBlock, set);
+								}
+								var code = _code.ToString();
+								if (code != origSource)
+								{
+									var jsExt = file.LastIndexOf(".js");
+
+									var newFileName = string.Format("{0}-{1}.js", file.Substring(0, jsExt), lang);
+
+									File.WriteAllText(newFileName, code);
+									foreach (var up in jsRewriter.unusedPhrases)
 									{
-										phraseRewriter.unusedPhrases.Remove(up);
+										if (phraseRewriter.unusedPhrases.Contains(up))
+										{
+											phraseRewriter.unusedPhrases.Remove(up);
+										}
 									}
 								}
-							}
-						};
-						context.Diagnostics.Add(
-						Diagnostic.Create(
-							new DiagnosticDescriptor("L10n", "TEST", "Checked phrases in: " + file, "Translated", DiagnosticSeverity.Info, true),
-							Location.None));
-					}
-				}
-				else
-				{
-					// Här matchar vi bara antalet användningar av fraser
-					var m = noParam.Matches(fileContents).Cast<Match>().ToList();
-					m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
-					if (m.Count > 0)
-					{
-						foreach (Match match in m)
-						{
-							var phraseText = match.Groups[1].Value.Trim();
-							var args = match.Groups[2].Value.Trim();
-
-							if (!PhraseInstance.Phrases.ContainsKey(phraseText))
-							{
-								PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { LatestBuildUsage = bpIdentifier });
-							}
-							else
-							{
-								PhraseInstance.Phrases[phraseText].Usages++;
-							}
-
-							if (phraseRewriter.unusedPhrases.Contains(phraseText))
-							{
-								phraseRewriter.unusedPhrases.Remove(phraseText);
-							}
+							};
+							Console.WriteLine("info l10n: Checked phrases in (JavaScript): " + file);
 						}
 					}
-				}
-			};
+					else
+					{
+						var m = noParam.Matches(fileContents).Cast<Match>().ToList();
+						m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
+						if (m.Count > 0)
+						{
+							foreach (Match match in m)
+							{
+								var phraseText = match.Groups[1].Value.Trim();
+								var args = match.Groups[2].Value.Trim();
 
-			// Här händer all magi med koden som ska kompileras
+								if (!PhraseInstance.Phrases.ContainsKey(phraseText))
+								{
+									PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { LatestBuildUsage = bpIdentifier });
+								}
+								else
+								{
+									PhraseInstance.Phrases[phraseText].Usages++;
+								}
+
+								if (phraseRewriter.unusedPhrases.Contains(phraseText))
+								{
+									phraseRewriter.unusedPhrases.Remove(phraseText);
+								}
+							}
+							Console.WriteLine("info l10n: Checked phrases in: " + file);
+						}
+					}
+				};
+			}
+			else
+			{
+				Console.WriteLine("info l10n: Skipping content files, build server");
+			}
+
 			foreach (var st in context.Compilation.SyntaxTrees)
 			{
 				phraseRewriter._Class.Clear();
@@ -191,13 +204,13 @@ namespace MN.L10n
 					context.Compilation = context.Compilation.ReplaceSyntaxTree(st,
 						st.WithRootAndOptions(rewrittenRoot, st.Options));
 
-					context.Diagnostics.Add(
-						Diagnostic.Create(
-							new DiagnosticDescriptor("L10n", "TEST", "Replaced " + phraseRewriter._Class.Count + " phrases in: " + st.FilePath, "Translated", DiagnosticSeverity.Info, true),
-							Location.None));
+					Console.WriteLine("info l10n: Replaced " + phraseRewriter._Class.Count + " phrases in: " + st.FilePath);
 				}
 			}
 			phraseRewriter.SavePhrasesToFile();
+			FileHashHelper.SaveFileHashes(hashPath);
+			stw.Stop();
+			Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n");
 		}
 
 		private bool IsValidBuildIdentifier(string bpIdentifier)

@@ -6,23 +6,15 @@
     <Company>MultiNet Interactive AB</Company>
     <Authors>Chris Gårdenberg</Authors>
     <Description>MultiNet L10n
-Översättningspaket</Description>
+Translation package</Description>
     <PackageTags>L10n translation</PackageTags>
     <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.68</Version>
+    <Version>1.0.72</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Javascript\L10n.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Javascript\L10n.js" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
