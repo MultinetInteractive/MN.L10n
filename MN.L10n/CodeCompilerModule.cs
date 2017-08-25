@@ -65,6 +65,9 @@ namespace MN.L10n
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx" };
 
+			var defaultIgnorePaths = new[] { "/.git", "/node_modules", "/.vscode", "/.idea", "/.vs", "/bin", "/obj" };
+
+
 			List<string> fileList = new List<string>();
 
 			if (config != null)
@@ -72,12 +75,17 @@ namespace MN.L10n
 				if (config.IncludePatterns.Count == 0)
 				{
 					fileList = Directory.EnumerateFiles(context.Arguments.BaseDirectory, "*.*", SearchOption.AllDirectories)
-					.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))).ToList();
+					.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+					.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+					.ToList();
 				}
 
 				foreach (var pattern in config.IncludePatterns)
 				{
-					fileList.AddRange(Glob.Glob.ExpandNames(context.Arguments.BaseDirectory + pattern));
+					fileList.AddRange(
+						Glob.Glob.ExpandNames(context.Arguments.BaseDirectory + pattern)
+						.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+					);
 				}
 
 				foreach (var pattern in config.ExcludePatterns)
@@ -88,8 +96,12 @@ namespace MN.L10n
 			else
 			{
 				fileList = Directory.EnumerateFiles(context.Arguments.BaseDirectory, "*.*", SearchOption.AllDirectories)
-				.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase))).ToList();
+				.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+				.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+				.ToList();
 			}
+
+
 
 			var methods = new[]
 			{
