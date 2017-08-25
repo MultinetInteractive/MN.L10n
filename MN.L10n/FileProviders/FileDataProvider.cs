@@ -6,7 +6,7 @@ namespace MN.L10n.FileProviders
 {
 	public class FileDataProvider : IL10nDataProvider
 	{
-		private Options SerializerOptions = Options.ISO8601;
+		private Options SerializerOptions = Options.ISO8601PrettyPrint;
 
 		private string FilePath { get; set; }
 		private string PhraseFile { get; set; }
