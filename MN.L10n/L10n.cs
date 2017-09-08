@@ -144,7 +144,7 @@ namespace MN.L10n
 			var tmpVal = formatString;
 			foreach (var p in t.GetProperties())
 			{
-				tmpVal = tmpVal.Replace("$" + p.Name + "$", p.GetValue(args).ToString());
+				tmpVal = tmpVal.Replace("$" + p.Name + "$", p.GetValue(args)?.ToString());
 			}
 
 			return tmpVal;
