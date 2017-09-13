@@ -1,7 +1,7 @@
 # MN.L10n [![Build status](https://ci.appveyor.com/api/projects/status/y5uh8gvxm29v90rk?svg=true)](https://ci.appveyor.com/project/itssimple/mn-l10n)
 Translation-thingy for all our products
 
-You must implement your `IL10nLanguageProvider` yourself. :) (Basically just `string GetLanguage()`)
+You must implement your `IL10nLanguageProvider` and a custom `IFileResolver` (for javascript) yourself. :) (Basically just `string GetLanguage()` and `bool FileExists(string file)`)
 
 There's also a custom mvc webview `MN.L10n.Mvc.L10nWebView`.
 
@@ -13,7 +13,11 @@ using static MN.L10n.L10n;
 
 void Main()
 {
-	var l10n = MN.L10n.L10n.CreateInstance(new NullLanguageProvider("en-GB"), new FileDataProvider(@"C:\temp\phrase"));
+	var l10n = MN.L10n.L10n.CreateInstance(
+		new NullLanguageProvider("en-GB"), 
+		new FileDataProvider(@"C:\temp\phrase"), 
+		new FileResolver()
+	);
 
 	Console.WriteLine(
 		_s("Det finns $__count$ meddelanden", 
@@ -64,15 +68,11 @@ DealDetails.ShowNotification(
 ...
 <script type="text/javascript" src="<%=
 ResolveUrl(
-  MN.L10n.Javascript
-  .Loader.LoadL10nJavascript(
-    "~/path/file.js", 
-    (file) => 
-    { 
-      // Check if a translationfile is available, otherwise default is returned
-      return System.IO.File.Exists(Server.MapPath(file)); 
-    }
-)%>"></script>
+  MN.L10n
+  .Javascript
+  .Loader
+  .LoadL10nJavascript("~/path/file.js")
+%>"></script>
 ...
 ```
 
@@ -87,7 +87,7 @@ protected void Application_Start(object sender, EventArgs e)
 #endif
   ViewEngines.Engines.Add(new RoslynRazorViewEngine());
   ...
-  MN.L10n.L10n.CreateInstance(new IL10nLanguageProvider(), new FileDataProvider(@"C:\temp\phrase"));
+  MN.L10n.L10n.CreateInstance(new IL10nLanguageProvider(), new FileDataProvider(@"C:\temp\phrase"), new FileResolver());
   ...
 }
 ```

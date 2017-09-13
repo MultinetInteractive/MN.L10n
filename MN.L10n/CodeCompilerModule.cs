@@ -21,9 +21,9 @@ namespace MN.L10n
 		{
 			bool isBuildEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("is_build_environment"));
 
-			//var runPhrase = true;
+			var runPhrase = false;
 			//try { runPhrase = context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Debug; } catch { }
-			//if (!runPhrase) return;
+			if (!runPhrase) return;
 			Debugger.Break();
 			Stopwatch stw = new Stopwatch();
 			stw.Start();
@@ -61,11 +61,19 @@ namespace MN.L10n
 
 			Console.WriteLine("info l10n: BuildIdentifier: " + bpIdentifier);
 
-			L10n PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir));
+			L10n PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir), new FileResolver());
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx" };
 
-			var defaultIgnorePaths = new[] { "/.git", "/node_modules", "/.vscode", "/.idea", "/.vs", "/bin", "/obj" };
+			var defaultIgnorePaths = new[] {
+				"/.git", "\\.git",
+				"/node_modules", "\\node_modules",
+				"/.vscode", "\\.vscode",
+				"/.idea", "\\.idea",
+				"/.vs", "\\.vs",
+				"/bin", "\\bin",
+				"/obj", "\\obj",
+			};
 
 
 			List<string> fileList = new List<string>();

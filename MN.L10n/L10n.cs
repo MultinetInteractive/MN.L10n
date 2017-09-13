@@ -9,13 +9,16 @@ namespace MN.L10n
 		private IL10nDataProvider DataProvider { get; set; }
 		private IL10nLanguageProvider LanguageProvider { get; set; }
 
+		internal IFileResolver FileResolver { get; set; }
+
 		internal static L10n Instance;
 
-		public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider)
+		public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider, IFileResolver fileResolver)
 		{
 			var l10n = dataProvider.LoadL10n();
 			l10n.DataProvider = dataProvider;
 			l10n.LanguageProvider = langProvider;
+			l10n.FileResolver = fileResolver;
 			Instance = l10n;
 			return l10n;
 		}
@@ -27,19 +30,19 @@ namespace MN.L10n
 
 		public static bool SaveDataProvider()
 		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
 			return Instance.DataProvider.SaveL10n(Instance);
 		}
 
 		public static string _s(string phrase, object args = null)
 		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
 			return Instance.__getPhrase(phrase, args);
 		}
 
 		public static string _m(string phrase, object args = null)
 		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
 
 			return Instance.ConvertFromMarkdown(Instance.__getPhrase(phrase, args));
 		}
@@ -51,7 +54,7 @@ namespace MN.L10n
 
 		public static string GetLanguage()
 		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider) to create an instance before using this.");
+			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
 			return Instance.LanguageProvider.GetLanguage();
 		}
 
