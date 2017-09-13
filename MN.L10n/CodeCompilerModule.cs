@@ -22,7 +22,7 @@ namespace MN.L10n
 			bool isBuildEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("is_build_environment"));
 
 			var runPhrase = false;
-			//try { runPhrase = context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Debug; } catch { }
+			try { runPhrase = context.Arguments.CompilationOptions.OptimizationLevel == OptimizationLevel.Release; } catch { }
 			if (!runPhrase) return;
 			Debugger.Break();
 			Stopwatch stw = new Stopwatch();
