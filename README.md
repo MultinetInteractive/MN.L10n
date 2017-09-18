@@ -92,22 +92,6 @@ protected void Application_Start(object sender, EventArgs e)
 }
 ```
 
-## web/app.config
-```xml
-...
-<configSections>
-  ...
-  <section name="stackExchange.precompiler" type="StackExchange.Precompilation.PrecompilerSection, StackExchange.Precompilation.Metaprogramming" />
-  ...
-</configSections>
-<stackExchange.precompiler>
-  <modules>
-    <add type="MN.L10n.CodeCompilerModule, MN.L10n" />
-  </modules>
-</stackExchange.precompiler>
-...
-```
-
 ## web.config (In MVC Views)
 ```xml
 ...
@@ -128,10 +112,6 @@ protected void Application_Start(object sender, EventArgs e)
 ```xml
 <Project...>
   ...
-  <PropertyGroup>
-    <SEPrecompilerIncludeRazor>true</SEPrecompilerIncludeRazor>
-  </PropertyGroup>
-  ...
   <Target Name="AfterBuild">
     <ItemGroup>
       <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)language-*.json" />
@@ -145,8 +125,6 @@ protected void Application_Start(object sender, EventArgs e)
 ---
 
 #### Things we use in the code to make the magic happen
-- [StackExchange.Precompilation](https://github.com/StackExchange/StackExchange.Precompilation)
 - [Glob.cs](https://github.com/mganss/Glob.cs)
 - [CommonMark.NET](https://github.com/Knagis/CommonMark.NET)
 - [Jil](https://github.com/kevin-montrose/Jil)
-- [WebGrease](https://github.com/Licshee/WebGrease)

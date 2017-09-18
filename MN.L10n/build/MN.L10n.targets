@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="MN.L10n.L10nBuildTask" AssemblyFile="net462\MN.L10n.dll"/>
+
+  <PropertyGroup>
+	<BuildDependsOn>
+	  $(BuildDependsOn);
+	  L10n
+	</BuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="L10n" AfterTargets="AfterBuild">
+	<L10nBuildTask/>
+  </Target>
+</Project>
