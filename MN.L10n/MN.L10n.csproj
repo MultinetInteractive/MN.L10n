@@ -12,15 +12,21 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.77</Version>
+    <Version>1.0.88</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="build\MN.L10n.targets" PackagePath="build\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-    <PackageReference Include="StackExchange.Precompilation.Build" Version="4.0.0" />
-	<PackageReference Include="Jil" Version="2.15.2" />
-	<PackageReference Include="WebGrease" Version="1.6.0" />
+	<PackageReference Include="Jil" Version="2.15.4" />
+	<PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" PrivateAssets="All" />
+	<PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" PrivateAssets="All" />
+	<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" PrivateAssets="All" />
+	<!--<PackageReference Update="@(PackageReference)" PrivateAssets="All" />-->
   </ItemGroup>
 
   <ItemGroup>
@@ -37,5 +43,18 @@ Translation package</Description>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
+  
+  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+	<!--
+    The include needs to happen after output has been copied to build output folder
+    but before NuGet generates a nuspec.
+    -->
+	<ItemGroup>
+	  <_PackageFiles Include="bin\$(Configuration)\*\*.dll">
+		<PackagePath>build\%(RecursiveDir)</PackagePath>
+		<Visible>false</Visible>
+		<BuildAction>Content</BuildAction>
+	  </_PackageFiles>
+	</ItemGroup>
+  </Target>
 </Project>
