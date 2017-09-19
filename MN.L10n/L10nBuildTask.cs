@@ -15,15 +15,24 @@ namespace MN.L10n
 	{
 		public override bool Execute()
 		{
-			Log.LogMessage(MessageImportance.High, "L10n - beginning work");
+			var fi = new FileInfo(BuildEngine.ProjectFileOfTaskNode);
+			
+			var baseDir = fi.Directory;
+			Log.LogMessage(MessageImportance.High, "info l10n: L10n - beginning work: " + baseDir.FullName);
+			var msgs = new List<string>
+			{
+				"CurrentDir-" + System.IO.Directory.GetCurrentDirectory(),
+				"EnvCurrent-" + Environment.CurrentDirectory
+			};
+
+			foreach (var msg in msgs)
+			{
+				Log.LogMessage(MessageImportance.High, "info l10n: " + msg);
+			}
 			Debugger.Break();
 			Stopwatch stw = new Stopwatch();
 			stw.Start();
-
-			var fi = new FileInfo(BuildEngine.ProjectFileOfTaskNode);
-
-			var baseDir = fi.Directory;
-
+			
 			L10nConfig config = null;
 
 			while (!baseDir.GetFiles("*.sln").Any())
@@ -32,11 +41,6 @@ namespace MN.L10n
 			}
 
 			var solutionDir = baseDir.FullName;
-			var hashPath = Path.Combine(solutionDir, "l10n-hash.json");
-			if (!FileHashHelper.HashesLoaded)
-			{
-				FileHashHelper.LoadFileHashes(hashPath);
-			}
 
 			var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
 			if (cfgFile != null)
@@ -44,18 +48,11 @@ namespace MN.L10n
 				config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
 			}
 
-			var bpEnvName = solutionDir + "__l10n_build";
-
-			var bpIdentifier = Environment.GetEnvironmentVariable(bpEnvName, EnvironmentVariableTarget.Machine);
-			if (string.IsNullOrWhiteSpace(bpIdentifier) || !IsValidBuildIdentifier(bpIdentifier))
-			{
-				bpIdentifier = Guid.NewGuid().ToString() + "|" + DateTime.Now.ToString();
-				Environment.SetEnvironmentVariable(bpEnvName, bpIdentifier, EnvironmentVariableTarget.Machine);
-			}
-
-			Log.LogMessage(MessageImportance.High, "info l10n: BuildIdentifier: " + bpIdentifier);
-
-			L10n PhraseInstance = L10n.CreateInstance(new NullLanguageProvider("1"), new FileDataProvider(solutionDir), new FileResolver());
+			L10n PhraseInstance = L10n.CreateInstance(
+				new NullLanguageProvider("1"), 
+				new FileDataProvider(solutionDir), 
+				new FileResolver()
+			);
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx" };
 
@@ -67,7 +64,8 @@ namespace MN.L10n
 				"/.vs", "\\.vs",
 				"/bin", "\\bin",
 				"/obj", "\\obj",
-				".dll"
+				".dll", ".designer.cs",
+				"/packages", "\\packages"
 			};
 			
 			List<string> fileList = new List<string>();
@@ -109,25 +107,20 @@ namespace MN.L10n
 			
 			var methods = new[]
 			{
-				"_s",
-				"_m",
-				"MN.L10n.L10n._s",
-				"MN.L10n.L10n._m"
+				"_s",				"_m",
+				"MN.L10n.L10n._s",	"MN.L10n.L10n._m"
 			};
 
-			var phraseRewriter = new PhrasesRewriter("L10n_rw", "MN.L10n.L10n.GetLanguage()", PhraseInstance, bpIdentifier, methods);
+			var phraseRewriter = new PhrasesRewriter("L10n_rw", "MN.L10n.L10n.GetLanguage()", PhraseInstance, methods);
 
 			var noParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""]\)", RegexOptions.Compiled);
 			var withParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""],.*?{(.*?)}\)", RegexOptions.Compiled);
 
+			var findParam = new Regex(@"(\$[a-zA-Z_]*?\$)", RegexOptions.Compiled);
+
 			foreach (var file in fileList.Distinct())
 			{
 				var fileContents = File.ReadAllText(file);
-				var fileHash = FileHashHelper.GetHash(fileContents);
-				if (FileHashHelper.FileHashes.ContainsKey(file) && FileHashHelper.FileHashes[file] == fileHash)
-					continue;
-
-				FileHashHelper.FileHashes[file] = fileHash;
 				var m = noParam.Matches(fileContents).Cast<Match>().ToList();
 				m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
 				if (m.Count > 0)
@@ -137,9 +130,19 @@ namespace MN.L10n
 						var phraseText = match.Groups[1].Value.Trim();
 						var args = match.Groups[2].Value.Trim();
 
+						if (match.Groups.Count == 2)
+						{
+							// Here we check if the regex matched too much, until we get a better regex...
+							var hasParams = findParam.Matches(match.Value).Cast<Match>().ToList();
+							if (hasParams.Any())
+							{
+								continue;
+							}
+						}
+
 						if (!PhraseInstance.Phrases.ContainsKey(phraseText))
 						{
-							PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { LatestBuildUsage = bpIdentifier });
+							PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { });
 						}
 						else
 						{
@@ -151,28 +154,15 @@ namespace MN.L10n
 							phraseRewriter.unusedPhrases.Remove(phraseText);
 						}
 					}
-					Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + file);
 				}
+				Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + file + ", found " + m.Count + " phrases");
 			};
 
 			phraseRewriter.SavePhrasesToFile();
-			FileHashHelper.SaveFileHashes(hashPath);
 			stw.Stop();
-			Log.LogMessage(MessageImportance.High, "info l10n: Spent " + stw.Elapsed + " running L10n");
+			Log.LogMessage(MessageImportance.High, "info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
 
 			return true;
-		}
-
-		private bool IsValidBuildIdentifier(string bpIdentifier)
-		{
-			var parts = bpIdentifier.Split('|');
-			if (parts.Length != 2)
-			{
-				return false;
-			}
-
-			var ts = DateTime.Now - DateTime.Parse(parts[1]);
-			return ts.TotalMinutes < 2;
 		}
 	}
 }
