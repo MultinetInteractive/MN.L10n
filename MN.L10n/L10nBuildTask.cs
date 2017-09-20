@@ -20,16 +20,7 @@ namespace MN.L10n
 			var baseDir = fi.Directory;
 			var sourceDir = Environment.CurrentDirectory;
 			Log.LogMessage(MessageImportance.High, "info l10n: L10n - beginning work: " + sourceDir);
-			var msgs = new List<string>
-			{
-				"CurrentDir-" + System.IO.Directory.GetCurrentDirectory(),
-				"EnvCurrent-" + Environment.CurrentDirectory
-			};
 
-			foreach (var msg in msgs)
-			{
-				Log.LogMessage(MessageImportance.High, "info l10n: " + msg);
-			}
 			Debugger.Break();
 			Stopwatch stw = new Stopwatch();
 			stw.Start();
@@ -50,7 +41,7 @@ namespace MN.L10n
 			}
 			
 			L10n PhraseInstance = L10n.CreateInstance(
-				new NullLanguageProvider("1"), 
+				new NullLanguageProvider(), 
 				new FileDataProvider(solutionDir), 
 				new FileResolver()
 			);
@@ -105,14 +96,8 @@ namespace MN.L10n
 				.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
 				.ToList();
 			}
-			
-			var methods = new[]
-			{
-				"_s",				"_m",
-				"MN.L10n.L10n._s",	"MN.L10n.L10n._m"
-			};
 
-			var phraseRewriter = new PhrasesRewriter("L10n_rw", "MN.L10n.L10n.GetLanguage()", PhraseInstance, methods);
+			var phraseRewriter = new PhrasesRewriter(PhraseInstance);
 
 			var noParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""]\)", RegexOptions.Compiled);
 			var withParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""],.*?{(.*?)}\)", RegexOptions.Compiled);

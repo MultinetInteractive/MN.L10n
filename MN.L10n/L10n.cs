@@ -74,19 +74,19 @@ namespace MN.L10n
 				{
 					var phr = LanguagePhrases[selectedLang].Phrases[phrase];
 
-					if (phr.r.ContainsKey("x"))
+					if (phr.r.ContainsKey("0"))
 					{
-						phrase = phr.r["x"];
+						phrase = phr.r["0"];
 					}
 
-					if (isPluralized)
+					if (isPluralized && LanguagePhrases[selectedLang].AstPluralRule != null)
 					{
-						foreach (var rule in phr.r)
+						// Here there be dragons
+						// Dynamic evaluation to get the phrase to use, based on the pluralization rule specified
+						var phraseIndex = LanguagePhrases[selectedLang].AstPluralRule.Evaluate(GetCount(args)).ToString();
+						if (phr.r.ContainsKey(phraseIndex))
 						{
-							if (rule.Key == GetCount(args).ToString())
-							{
-								phrase = rule.Value;
-							}
+							phrase = phr.r[phraseIndex];
 						}
 					}
 				}
@@ -96,7 +96,7 @@ namespace MN.L10n
 					{
 						LanguagePhrases[selectedLang].Phrases.Add(phrase, new L10nPhraseObject
 						{
-							r = new Dictionary<string, string> { { "x", phrase } }
+							r = new Dictionary<string, string> { { "0", phrase } }
 						});
 					}
 					else
@@ -127,13 +127,13 @@ namespace MN.L10n
 			return false;
 		}
 
-		public static int GetCount(object args = null)
+		public static long GetCount(object args = null)
 		{
 			if (args == null) return 0;
 			var t = args.GetType();
 			foreach (var p in t.GetProperties())
 			{
-				if (p.Name == "__count") return (int)p.GetValue(args);
+				if (p.Name == "__count") return (long)p.GetValue(args);
 			}
 
 			return 0;
