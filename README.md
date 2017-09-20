@@ -81,12 +81,6 @@ ResolveUrl(
 protected void Application_Start(object sender, EventArgs e)
 {
   ...
-  ViewEngines.Engines.Clear();
-#if !DEBUG
-  ViewEngines.Engines.Add(new PrecompiledViewEngine());
-#endif
-  ViewEngines.Engines.Add(new RoslynRazorViewEngine());
-  ...
   MN.L10n.L10n.CreateInstance(new IL10nLanguageProvider(), new FileDataProvider(@"C:\temp\phrase"), new FileResolver());
   ...
 }
@@ -108,23 +102,10 @@ protected void Application_Start(object sender, EventArgs e)
 ...
 ```
 
-## \*.csproj
-```xml
-<Project...>
-  ...
-  <Target Name="AfterBuild">
-    <ItemGroup>
-      <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)language-*.json" />
-    </ItemGroup>
-    <Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)App_Data\" />
-    <Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)App_Data\" />
-    <Message Importance="high" Text="Files copied to $(ProjectDir)App_Data\" />
-  </Target>
-```
-
 ---
 
 #### Things we use in the code to make the magic happen
 - [Glob.cs](https://github.com/mganss/Glob.cs)
 - [CommonMark.NET](https://github.com/Knagis/CommonMark.NET)
 - [Jil](https://github.com/kevin-montrose/Jil)
+- [NGettext](https://github.com/neris/NGettext/)
