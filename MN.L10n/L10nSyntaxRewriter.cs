@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace MN.L10n
 {
@@ -7,14 +6,10 @@ namespace MN.L10n
 	{
 		internal L10n _phrases;
 		internal Dictionary<string, Dictionary<object, L10nPhraseObject>> _phraseDic = new Dictionary<string, Dictionary<object, L10nPhraseObject>>();
-		internal string LanguageIdentifier;
 
 		internal List<string> unusedPhrases = new List<string>();
-		public PhrasesRewriter(string className, string languageIdentifier, L10n phraseRepo, params string[] methods) : base()
+		public PhrasesRewriter(L10n phraseRepo) : base()
 		{
-			if (!string.IsNullOrWhiteSpace(className))
-				phraseClassName = className.Trim();
-			LanguageIdentifier = languageIdentifier.Trim();
 			_phrases = phraseRepo;
 			
 			var allPhrases = _phrases.Phrases.Keys;
@@ -38,9 +33,6 @@ namespace MN.L10n
 					_phraseDic[trpr.Key].Add(langKey, trpr.Value);
 				}
 			}
-
-			if (methods.Length > 0)
-				PhraseMethods = methods;
 		}
 
 		public bool SavePhrasesToFile()
@@ -52,8 +44,5 @@ namespace MN.L10n
 
 			return L10n.SaveDataProvider();
 		}
-
-		internal string phraseClassName = "Phrase" + Guid.NewGuid().ToString().Replace("-", "");
-		internal string[] PhraseMethods = new string[] { "_s", "_m" };
 	}
 }

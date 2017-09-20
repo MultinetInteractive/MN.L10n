@@ -19,6 +19,8 @@ namespace MN.L10n.FileProviders
 		}
 		public L10n LoadL10n()
 		{
+			var tp = new NGettext.Plural.Ast.AstTokenParser();
+
 			var phrasePath = Path.Combine(FilePath, PhraseFile);
 			L10n l10n;
 			if (File.Exists(phrasePath))
@@ -51,10 +53,16 @@ namespace MN.L10n.FileProviders
 						LanguageName = lang,
 						Locale = lang,
 						Phrases = new Dictionary<string, L10nPhraseObject>(),
-						PluralizationRules = new List<string> { "x" }
+						PluralizationRules = new List<string> { "0", "1" },
+						PluralRule = "n != 1"
 					};
 					File.WriteAllText(langFileName, JSON.Serialize(nLang, SerializerOptions));
 					l10n.LanguagePhrases.Add(lang, nLang);
+				}
+
+				if (l10n.LanguagePhrases[lang].AstPluralRule == null && !string.IsNullOrWhiteSpace(l10n.LanguagePhrases[lang].PluralRule))
+				{
+					l10n.LanguagePhrases[lang].AstPluralRule = new NGettext.Plural.AstPluralRule(l10n.LanguagePhrases[lang].PluralizationRules.Count, tp.Parse(l10n.LanguagePhrases[lang].PluralRule));
 				}
 			}
 
