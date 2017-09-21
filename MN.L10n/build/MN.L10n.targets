@@ -14,8 +14,8 @@
 	<ItemGroup>
 	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)language-*.json" />
 	</ItemGroup>
-	<Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)App_Data\" />
-	<Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)App_Data\" />
-	<Message Importance="high" Text="Files copied to $(ProjectDir)App_Data\" />
+	<Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)L10n\" />
+	<Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)L10n\" />
+	<Message Importance="high" Text="Files copied to $(ProjectDir)L10n\" />
   </Target>
 </Project>

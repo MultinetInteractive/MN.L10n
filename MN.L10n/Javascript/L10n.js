@@ -8,6 +8,20 @@ function _s(_phrase, _args) {
 	if ('undefined' === typeof (_args))
 		_args = {};
 
+	if ('undefined' !== typeof (window.l10n)) {
+		var _p = window.l10n.Phrases[_phrase];
+		var _ri = '0';
+		if ('undefined' !== typeof (_args.__count)) {
+			_ri = window.l10n.ruleEvaluator(_args.__count).toString();
+		}
+		if ('undefined' !== typeof (_p)) {
+			_phrase = _p.r['0'];
+			if ('undefined' !== typeof (_p.r[_ri])) {
+				_phrase = _p.r[_ri];
+			}
+		}
+	}
+
 	for (var p in _args) {
 		if (_args.hasOwnProperty(p)) {
 			_phrase = _phrase.replace('$' + p + '$', _args[p]);
@@ -22,9 +36,24 @@ function _s(_phrase, _args) {
  * @returns {string}
  */
 function _m(_phrase, _args) {
-	_phrase = micromarkdown.parse(_phrase);
 	if ('undefined' === typeof (_args))
 		_args = {};
+
+	if ('undefined' !== typeof (window.l10n)) {
+		var _p = window.l10n.Phrases[_phrase];
+		var _ri = '0';
+		if ('undefined' !== typeof (_args.__count)) {
+			_ri = window.l10n.ruleEvaluator(_args.__count).toString();
+		}
+		if ('undefined' !== typeof (_p)) {
+			_phrase = _p.r['0'];
+			if ('undefined' !== typeof (_p.r[_ri])) {
+				_phrase = _p.r[_ri];
+			}
+		}
+	}
+
+	_phrase = micromarkdown.parse(_phrase);
 
 	for (var p in _args) {
 		if (_args.hasOwnProperty(p)) {
