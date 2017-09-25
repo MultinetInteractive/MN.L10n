@@ -7,17 +7,14 @@ namespace MN.L10n
 {
 	public class L10nParser
 	{
-		public List<string> Invocations { get; set; } = new List<string>();
-
 		public List<string> Parse(string source)
 		{
-			Invocations.Clear();
-			int _pos = -1;
+			List<string> Invocations = new List<string>();
 			bool inToken = false;
 			StringBuilder _tokenContent = new StringBuilder();
 			char _stringContainer = '"';
 
-			for (_pos = 0; _pos < source.Length; _pos++)
+			for (int _pos = 0; _pos < source.Length; _pos++)
 			{
 				switch (source[_pos])
 				{

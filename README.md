@@ -63,19 +63,6 @@ DealDetails.ShowNotification(
 );
 ```
 
-## Linking javascript
-```html
-...
-<script type="text/javascript" src="<%=
-ResolveUrl(
-  MN.L10n
-  .Javascript
-  .Loader
-  .LoadL10nJavascript("~/path/file.js")
-%>"></script>
-...
-```
-
 ## Global.asax.cs
 ```csharp
 protected void Application_Start(object sender, EventArgs e)
