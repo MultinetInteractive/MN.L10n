@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace MN.L10n
 {
@@ -16,7 +15,7 @@ namespace MN.L10n
 		public override bool Execute()
 		{
 			var fi = new FileInfo(BuildEngine.ProjectFileOfTaskNode);
-			
+
 			var baseDir = fi.Directory;
 			var sourceDir = Environment.CurrentDirectory;
 			Log.LogMessage(MessageImportance.High, "info l10n: L10n - beginning work: " + sourceDir);
@@ -24,7 +23,7 @@ namespace MN.L10n
 			Debugger.Break();
 			Stopwatch stw = new Stopwatch();
 			stw.Start();
-			
+
 			L10nConfig config = null;
 
 			while (!baseDir.GetFiles("*.sln").Any())
@@ -39,10 +38,10 @@ namespace MN.L10n
 			{
 				config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
 			}
-			
+
 			L10n PhraseInstance = L10n.CreateInstance(
-				new NullLanguageProvider(), 
-				new FileDataProvider(solutionDir), 
+				new NullLanguageProvider(),
+				new FileDataProvider(solutionDir),
 				new FileResolver()
 			);
 
@@ -57,9 +56,10 @@ namespace MN.L10n
 				"/bin", "\\bin",
 				"/obj", "\\obj",
 				".dll", ".designer.cs",
-				"/packages", "\\packages"
+				"/packages", "\\packages",
+				".min.js", ".css"
 			};
-			
+
 			List<string> fileList = new List<string>();
 
 			if (config != null)
@@ -99,49 +99,31 @@ namespace MN.L10n
 
 			var phraseRewriter = new PhrasesRewriter(PhraseInstance);
 
-			var noParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""]\)", RegexOptions.Compiled);
-			var withParam = new Regex(@"(?:MN\.)?(?:L10n\.)?(?:L10n\.)?_[sm]\(['""](.*?)['""],.*?{(.*?)}\)", RegexOptions.Compiled);
-
-			var findParam = new Regex(@"(\$[a-zA-Z_]*?\$)", RegexOptions.Compiled);
+			var parser = new L10nParser();
 
 			foreach (var file in fileList.Distinct())
 			{
 				var fileContents = File.ReadAllText(file);
-				var m = noParam.Matches(fileContents).Cast<Match>().ToList();
-				m.AddRange(withParam.Matches(fileContents).Cast<Match>().ToList());
-				if (m.Count > 0)
+				var invocations = parser.Parse(fileContents);
+
+				foreach (var _phrase in invocations)
 				{
-					foreach (Match match in m)
+					if (!PhraseInstance.Phrases.ContainsKey(_phrase))
 					{
-						var phraseText = match.Groups[1].Value.Trim();
-						var args = match.Groups[2].Value.Trim();
+						PhraseInstance.Phrases.Add(_phrase, new L10nPhrase() { });
+					}
+					else
+					{
+						PhraseInstance.Phrases[_phrase].Usages++;
+					}
 
-						if (match.Groups.Count == 2)
-						{
-							// Here we check if the regex matched too much, until we get a better regex...
-							var hasParams = findParam.Matches(match.Value).Cast<Match>().ToList();
-							if (hasParams.Any())
-							{
-								continue;
-							}
-						}
-
-						if (!PhraseInstance.Phrases.ContainsKey(phraseText))
-						{
-							PhraseInstance.Phrases.Add(phraseText, new L10nPhrase() { });
-						}
-						else
-						{
-							PhraseInstance.Phrases[phraseText].Usages++;
-						}
-
-						if (phraseRewriter.unusedPhrases.Contains(phraseText))
-						{
-							phraseRewriter.unusedPhrases.Remove(phraseText);
-						}
+					if (phraseRewriter.unusedPhrases.Contains(_phrase))
+					{
+						phraseRewriter.unusedPhrases.Remove(_phrase);
 					}
 				}
-				Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + file + ", found " + m.Count + " phrases");
+
+				Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + file + ", found " + invocations.Count + " phrases");
 			};
 
 			phraseRewriter.SavePhrasesToFile();
