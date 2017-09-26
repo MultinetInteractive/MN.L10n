@@ -133,7 +133,11 @@ namespace MN.L10n
 			var t = args.GetType();
 			foreach (var p in t.GetProperties())
 			{
-				if (p.Name == "__count") return (long)p.GetValue(args);
+				if (p.Name == "__count")
+				{
+					long.TryParse(p.GetValue(args).ToString(), out long __count);
+					return __count;
+				}
 			}
 
 			return 0;
