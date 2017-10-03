@@ -12,8 +12,17 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.101</Version>
+    <Version>1.0.107</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
+	<PackageReleaseNotes>## 1.0.107
+- I kinda missed a semicolon in the targets-file..
+
+## 1.0.106
+- Updated README
+
+## 1.0.105
+- Added separate file to store Languages in
+- Files to store in Solution = languages.json and all language-{0}.json-files</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

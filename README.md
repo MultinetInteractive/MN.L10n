@@ -1,4 +1,4 @@
-# MN.L10n [![Build status](https://ci.appveyor.com/api/projects/status/y5uh8gvxm29v90rk?svg=true)](https://ci.appveyor.com/project/itssimple/mn-l10n)
+﻿# MN.L10n [![Build status](https://ci.appveyor.com/api/projects/status/y5uh8gvxm29v90rk?svg=true)](https://ci.appveyor.com/project/itssimple/mn-l10n)
 Translation-thingy for all our products
 
 You must implement your `IL10nLanguageProvider` and a custom `IFileResolver` (for javascript) yourself. :) (Basically just `string GetLanguage()` and `bool FileExists(string file)`)
@@ -57,7 +57,7 @@ Response.Write("<script type=\"text/javascript\">" +
 
 ```javascript
 DealDetails.ShowNotification(
-  _s('Sparade en ny notering p� $companyName$', 
+  _s('Sparade en ny notering på $companyName$', 
     { companyName: DealDetails.DealInfo.CompanyName }
   )
 );
@@ -89,6 +89,47 @@ protected void Application_Start(object sender, EventArgs e)
 ...
 ```
 
+---
+
+# Example files
+
+## languages.json
+
+```json
+[ "sv_SE", "en_GB" ]
+```
+
+## phrases.json
+
+```json
+{ 
+  Phrases: { 
+    "Hello world": { 
+      "Created": "2017-01-01T00:00:00.000Z",
+      "Usages": 1,
+      "Comment": "Standard phrase, found everywhere."
+    }
+  }
+}
+```
+
+## language-sv_SE.json
+
+```json
+{
+  "LanguageName": "Svenska",
+  "Locale": "sv-SE",
+  "PluralizationRules": [ "0", "1" ],
+  "PluralRule": "(n != 1)",
+  "Phrases": {
+	"Hello world": {
+	  "r": {
+		"0": "Hej världen"
+	  }
+	}
+  }
+}
+```
 ---
 
 #### Things we use in the code to make the magic happen

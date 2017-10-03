@@ -20,7 +20,6 @@ namespace MN.L10n
 			var sourceDir = Environment.CurrentDirectory;
 			Log.LogMessage(MessageImportance.High, "info l10n: L10n - beginning work: " + sourceDir);
 
-			Debugger.Break();
 			Stopwatch stw = new Stopwatch();
 			stw.Start();
 

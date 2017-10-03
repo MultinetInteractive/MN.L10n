@@ -22,6 +22,8 @@ namespace MN.L10n
 			Instance = l10n;
 			return l10n;
 		}
+
+		[JilDirective(Ignore = true)]
 		public List<string> Languages { get; set; } = new List<string>();
 		public Dictionary<string, L10nPhrase> Phrases { get; set; } = new Dictionary<string, L10nPhrase>();
 
