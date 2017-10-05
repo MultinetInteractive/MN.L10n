@@ -1,4 +1,4 @@
-﻿# MN.L10n [![Build status](https://ci.appveyor.com/api/projects/status/y5uh8gvxm29v90rk?svg=true)](https://ci.appveyor.com/project/itssimple/mn-l10n)
+﻿# MN.L10n [![Build status](https://ci.appveyor.com/api/projects/status/y5uh8gvxm29v90rk?svg=true)](https://ci.appveyor.com/project/itssimple/mn-l10n) [![Gitter chat](https://badges.gitter.im/MultinetInteractive/MN.L10n.png)](https://gitter.im/MultinetInteractive/MN.L10n)
 Translation-thingy for all our products
 
 You must implement your `IL10nLanguageProvider` and a custom `IFileResolver` (for javascript) yourself. :) (Basically just `string GetLanguage()` and `bool FileExists(string file)`)
