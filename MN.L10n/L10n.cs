@@ -30,23 +30,38 @@ namespace MN.L10n
 		[JilDirective(Ignore = true)]
 		public Dictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new Dictionary<string, L10nLanguage>();
 
-		public static bool SaveDataProvider()
-		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
-			return Instance.DataProvider.SaveL10n(Instance);
-		}
+        public static L10nLanguage GetL10nLanguage(string language)
+        {
+            EnsureInitialized();
+            if(Instance.LanguagePhrases.TryGetValue(language, out var l10nLanguage))
+            {
+                return l10nLanguage;
+            }
+            throw new Exception($"Unknown language : {language}");
+        }
 
-		public static string _s(string phrase, object args = null)
+		public static bool SaveDataProvider()
+        {
+            EnsureInitialized();
+            return Instance.DataProvider.SaveL10n(Instance);
+        }
+
+        private static void EnsureInitialized()
+        {
+            if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
+        }
+
+        public static string _s(string phrase, object args = null)
 		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
-			return Instance.__getPhrase(phrase, args);
+            EnsureInitialized();
+            return Instance.__getPhrase(phrase, args);
 		}
 
 		public static string _m(string phrase, object args = null)
 		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
+            EnsureInitialized();
 
-			return Instance.ConvertFromMarkdown(Instance.__getPhrase(phrase, args));
+            return Instance.ConvertFromMarkdown(Instance.__getPhrase(phrase, args));
 		}
 		
 		public string ConvertFromMarkdown(string phrase)
@@ -56,8 +71,8 @@ namespace MN.L10n
 
 		public static string GetLanguage()
 		{
-			if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
-			return Instance.LanguageProvider.GetLanguage();
+            EnsureInitialized();
+            return Instance.LanguageProvider.GetLanguage();
 		}
 
 		internal string __getPhrase(string phrase, object args = null)

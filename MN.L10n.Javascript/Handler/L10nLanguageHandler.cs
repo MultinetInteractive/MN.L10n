@@ -26,17 +26,7 @@ namespace MN.L10n.Handler
 			context.Response.Cache.SetExpires(DateTime.Now.Add(cacheDuration));
 			context.Response.Cache.SetMaxAge(cacheDuration);
 			context.Response.Cache.SetValidUntilExpires(true);
-			var language = L10n.GetLanguage();
-			L10nLanguage l10nItem = context.Cache["__l10n_" + language] as L10nLanguage;
-			if (l10nItem == null)
-			{
-				l10nItem = L10n.Instance.LanguagePhrases[language];
-				context.Cache["__l10n_" + language] = l10nItem;
-			}
-			
-			context.Response.ContentType = "text/javascript";
-			context.Response.Write("window.l10n = " + Jil.JSON.Serialize(l10nItem, Jil.Options.ISO8601PrettyPrint) + ";");
-			context.Response.Write("window.l10n.ruleEvaluator = function(n) { return ~~(" + l10nItem.PluralRule + "); };");
+            context.Response.Write(Javascript.RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(context.Cache));
         }
 
         #endregion

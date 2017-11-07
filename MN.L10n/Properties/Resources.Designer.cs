@@ -19,7 +19,7 @@ namespace MN.L10n.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -57,19 +57,6 @@ namespace MN.L10n.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to window._s = function (_phrase, _args) { if (&apos;undefined&apos; === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace(&apos;$&apos; + p + &apos;$&apos;, _args[p]); } } return _phrase; };
-        ///window._m = function (_phrase, _args) { _phrase = micromarkdown.parse(_phrase); if (&apos;undefined&apos; === typeof (_args)) _args = {}; for (var p in _args) { if (_args.hasOwnProperty(p)) { _phrase = _phrase.replace(&apos;$&apos; + p + &apos;$&apos;, _args[p]); } } return _phrase; }
-        ///
-        ////* * * * * * * * * * * *
-        /// *  micro [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string L10n {
-            get {
-                return ResourceManager.GetString("L10n", resourceCulture);
             }
         }
     }

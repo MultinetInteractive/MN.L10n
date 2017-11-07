@@ -14,8 +14,7 @@ namespace MN.L10n
 	{
 		public override bool Execute()
 		{
-			var fi = new FileInfo(BuildEngine.ProjectFileOfTaskNode);
-
+            var fi = new FileInfo(BuildEngine.ProjectFileOfTaskNode);
 			var baseDir = fi.Directory;
 			var sourceDir = Environment.CurrentDirectory;
 			Log.LogMessage(MessageImportance.High, "info l10n: L10n - beginning work: " + sourceDir);
@@ -37,6 +36,12 @@ namespace MN.L10n
 			{
 				config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
 			}
+
+            if(config != null && config.PreventBuildTask)
+            {
+                Log.LogMessage(MessageImportance.High, "info l10n: L10n build task cancelled by config file");
+                return true;
+            }
 
 			L10n PhraseInstance = L10n.CreateInstance(
 				new NullLanguageProvider(),

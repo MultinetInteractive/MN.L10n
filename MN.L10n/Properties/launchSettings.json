@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MN.L10n": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe",
+      "commandLineArgs": "MN.L10n.Javascript.csproj",
+      "workingDirectory": "C:\\Users\\lice.MULTINET\\Git\\mn-l10n\\MN.L10n.Javascript"
+    }
+  }
+}

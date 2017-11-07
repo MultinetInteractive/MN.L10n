@@ -12,5 +12,6 @@ namespace MN.L10n
 		/// Glob-patterns för att definiera vilka kataloger/filer som L10n ska ignorera
 		/// </summary>
 		public List<string> ExcludePatterns { get; set; } = new List<string>();
-	}
+        public bool PreventBuildTask { get; set; }
+    }
 }
