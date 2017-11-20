@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n", "MN.L10n\MN.L10n.csproj", "{C224FF20-ACA4-4F7A-81C9-477F3DDE751A}"
 EndProject
@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.Javascript", "MN.L10n.Javascript\MN.L10n.Javascript.csproj", "{C2F42349-0F94-4291-A5E9-62806A3960FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.Mvc", "MN.L10n.Mvc\MN.L10n.Mvc.csproj", "{EEF87587-7240-433D-BD94-8CE635BE6F2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{C2F42349-0F94-4291-A5E9-62806A3960FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2F42349-0F94-4291-A5E9-62806A3960FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2F42349-0F94-4291-A5E9-62806A3960FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEF87587-7240-433D-BD94-8CE635BE6F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEF87587-7240-433D-BD94-8CE635BE6F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEF87587-7240-433D-BD94-8CE635BE6F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEF87587-7240-433D-BD94-8CE635BE6F2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

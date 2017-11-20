@@ -15,8 +15,7 @@ void Main()
 {
 	var l10n = MN.L10n.L10n.CreateInstance(
 		new NullLanguageProvider("en-GB"), 
-		new FileDataProvider(@"C:\temp\phrase"), 
-		new FileResolver()
+		new FileDataProvider(@"C:\temp\phrase")
 	);
 
 	Console.WriteLine(
@@ -68,7 +67,7 @@ DealDetails.ShowNotification(
 protected void Application_Start(object sender, EventArgs e)
 {
   ...
-  MN.L10n.L10n.CreateInstance(new IL10nLanguageProvider(), new FileDataProvider(@"C:\temp\phrase"), new FileResolver());
+  MN.L10n.L10n.CreateInstance(new IL10nLanguageProvider(), new FileDataProvider(@"C:\temp\phrase"));
   ...
 }
 ```

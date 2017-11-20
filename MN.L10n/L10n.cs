@@ -9,16 +9,13 @@ namespace MN.L10n
 		private IL10nDataProvider DataProvider { get; set; }
 		private IL10nLanguageProvider LanguageProvider { get; set; }
 
-		internal IFileResolver FileResolver { get; set; }
-
 		internal static L10n Instance;
 
-		public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider, IFileResolver fileResolver)
+		public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider)
 		{
 			var l10n = dataProvider.LoadL10n();
 			l10n.DataProvider = dataProvider;
 			l10n.LanguageProvider = langProvider;
-			l10n.FileResolver = fileResolver;
 			Instance = l10n;
 			return l10n;
 		}

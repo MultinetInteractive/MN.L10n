@@ -45,8 +45,7 @@ namespace MN.L10n
 
 			L10n PhraseInstance = L10n.CreateInstance(
 				new NullLanguageProvider(),
-				new FileDataProvider(solutionDir),
-				new FileResolver()
+				new FileDataProvider(solutionDir)
 			);
 
 			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx" };
@@ -108,17 +107,22 @@ namespace MN.L10n
 			foreach (var file in fileList.Distinct())
 			{
 				var fileContents = File.ReadAllText(file);
+				var shortFile = file.Replace(solutionDir, "");
 				var invocations = parser.Parse(fileContents);
 
 				foreach (var _phrase in invocations)
 				{
 					if (!PhraseInstance.Phrases.ContainsKey(_phrase))
 					{
-						PhraseInstance.Phrases.Add(_phrase, new L10nPhrase() { });
+						PhraseInstance.Phrases.Add(_phrase, new L10nPhrase() { Sources = new List<string> { shortFile } });
 					}
 					else
 					{
 						PhraseInstance.Phrases[_phrase].Usages++;
+						if (!PhraseInstance.Phrases[_phrase].Sources.Contains(shortFile))
+						{
+							PhraseInstance.Phrases[_phrase].Sources.Add(shortFile);
+						}
 					}
 
 					if (phraseRewriter.unusedPhrases.Contains(_phrase))
@@ -127,7 +131,7 @@ namespace MN.L10n
 					}
 				}
 
-				Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + file + ", found " + invocations.Count + " phrases");
+				Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
 			};
 
 			phraseRewriter.SavePhrasesToFile();
