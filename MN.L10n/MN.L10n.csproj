@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Company>MultiNet Interactive AB</Company>
     <Authors>Chris Gårdenberg</Authors>
@@ -12,7 +12,7 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.115</Version>
+    <Version>1.0.116</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
 	<PackageReleaseNotes>## 1.0.107
 - I kinda missed a semicolon in the targets-file..
@@ -30,7 +30,7 @@ Translation package</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommonMark.NET" Version="0.15.1" />
+	<PackageReference Include="CommonMark.NET" Version="0.15.1" />
 	<PackageReference Include="Jil" Version="2.15.4" />
 	<PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" PrivateAssets="All" />
 	<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" PrivateAssets="All" />
@@ -59,6 +59,11 @@ Translation package</Description>
     -->
 	<ItemGroup>
 	  <_PackageFiles Include="bin\$(Configuration)\*\*.dll">
+		<PackagePath>build\%(RecursiveDir)</PackagePath>
+		<Visible>false</Visible>
+		<BuildAction>Content</BuildAction>
+	  </_PackageFiles>
+	  <_PackageFiles Include="bin\$(Configuration)\*\*.deps.json">
 		<PackagePath>build\%(RecursiveDir)</PackagePath>
 		<Visible>false</Visible>
 		<BuildAction>Content</BuildAction>
