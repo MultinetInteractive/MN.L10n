@@ -26,7 +26,11 @@ namespace MN.L10n.Handler
 			context.Response.Cache.SetExpires(DateTime.Now.Add(cacheDuration));
 			context.Response.Cache.SetMaxAge(cacheDuration);
 			context.Response.Cache.SetValidUntilExpires(true);
-            context.Response.Write(Javascript.RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(context.Cache));
+
+			var minifiedScript = false;
+			if (context.Request["minified"] == "1")
+				minifiedScript = true;
+            context.Response.Write(Javascript.RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(context.Cache, minifiedScript));
         }
 
         #endregion

@@ -2,7 +2,7 @@
 {
     public class RuleEvaluatorFactory
     {
-        public static string CreateJavascriptRuleEvaluator(string language, System.Web.Caching.Cache cache)
+        public static string CreateJavascriptRuleEvaluator(string language, System.Web.Caching.Cache cache, bool minified)
         {
             L10nLanguage l10nItem = null;
             if (cache != null)
@@ -20,14 +20,18 @@
                 }
             }
 
-            return "window.l10n = " + Jil.JSON.Serialize(l10nItem, Jil.Options.ISO8601PrettyPrint) + ";" +
+			Jil.Options jsOptions = Jil.Options.ISO8601PrettyPrint;
+			if (minified)
+				jsOptions = Jil.Options.ISO8601;
+
+            return "window.l10n = " + Jil.JSON.Serialize(l10nItem, jsOptions) + ";" +
                    "window.l10n.ruleEvaluator = function(n) { return ~~(" + l10nItem.PluralRule + "); };";
         }
 
-        public static string CreateJavascriptRuleEvaluator(System.Web.Caching.Cache cache)
+        public static string CreateJavascriptRuleEvaluator(System.Web.Caching.Cache cache, bool minified)
         {
             var language = L10n.GetLanguage();
-            return CreateJavascriptRuleEvaluator(language, cache);
+            return CreateJavascriptRuleEvaluator(language, cache, minified);
         }
     }
 }
