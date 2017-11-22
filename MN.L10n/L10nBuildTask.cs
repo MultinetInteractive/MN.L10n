@@ -130,8 +130,7 @@ namespace MN.L10n
 						phraseRewriter.unusedPhrases.Remove(_phrase);
 					}
 				}
-
-				Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
+				if(config.ShowDetailedLog) Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
 			};
 
 			phraseRewriter.SavePhrasesToFile();

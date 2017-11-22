@@ -13,5 +13,6 @@ namespace MN.L10n
 		/// </summary>
 		public List<string> ExcludePatterns { get; set; } = new List<string>();
         public bool PreventBuildTask { get; set; }
+		public bool ShowDetailedLog { get; set; }
     }
 }
