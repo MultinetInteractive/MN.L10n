@@ -49,8 +49,6 @@
       <Name>MN.L10n</Name>
     </ProjectReference>
   </ItemGroup>
-  <UsingTask TaskName="MN.L10n.L10nBuildTask" AssemblyFile="..\MN.L10n\bin\Debug\net462\MN.L10n.dll"/>
-
   <PropertyGroup>
 	<BuildDependsOn>
 	  $(BuildDependsOn);
@@ -59,7 +57,7 @@
   </PropertyGroup>
 
   <Target Name="L10n" AfterTargets="BeforeBuild">
-	<L10nBuildTask/>
+	<Exec Command="..\MN.L10n\bin\Debug\net462\MN.L10n.exe $(ProjectDir)" />
 	<ItemGroup>
 	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
 	</ItemGroup>

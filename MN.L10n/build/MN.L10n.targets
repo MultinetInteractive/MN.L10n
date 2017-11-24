@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="MN.L10n.L10nBuildTask" AssemblyFile="net462\MN.L10n.dll"/>
-
   <PropertyGroup>
 	<BuildDependsOn>
 	  $(BuildDependsOn);
@@ -10,7 +8,7 @@
   </PropertyGroup>
 
   <Target Name="L10n" AfterTargets="BeforeBuild">
-	<L10nBuildTask/>
+	<Exec Command="$(ProjectDir)$(OutDir)MN.L10n.exe $(ProjectDir)" />
 	<ItemGroup>
 	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
 	</ItemGroup>
