@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A32F95EC-8034-451B-9065-EA97FC96DF17}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>net462ClassLibrary</RootNamespace>
+    <AssemblyName>net462ClassLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MN.L10n\MN.L10n.csproj">
+      <Project>{c224ff20-aca4-4f7a-81c9-477f3dde751a}</Project>
+      <Name>MN.L10n</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <UsingTask TaskName="MN.L10n.L10nBuildTask" AssemblyFile="..\MN.L10n\bin\Debug\net462\MN.L10n.dll"/>
+
+  <PropertyGroup>
+	<BuildDependsOn>
+	  $(BuildDependsOn);
+	  L10n
+	</BuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="L10n" AfterTargets="BeforeBuild">
+	<L10nBuildTask/>
+	<ItemGroup>
+	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
+	</ItemGroup>
+	<Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)L10n\" />
+	<Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)L10n\" />
+	<Message Importance="high" Text="Files copied to $(ProjectDir)L10n\" />
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!--<Import Project="..\MN.L10n\build\MN.L10n.targets" Condition="Exists('..\MN.L10n\build\MN.L10n.targets')" />-->
+</Project>

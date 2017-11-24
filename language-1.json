@@ -1,0 +1,8 @@
+{
+ "PluralizationRules": ["0", "1"],
+ "Phrases": {
+ },
+ "PluralRule": "n != 1",
+ "Locale": "1",
+ "LanguageName": "1"
+}
