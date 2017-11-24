@@ -12,9 +12,12 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.117</Version>
+    <Version>1.0.118</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
-	<PackageReleaseNotes>## 1.0.107
+	<PackageReleaseNotes>## 1.0.118
+- Ugly exception handling by catching all exceptions and writing them to the log
+
+## 1.0.107
 - I kinda missed a semicolon in the targets-file..
 
 ## 1.0.106
