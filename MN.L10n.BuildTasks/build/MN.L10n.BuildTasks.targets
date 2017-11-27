@@ -7,8 +7,12 @@
 	</BuildDependsOn>
   </PropertyGroup>
 
-  <Target Name="L10n" AfterTargets="BeforeBuild">
-	<Exec Command="$(ProjectDir)$(OutDir)MN.L10n.exe $(ProjectDir)" />
+  <PropertyGroup>
+	<_L10nBuildTask>$(MSBuildThisFileDirectory)MN.L10n.BuildTasks.exe</_L10nBuildTask>
+  </PropertyGroup>
+
+  <Target Name="L10n" AfterTargets="AfterBuild">
+	<Exec Command="&quot;$(_L10nBuildTask)&quot; $(ProjectDir)" />
 	<ItemGroup>
 	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
 	</ItemGroup>

@@ -57,7 +57,7 @@
   </PropertyGroup>
 
   <Target Name="L10n" AfterTargets="BeforeBuild">
-	<Exec Command="..\MN.L10n\bin\Debug\net462\MN.L10n.exe $(ProjectDir)" />
+	<Exec Command="..\MN.L10n.BuildTasks\bin\Debug\net462\MN.L10n.exe $(ProjectDir)" />
 	<ItemGroup>
 	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
 	</ItemGroup>

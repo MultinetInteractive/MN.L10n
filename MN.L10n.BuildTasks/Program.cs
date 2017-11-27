@@ -1,6 +1,4 @@
-﻿using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-using MN.L10n.FileProviders;
+﻿using MN.L10n.FileProviders;
 using MN.L10n.NullProviders;
 using System;
 using System.Collections.Generic;
@@ -8,17 +6,27 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace MN.L10n
+namespace MN.L10n.BuildTasks
 {
-	public class L10nBuildTask : Task
-	{
-		public override bool Execute()
+    class Program
+    {
+		static int Main(string[] args)
 		{
+			string projectFolder = string.Empty;
+			if (args.Length == 0)
+			{
+				throw new ArgumentNullException("projectFolder");
+			}
+			else
+			{
+				projectFolder = string.Join(" ", args[0]);
+			}
+
 			Stopwatch stw = new Stopwatch();
-			var fi = new FileInfo(BuildEngine.ProjectFileOfTaskNode);
+			var fi = new FileInfo(projectFolder);
 			var baseDir = fi.Directory;
 			var sourceDir = Environment.CurrentDirectory;
-			Log.LogMessage(MessageImportance.High, "info l10n: L10n - beginning work: " + sourceDir);
+			Console.WriteLine("info l10n: L10n - beginning work: " + sourceDir);
 
 			stw.Start();
 
@@ -39,8 +47,8 @@ namespace MN.L10n
 
 			if (config != null && config.PreventBuildTask)
 			{
-				Log.LogMessage(MessageImportance.High, "info l10n: L10n build task cancelled by config file");
-				return true;
+				Console.WriteLine("info l10n: L10n build task cancelled by config file");
+				return 0;
 			}
 
 			L10n PhraseInstance = L10n.CreateInstance(
@@ -130,15 +138,14 @@ namespace MN.L10n
 						phraseRewriter.unusedPhrases.Remove(_phrase);
 					}
 				}
-				if (config.ShowDetailedLog) Log.LogMessage(MessageImportance.High, "info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
+				if (config.ShowDetailedLog) Console.WriteLine("info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
 			};
 
 			phraseRewriter.SavePhrasesToFile();
 			stw.Stop();
-			Log.LogMessage(MessageImportance.High, "info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
+			Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
 
-			return true;
-
+			return 0;
 		}
 	}
 }

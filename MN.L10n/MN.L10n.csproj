@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFrameworks>net462;netstandard2.0;netcoreapp2.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Company>MultiNet Interactive AB</Company>
     <Authors>Chris Gårdenberg</Authors>
@@ -12,7 +12,7 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.120</Version>
+    <Version>1.0.122</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
 	<PackageReleaseNotes>## 1.0.118
 - Ugly exception handling by catching all exceptions and writing them to the log
@@ -27,8 +27,8 @@ Translation package</Description>
 - Added separate file to store Languages in
 - Files to store in Solution = languages.json and all language-{0}.json-files</PackageReleaseNotes>
 	<ApplicationIcon />
-	<OutputType>Exe</OutputType>
-	<StartupObject>MN.L10n.Program</StartupObject>
+	<OutputType>Library</OutputType>
+	<StartupObject></StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -40,14 +40,8 @@ Translation package</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="build\MN.L10n.targets" PackagePath="build\" />
-  </ItemGroup>
-
-  <ItemGroup>
 	<PackageReference Include="CommonMark.NET" Version="0.15.1" />
 	<PackageReference Include="Jil" Version="2.15.4" />
-	<PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" PrivateAssets="All" />
-	<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" PrivateAssets="All" />
 	<PackageReference Include="NGettext" Version="0.6.3" />
 	<!--<PackageReference Update="@(PackageReference)" PrivateAssets="All" />-->
   </ItemGroup>

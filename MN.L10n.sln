@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EFB1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "net462ClassLibrary", "net462ClassLibrary\net462ClassLibrary.csproj", "{A32F95EC-8034-451B-9065-EA97FC96DF17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.BuildTasks", "MN.L10n.BuildTasks\MN.L10n.BuildTasks.csproj", "{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{A32F95EC-8034-451B-9065-EA97FC96DF17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A32F95EC-8034-451B-9065-EA97FC96DF17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A32F95EC-8034-451B-9065-EA97FC96DF17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject>MN.L10n.BuildTasks.Program</StartupObject>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.2</Version>
+    <Authors>Chris Gårdenberg</Authors>
+    <Company>MultiNet Interactive AB</Company>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<Content Include="build\MN.L10n.BuildTasks.targets" PackagePath="build\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MN.L10n\MN.L10n.csproj" />
+  </ItemGroup>
+  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+	<!--
+    The include needs to happen after output has been copied to build output folder
+    but before NuGet generates a nuspec.
+    -->
+	<ItemGroup>
+	  <_PackageFiles Include="$(OutputPath)\*.*">
+		<PackagePath>build\%(RecursiveDir)</PackagePath>
+		<Visible>false</Visible>
+		<BuildAction>Content</BuildAction>
+	  </_PackageFiles>
+	</ItemGroup>
+  </Target>
+</Project>
