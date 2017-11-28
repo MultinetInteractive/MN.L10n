@@ -19,7 +19,7 @@ namespace MN.L10n.BuildTasks
 			}
 			else
 			{
-				projectFolder = string.Join(" ", args[0]);
+				projectFolder = string.Join(" ", args[0]).TrimEnd(Path.DirectorySeparatorChar, '"');
 			}
 
 			Stopwatch stw = new Stopwatch();

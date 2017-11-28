@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <Target Name="L10n" AfterTargets="AfterBuild">
-	<Exec Command="&quot;$(_L10nBuildTask)&quot; $(ProjectDir)" />
+	<Exec Command="&quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;" />
 	<ItemGroup>
 	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
 	</ItemGroup>
