@@ -6,7 +6,7 @@
     <OutputType>Exe</OutputType>
     <StartupObject>MN.L10n.BuildTasks.Program</StartupObject>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.5</Version>
+    <Version>1.0.7</Version>
     <Authors>Chris Gårdenberg</Authors>
     <Company>MultiNet Interactive AB</Company>
   </PropertyGroup>
@@ -20,7 +20,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<Content Include="build\MN.L10n.BuildTasks.targets" PackagePath="build\" />
+	<Content Include="build\*" PackagePath="build\" />
+	<Content Include="buildMultiTargeting\*" PackagePath="buildMultiTargeting\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -21,6 +21,7 @@ namespace MN.L10n.Handler
 
         public void ProcessRequest(HttpContext context)
         {
+			context.Response.ContentType = "text/javascript";
 			var cacheDuration = new TimeSpan(1, 0, 0);
 			context.Response.Cache.SetCacheability(HttpCacheability.Public);
 			context.Response.Cache.SetExpires(DateTime.Now.Add(cacheDuration));

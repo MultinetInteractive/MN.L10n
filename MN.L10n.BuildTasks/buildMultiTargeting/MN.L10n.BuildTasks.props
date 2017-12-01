@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\MN.L10n.BuildTasks.props"/>
+</Project>
