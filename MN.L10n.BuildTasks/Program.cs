@@ -127,9 +127,9 @@ namespace MN.L10n.BuildTasks
 					else
 					{
 						PhraseInstance.Phrases[_phrase.Phrase].Usages++;
-						if (!PhraseInstance.Phrases[_phrase.Phrase].Sources.Contains(shortFile))
+						if (!PhraseInstance.Phrases[_phrase.Phrase].Sources.Contains(shortFile + ":" + _phrase.Row))
 						{
-							PhraseInstance.Phrases[_phrase.Phrase].Sources.Add(shortFile);
+							PhraseInstance.Phrases[_phrase.Phrase].Sources.Add(shortFile + ":" + _phrase.Row);
 						}
 					}
 
