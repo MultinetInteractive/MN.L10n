@@ -120,22 +120,22 @@ namespace MN.L10n.BuildTasks
 
 				foreach (var _phrase in invocations)
 				{
-					if (!PhraseInstance.Phrases.ContainsKey(_phrase))
+					if (!PhraseInstance.Phrases.ContainsKey(_phrase.Phrase))
 					{
-						PhraseInstance.Phrases.Add(_phrase, new L10nPhrase() { Sources = new List<string> { shortFile } });
+						PhraseInstance.Phrases.Add(_phrase.Phrase, new L10nPhrase() { Sources = new List<string> { shortFile + ":" + _phrase.Row } });
 					}
 					else
 					{
-						PhraseInstance.Phrases[_phrase].Usages++;
-						if (!PhraseInstance.Phrases[_phrase].Sources.Contains(shortFile))
+						PhraseInstance.Phrases[_phrase.Phrase].Usages++;
+						if (!PhraseInstance.Phrases[_phrase.Phrase].Sources.Contains(shortFile))
 						{
-							PhraseInstance.Phrases[_phrase].Sources.Add(shortFile);
+							PhraseInstance.Phrases[_phrase.Phrase].Sources.Add(shortFile);
 						}
 					}
 
-					if (phraseRewriter.unusedPhrases.Contains(_phrase))
+					if (phraseRewriter.unusedPhrases.Contains(_phrase.Phrase))
 					{
-						phraseRewriter.unusedPhrases.Remove(_phrase);
+						phraseRewriter.unusedPhrases.Remove(_phrase.Phrase);
 					}
 				}
 				if (config.ShowDetailedLog) Console.WriteLine("info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");

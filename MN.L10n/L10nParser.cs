@@ -5,12 +5,19 @@ namespace MN.L10n
 {
 	public class L10nParser
 	{
-		public List<string> Parse(string source)
+		public struct PhraseInvocation
 		{
-			List<string> Invocations = new List<string>();
+			public string Phrase { get; set; }
+			public int Row { get; set; }
+		}
+
+		public List<PhraseInvocation> Parse(string source)
+		{
+			List<PhraseInvocation> Invocations = new List<PhraseInvocation>();
 			bool inToken = false;
 			StringBuilder _tokenContent = new StringBuilder();
 			char _stringContainer = '"';
+			int row = 1;
 
 			for (int _pos = 0; _pos < source.Length; _pos++)
 			{
@@ -50,12 +57,14 @@ namespace MN.L10n
 
 						break;
 					default:
+						if (source[_pos] == '\n')
+							row++;
 						if (inToken)
 						{
 							var tail = source[_pos - 1];
 							if (source[_pos] == _stringContainer && tail != '\\' && tail != '(')
 							{
-								Invocations.Add(_tokenContent.ToString());
+								Invocations.Add(new PhraseInvocation { Phrase = _tokenContent.ToString(), Row = row });
 								inToken = false;
 							}
 							_tokenContent.Append(source[_pos]);
