@@ -56,7 +56,7 @@ namespace MN.L10n.BuildTasks
 				new FileDataProvider(solutionDir)
 			);
 
-			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx" };
+			var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx" };
 
 			var defaultIgnorePaths = new[] {
 				"/.git", "\\.git",
