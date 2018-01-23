@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Concurrent;
+using System.IO;
 using System.Collections.Generic;
 using Jil;
 
@@ -56,7 +57,7 @@ namespace MN.L10n.FileProviders
 				{
 					var phraseFileContents = File.ReadAllText(langFileName);
 					var langPhrases = JSON.Deserialize<L10nLanguage>(phraseFileContents, SerializerOptions);
-					l10n.LanguagePhrases.Add(lang, langPhrases);
+					l10n.LanguagePhrases.TryAdd(lang, langPhrases);
 				}
 				else
 				{
@@ -64,12 +65,12 @@ namespace MN.L10n.FileProviders
 					{
 						LanguageName = lang,
 						Locale = lang,
-						Phrases = new Dictionary<string, L10nPhraseObject>(),
+						Phrases = new ConcurrentDictionary<string, L10nPhraseObject>(),
 						PluralizationRules = new List<string> { "0", "1" },
 						PluralRule = "n != 1"
 					};
 					File.WriteAllText(langFileName, JSON.Serialize(nLang, SerializerOptions));
-					l10n.LanguagePhrases.Add(lang, nLang);
+					l10n.LanguagePhrases.TryAdd(lang, nLang);
 				}
 
 				if (l10n.LanguagePhrases[lang].AstPluralRule == null && !string.IsNullOrWhiteSpace(l10n.LanguagePhrases[lang].PluralRule))

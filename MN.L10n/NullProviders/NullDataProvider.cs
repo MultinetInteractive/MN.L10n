@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace MN.L10n.NullProviders
 {
@@ -9,7 +10,7 @@ namespace MN.L10n.NullProviders
 			return new L10n
 			{
 				Languages = new List<string> { "sv-SE" },
-				Phrases = new Dictionary<string, L10nPhrase>()
+				Phrases = new ConcurrentDictionary<string, L10nPhrase>()
 			};
 		}
 
