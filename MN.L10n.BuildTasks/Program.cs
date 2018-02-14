@@ -38,114 +38,137 @@ namespace MN.L10n.BuildTasks
             }
 
             var solutionDir = baseDir.FullName;
+			var lockFile = Path.Combine(solutionDir, ".l10nLock");
 
-            var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
-            if (cfgFile != null)
-            {
-                config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
-            }
+			var lockFileExists = File.Exists(lockFile);
+			if (lockFileExists)
+			{
+				Console.WriteLine("info l10n: Lock file exists, exiting gracefully");
+				return 0;
+			}
 
-            if (config != null && config.PreventBuildTask)
-            {
-                Console.WriteLine("info l10n: L10n build task cancelled by config file");
-                return 0;
-            }
+			File.WriteAllText(lockFile, DateTime.UtcNow.ToString());
+			try
+			{
 
-            L10n PhraseInstance = L10n.CreateInstance(
-                new NullLanguageProvider(),
-                new FileDataProvider(solutionDir)
-            );
+				var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
+				if (cfgFile != null)
+				{
+					config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
+				}
 
-            var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx" };
+				if (config != null && config.PreventBuildTask)
+				{
+					Console.WriteLine("info l10n: L10n build task cancelled by config file");
+					File.Delete(lockFile);
+					return 0;
+				}
 
-            var defaultIgnorePaths = new[] {
-                "/.git", "\\.git",
-                "/node_modules", "\\node_modules",
-                "/.vscode", "\\.vscode",
-                "/.idea", "\\.idea",
-                "/.vs", "\\.vs",
-                "/bin", "\\bin",
-                "/obj", "\\obj",
-                ".dll", ".designer.cs",
-                "/packages", "\\packages",
-                ".min.js", ".css"
-            };
+				L10n PhraseInstance = L10n.CreateInstance(
+					new NullLanguageProvider(),
+					new FileDataProvider(solutionDir)
+				);
 
-            List<string> fileList = new List<string>();
+				var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx" };
 
-            if (config != null)
-            {
-                if (config.IncludePatterns.Count == 0)
-                {
-                    fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
-                    .Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
-                    .Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
-                    .ToList();
-                }
+				var defaultIgnorePaths = new[] {
+				"/.git", "\\.git",
+				"/node_modules", "\\node_modules",
+				"/.vscode", "\\.vscode",
+				"/.idea", "\\.idea",
+				"/.vs", "\\.vs",
+				"/bin", "\\bin",
+				"/obj", "\\obj",
+				".dll", ".designer.cs",
+				"/packages", "\\packages",
+				".min.js", ".css"
+			};
 
-                foreach (var pattern in config.IncludePatterns)
-                {
-                    fileList.AddRange(
-                        Glob.Glob.ExpandNames(solutionDir + pattern)
-                        .Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
-                    );
-                }
+				List<string> fileList = new List<string>();
 
-                foreach (var pattern in config.ExcludePatterns)
-                {
-                    var match = Glob.Glob.ExpandNames(solutionDir + pattern);
-                    foreach (var m in match)
-                    {
-                        fileList.Remove(m);
-                    }
-                }
-            }
-            else
-            {
-                fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
-                .Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
-                .Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
-                .ToList();
-            }
+				if (config != null)
+				{
+					if (config.IncludePatterns.Count == 0)
+					{
+						fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+						.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+						.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+						.ToList();
+					}
 
-            var phraseRewriter = new PhrasesRewriter(PhraseInstance);
+					foreach (var pattern in config.IncludePatterns)
+					{
+						fileList.AddRange(
+							Glob.Glob.ExpandNames(solutionDir + pattern)
+							.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+						);
+					}
 
-            var parser = new L10nParser();
+					foreach (var pattern in config.ExcludePatterns)
+					{
+						var match = Glob.Glob.ExpandNames(solutionDir + pattern);
+						foreach (var m in match)
+						{
+							fileList.Remove(m);
+						}
+					}
+				}
+				else
+				{
+					fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+					.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+					.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+					.ToList();
+				}
 
-            foreach (var file in fileList.Distinct())
-            {
-                var fileContents = File.ReadAllText(file);
-                var shortFile = file.Replace(solutionDir, "");
-                var invocations = parser.Parse(fileContents);
+				var phraseRewriter = new PhrasesRewriter(PhraseInstance);
 
-                foreach (var _phrase in invocations)
-                {
-                    if (!PhraseInstance.Phrases.ContainsKey(_phrase.Phrase))
-                    {
-                        PhraseInstance.Phrases.TryAdd(_phrase.Phrase, new L10nPhrase() { Sources = new List<string> { shortFile + ":" + _phrase.Row } });
-                    }
-                    else
-                    {
-                        PhraseInstance.Phrases[_phrase.Phrase].Usages++;
-                        if (!PhraseInstance.Phrases[_phrase.Phrase].Sources.Contains(shortFile + ":" + _phrase.Row))
-                        {
-                            PhraseInstance.Phrases[_phrase.Phrase].Sources.Add(shortFile + ":" + _phrase.Row);
-                        }
-                    }
+				var parser = new L10nParser();
 
-                    if (phraseRewriter.unusedPhrases.Contains(_phrase.Phrase))
-                    {
-                        phraseRewriter.unusedPhrases.Remove(_phrase.Phrase);
-                    }
-                }
-                if (config.ShowDetailedLog) Console.WriteLine("info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
-            };
+				foreach (var file in fileList.Distinct())
+				{
+					var fileContents = File.ReadAllText(file);
+					var shortFile = file.Replace(solutionDir, "");
+					var invocations = parser.Parse(fileContents);
 
-            phraseRewriter.SavePhrasesToFile();
-            stw.Stop();
-            Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
+					foreach (var _phrase in invocations)
+					{
+						if (!PhraseInstance.Phrases.ContainsKey(_phrase.Phrase))
+						{
+							PhraseInstance.Phrases.TryAdd(_phrase.Phrase, new L10nPhrase() { Sources = new List<string> { shortFile + ":" + _phrase.Row } });
+						}
+						else
+						{
+							PhraseInstance.Phrases[_phrase.Phrase].Usages++;
+							if (!PhraseInstance.Phrases[_phrase.Phrase].Sources.Contains(shortFile + ":" + _phrase.Row))
+							{
+								PhraseInstance.Phrases[_phrase.Phrase].Sources.Add(shortFile + ":" + _phrase.Row);
+							}
+						}
 
-            return 0;
+						if (phraseRewriter.unusedPhrases.Contains(_phrase.Phrase))
+						{
+							phraseRewriter.unusedPhrases.Remove(_phrase.Phrase);
+						}
+					}
+					if (config.ShowDetailedLog) Console.WriteLine("info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
+				};
+
+				phraseRewriter.SavePhrasesToFile();
+				stw.Stop();
+				Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
+				File.Delete(lockFile);
+				return 0;
+			}
+			catch
+			{
+				File.Delete(lockFile);
+				return -1;
+			}
+			finally
+			{
+				File.Delete(lockFile);
+			}
         }
     }
 }
