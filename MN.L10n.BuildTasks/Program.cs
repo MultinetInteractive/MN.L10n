@@ -8,36 +8,36 @@ using System.Linq;
 
 namespace MN.L10n.BuildTasks
 {
-    class Program
-    {
-        static int Main(string[] args)
-        {
-            string projectFolder = string.Empty;
-            if (args.Length == 0)
-            {
-                throw new ArgumentNullException("projectFolder");
-            }
-            else
-            {
-                projectFolder = string.Join(" ", args[0]).TrimEnd(Path.DirectorySeparatorChar, '"');
-            }
+	class Program
+	{
+		static int Main(string[] args)
+		{
+			string projectFolder = string.Empty;
+			if (args.Length == 0)
+			{
+				throw new ArgumentNullException("projectFolder");
+			}
+			else
+			{
+				projectFolder = string.Join(" ", args[0]).TrimEnd(Path.DirectorySeparatorChar, '"');
+			}
 
-            Stopwatch stw = new Stopwatch();
-            var fi = new FileInfo(projectFolder);
-            var baseDir = fi.Directory;
-            var sourceDir = Environment.CurrentDirectory;
-            Console.WriteLine("info l10n: L10n - beginning work: " + sourceDir);
+			Stopwatch stw = new Stopwatch();
+			var fi = new FileInfo(projectFolder);
+			var baseDir = fi.Directory;
+			var sourceDir = Environment.CurrentDirectory;
+			Console.WriteLine("info l10n: L10n - beginning work: " + sourceDir);
 
-            stw.Start();
+			stw.Start();
 
-            L10nConfig config = new L10nConfig();
+			L10nConfig config = new L10nConfig();
 
-            while (!baseDir.GetFiles("*.sln").Any())
-            {
-                baseDir = baseDir.Parent;
-            }
+			while (!baseDir.GetFiles("*.sln").Any())
+			{
+				baseDir = baseDir.Parent;
+			}
 
-            var solutionDir = baseDir.FullName;
+			var solutionDir = baseDir.FullName;
 			var lockFile = Path.Combine(solutionDir, ".l10nLock");
 
 			var lockFileExists = File.Exists(lockFile);
@@ -72,17 +72,20 @@ namespace MN.L10n.BuildTasks
 				var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx" };
 
 				var defaultIgnorePaths = new[] {
-				"/.git", "\\.git",
-				"/node_modules", "\\node_modules",
-				"/.vscode", "\\.vscode",
-				"/.idea", "\\.idea",
-				"/.vs", "\\.vs",
-				"/bin", "\\bin",
-				"/obj", "\\obj",
-				".dll", ".designer.cs",
-				"/packages", "\\packages",
-				".min.js", ".css"
-			};
+					"/.git/", "\\.git\\",
+					"/node_modules/", "\\node_modules\\",
+					"/.vscode/", "\\.vscode",
+					"/.idea/", "\\.idea",
+					"/.vs/", "\\.vs",
+					"/bin/", "\\bin",
+					"/obj/", "\\obj\\",
+					"/packages/", "\\packages\\",
+				};
+
+				var defaultIgnoreExtensions = new[] {
+					".min.js", ".css",
+					".dll", ".designer.cs",
+				};
 
 				List<string> fileList = new List<string>();
 
@@ -92,7 +95,10 @@ namespace MN.L10n.BuildTasks
 					{
 						fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
 						.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
-						.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+						.Where(f => 
+							!defaultIgnoreExtensions.Any(ign => f.ToLower().EndsWith(ign)) && 
+							!defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign))
+						)
 						.ToList();
 					}
 
@@ -169,6 +175,6 @@ namespace MN.L10n.BuildTasks
 			{
 				File.Delete(lockFile);
 			}
-        }
-    }
+		}
+	}
 }
