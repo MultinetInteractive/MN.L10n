@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject>MN.L10n.BuildTasks.Program</StartupObject>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.12</Version>
+    <Version>1.0.13</Version>
     <Authors>Chris Gårdenberg</Authors>
     <Company>MultiNet Interactive AB</Company>
   </PropertyGroup>

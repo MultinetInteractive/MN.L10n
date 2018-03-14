@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;netstandard2.0;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net471;netstandard2.0;netcoreapp2.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Company>MultiNet Interactive AB</Company>
     <Authors>Chris Gårdenberg</Authors>
@@ -12,7 +12,7 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.124</Version>
+    <Version>1.0.125</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
 	<PackageReleaseNotes>## 1.0.124 
 - Change the phrase dictionaries into ConcurrentDictionary
