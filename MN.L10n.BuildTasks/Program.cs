@@ -131,6 +131,11 @@ namespace MN.L10n.BuildTasks
 
 				var parser = new L10nParser();
 
+				foreach (var p in PhraseInstance.Phrases)
+				{
+					p.Value.Sources = new List<string>();
+				}
+
 				foreach (var file in fileList.Distinct())
 				{
 					var fileContents = File.ReadAllText(file);

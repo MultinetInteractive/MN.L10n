@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.Mvc", "MN.L10n.Mvc\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EFB14859-8BD4-4313-B5AD-E2B8DE7FAE0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "net462ClassLibrary", "net462ClassLibrary\net462ClassLibrary.csproj", "{A32F95EC-8034-451B-9065-EA97FC96DF17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "net471ClassLibrary", "net462ClassLibrary\net471ClassLibrary.csproj", "{A32F95EC-8034-451B-9065-EA97FC96DF17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.BuildTasks", "MN.L10n.BuildTasks\MN.L10n.BuildTasks.csproj", "{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.BuildTasks", "MN.L10n.BuildTasks\MN.L10n.BuildTasks.csproj", "{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

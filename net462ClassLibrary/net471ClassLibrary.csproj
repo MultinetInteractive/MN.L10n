@@ -7,10 +7,11 @@
     <ProjectGuid>{A32F95EC-8034-451B-9065-EA97FC96DF17}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>net462ClassLibrary</RootNamespace>
-    <AssemblyName>net462ClassLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <RootNamespace>net471ClassLibrary</RootNamespace>
+    <AssemblyName>net471ClassLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,20 +51,22 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
-	<BuildDependsOn>
+    <BuildDependsOn>
 	  $(BuildDependsOn);
 	  L10n
 	</BuildDependsOn>
   </PropertyGroup>
-
-  <Target Name="L10n" AfterTargets="BeforeBuild">
-	<Exec Command="..\MN.L10n.BuildTasks\bin\Debug\net462\MN.L10n.exe $(ProjectDir)" />
-	<ItemGroup>
-	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
-	</ItemGroup>
-	<Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)L10n\" />
-	<Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)L10n\" />
-	<Message Importance="high" Text="Files copied to $(ProjectDir)L10n\" />
+  <PropertyGroup>
+    <_L10nBuildTask>$(MSBuildThisFileDirectory)..\MN.L10n.BuildTasks\bin\$(Configuration)\net471\MN.L10n.BuildTasks.exe</_L10nBuildTask>
+  </PropertyGroup>
+  <Target Name="L10n" AfterTargets="AfterBuild">
+    <Exec Command="&quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;" />
+    <ItemGroup>
+      <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
+    </ItemGroup>
+    <Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)L10n\" />
+    <Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)L10n\" />
+    <Message Importance="high" Text="Files copied to $(ProjectDir)L10n\" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--<Import Project="..\MN.L10n\build\MN.L10n.targets" Condition="Exists('..\MN.L10n\build\MN.L10n.targets')" />-->
