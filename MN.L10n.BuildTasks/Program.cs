@@ -32,7 +32,7 @@ namespace MN.L10n.BuildTasks
 
 			L10nConfig config = new L10nConfig();
 
-			while (!baseDir.GetFiles("*.sln").Any())
+			while (!baseDir.EnumerateFiles().Any(x => x.Extension == ".sln" || x.Extension == ".l10nroot"))
 			{
 				baseDir = baseDir.Parent;
 			}
