@@ -15,4 +15,4 @@
     <Exec Command="&quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;">
     </Exec>
   </Target>
-</Project>
+</Project> 

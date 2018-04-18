@@ -173,7 +173,7 @@ namespace MN.L10n.BuildTasks
 				stw.Stop();
 				Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
 
-                var dir = new DirectoryInfo(sourceDir);
+                var dir = new DirectoryInfo(baseDir.FullName);
 			    
                 var files = dir.GetFiles();
 
@@ -195,7 +195,7 @@ namespace MN.L10n.BuildTasks
 			        Directory.CreateDirectory(destDirName);
 			    }
 
-			    Console.WriteLine($@"Copying phrase-files from {sourceDir} to {destDirName}");
+			    Console.WriteLine($@"Copying phrase-files from {baseDir.FullName} to {destDirName}");
                 
 			    foreach (var file in toCopy)
 			    {
