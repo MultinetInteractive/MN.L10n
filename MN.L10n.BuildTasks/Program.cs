@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MN.L10n.BuildTasks
 {
@@ -26,7 +27,9 @@ namespace MN.L10n.BuildTasks
 			var fi = new FileInfo(projectFolder);
 			var baseDir = fi.Directory;
 			var sourceDir = Environment.CurrentDirectory;
-			Console.WriteLine("info l10n: L10n - beginning work: " + sourceDir);
+
+            Console.WriteLine(baseDir.FullName + ";");
+            Console.WriteLine("info l10n: L10n - beginning work: " + sourceDir);
 
 			stw.Start();
 
@@ -38,7 +41,8 @@ namespace MN.L10n.BuildTasks
 			}
 
 			var solutionDir = baseDir.FullName;
-			var lockFile = Path.Combine(solutionDir, ".l10nLock");
+
+            var lockFile = Path.Combine(solutionDir, ".l10nLock");
 
 			var lockFileExists = File.Exists(lockFile);
 			if (lockFileExists)
@@ -168,7 +172,39 @@ namespace MN.L10n.BuildTasks
 				phraseRewriter.SavePhrasesToFile();
 				stw.Stop();
 				Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
-				File.Delete(lockFile);
+
+                var dir = new DirectoryInfo(sourceDir);
+			    
+                var files = dir.GetFiles();
+
+			    var langRegex = new Regex("language-[^\\.]*\\.json");
+
+			    var toCopy = new List<FileInfo>();
+			    foreach (var file in files)
+			    {
+			        if (file.Name == "phrases.json" || file.Name == "languages.json" || langRegex.IsMatch(file.Name))
+			        {
+			            toCopy.Add(file);
+			        }
+			    }
+
+			    var destDirName = Path.Combine(projectFolder, "L10n");
+
+			    if (!Directory.Exists(destDirName))
+			    {
+			        Directory.CreateDirectory(destDirName);
+			    }
+
+			    Console.WriteLine($@"Copying phrase-files from {sourceDir} to {destDirName}");
+                
+			    foreach (var file in toCopy)
+			    {
+			        file.CopyTo(Path.Combine(destDirName, file.Name), true);
+			    }
+
+			    Console.WriteLine($@"Files copied to {destDirName}");
+
+                File.Delete(lockFile);
 				return 0;
 			}
 			catch
@@ -181,5 +217,5 @@ namespace MN.L10n.BuildTasks
 				File.Delete(lockFile);
 			}
 		}
-	}
+    }
 }

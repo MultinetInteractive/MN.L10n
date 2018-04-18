@@ -1,23 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<BuildDependsOn>
-	  $(BuildDependsOn);
-	  L10n
-	</BuildDependsOn>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      L10n
+    </BuildDependsOn>
   </PropertyGroup>
 
   <PropertyGroup>
-	<_L10nBuildTask>$(MSBuildThisFileDirectory)MN.L10n.BuildTasks.exe</_L10nBuildTask>
+    <_L10nBuildTask>$(MSBuildThisFileDirectory)MN.L10n.BuildTasks.exe</_L10nBuildTask>
   </PropertyGroup>
 
   <Target Name="L10n" AfterTargets="AfterBuild">
-	<Exec Command="&quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;" />
-	<ItemGroup>
-	  <L10nLanguageFiles Include="$(SolutionDir)phrases.json;$(SolutionDir)languages.json;$(SolutionDir)language-*.json" />
-	</ItemGroup>
-	<Message Importance="high" Text="Copying phrase-files from @(L10nLanguageFiles) to $(ProjectDir)L10n\" />
-	<Copy SourceFiles="@(L10nLanguageFiles)" DestinationFolder="$(ProjectDir)L10n\" />
-	<Message Importance="high" Text="Files copied to $(ProjectDir)L10n\" />
+    <Exec Command="&quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;">
+    </Exec>
   </Target>
 </Project>
