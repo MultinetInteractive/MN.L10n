@@ -50,7 +50,17 @@ namespace MN.L10n.Tests
             var result = parser.Parse(src);
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual("Hej", result[0].Phrase.Trim());
-            Assert.AreEqual("Nej", result[0].Phrase.Trim());
+            Assert.AreEqual("Nej", result[1].Phrase.Trim());
+        }
+
+        [TestMethod]
+        public void TestDoesNotGoOutOfBounds()
+        {
+            var src = @"<a href=javascript:void(0)>
+                      _s(";
+            var parser = new L10nParser();
+            var result = parser.Parse(src);
+            Assert.AreEqual(0, result.Count);
         }
     }
 }

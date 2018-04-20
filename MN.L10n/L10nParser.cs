@@ -22,31 +22,50 @@ namespace MN.L10n
 
 			for (int _pos = 0; _pos < source.Length; _pos++)
 			{
+			    char peek = source[_pos];
+
+			    bool TryPeek(int forward)
+			    {
+			        if (source.Length <= _pos + forward)
+			        {
+			            return false;
+			        }
+
+			        peek = source[_pos + forward];
+			        return true;
+			    }
+
 				switch (source[_pos])
 				{
 					case '_': // Possible _s/_m, peek to see
 						if (!inToken)
 						{
 							_tokenContent.Clear();
+						    if (!TryPeek(1))
+						    {
+						        return Invocations;
+						    }
 
-							var peek = source[_pos + 1];
 							switch (peek)
 							{
 								case 's':
 								case 'm':
 									// Even more likely to be _s/_m, proceed
 								    var modifier = 2;
-									peek = source[_pos + modifier];
+								    if (!TryPeek(modifier))
+								    {
+								        return Invocations;
+								    }
 
 								    if (peek == '(')
 								    {
-								        modifier += 1;
-                                        peek = source[_pos + modifier];
-
-								        while (Char.IsWhiteSpace(peek))
+								        do
 								        {
-								            peek = source[_pos + ++modifier];
-								        }
+								            if (!TryPeek(++modifier))
+								            {
+								                return Invocations;
+								            }
+								        } while (Char.IsWhiteSpace(peek));
 
                                         if (peek == '"' || peek == '\'')
 								            {
