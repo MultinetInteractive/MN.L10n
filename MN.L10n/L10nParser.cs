@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace MN.L10n
@@ -34,18 +35,27 @@ namespace MN.L10n
 								case 's':
 								case 'm':
 									// Even more likely to be _s/_m, proceed
-									peek = source[_pos + 2];
-									if (peek == '(')
-									{
-										peek = source[_pos + 3];
-										if (peek == '"' || peek == '\'')
-										{
-											_stringContainer = peek;
-											inToken = true;
-											_pos += 4;
-										}
-									}
-									break;
+								    var modifier = 2;
+									peek = source[_pos + modifier];
+
+								    if (peek == '(')
+								    {
+								        modifier += 1;
+                                        peek = source[_pos + modifier];
+
+								        while (Char.IsWhiteSpace(peek))
+								        {
+								            peek = source[_pos + ++modifier];
+								        }
+
+                                        if (peek == '"' || peek == '\'')
+								            {
+								                _stringContainer = peek;
+								                inToken = true;
+								                _pos += modifier + 1;
+								            }
+								        }
+								    break;
 								default:
 									continue;
 							}
