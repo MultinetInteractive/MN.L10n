@@ -105,22 +105,19 @@ namespace MN.L10n.BuildTasks
 						)
 						.ToList();
 					}
-
-					foreach (var pattern in config.IncludePatterns)
-					{
+                    else
+                    { 
 						fileList.AddRange(
-							Glob.Glob.ExpandNames(solutionDir + pattern)
-							.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
+						    Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+                            .Where(f => config.IncludePatterns.Any(p => f.ToLower().Contains(p.ToLower())))
+                            .Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
 						);
 					}
 
-					foreach (var pattern in config.ExcludePatterns)
+
+					if(config.ExcludePatterns.Count > 0)
 					{
-						var match = Glob.Glob.ExpandNames(solutionDir + pattern);
-						foreach (var m in match)
-						{
-							fileList.Remove(m);
-						}
+					    fileList = fileList.Where(f => config.ExcludePatterns.All(p => !f.ToLower().Contains(p.ToLower()))).ToList();
 					}
 				}
 				else
