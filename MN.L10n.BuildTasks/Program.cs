@@ -24,8 +24,8 @@ namespace MN.L10n.BuildTasks
 			}
 
 			Stopwatch stw = new Stopwatch();
-			var fi = new FileInfo(projectFolder);
-			var baseDir = fi.Directory;
+			var fi = new DirectoryInfo(projectFolder);
+			var baseDir = fi;
 			var sourceDir = Environment.CurrentDirectory;
 
             Console.WriteLine(baseDir.FullName + ";");
@@ -73,7 +73,7 @@ namespace MN.L10n.BuildTasks
 					new FileDataProvider(solutionDir)
 				);
 
-				var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx" };
+				var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx", ".php" };
 
 				var defaultIgnorePaths = new[] {
 					"/.git/", "\\.git\\",
