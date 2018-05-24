@@ -10,6 +10,7 @@
 	<RepositoryType>git</RepositoryType>
 	<PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
 	<PackageLicenseUrl>https://github.com/MultinetInteractive/MN.L10n/blob/master/LICENSE.txt</PackageLicenseUrl>
+	<Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

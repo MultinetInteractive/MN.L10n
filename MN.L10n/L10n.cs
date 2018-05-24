@@ -73,6 +73,12 @@ namespace MN.L10n
             return Instance.LanguageProvider.GetLanguage();
         }
 
+		public static T GetLanguageProvider<T>() where T : IL10nLanguageProvider
+		{
+			EnsureInitialized();
+			return (T)Instance.LanguageProvider;
+		}
+
         internal string __getPhrase(string phrase, object args = null)
         {
             if (!Phrases.ContainsKey(phrase))

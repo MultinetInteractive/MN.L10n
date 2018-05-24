@@ -3,7 +3,7 @@ using System;
 
 namespace MN.L10n.Providers.LanguageProviders
 {
-    public class SwitchableLanguageProvider : NullLanguageProvider, IL10nLanguageProvider
+    public class SwitchableLanguageProvider : IL10nLanguageProvider
 	{
 		[ThreadStatic]
 		public string Language = "sv-SE";
@@ -11,6 +11,11 @@ namespace MN.L10n.Providers.LanguageProviders
 		public SwitchableLanguageProvider(string language)
 		{
 			Language = language;
+		}
+
+		public string GetLanguage()
+		{
+			return Language;
 		}
 
 		public IDisposable LocalLanguageContext(string language)
