@@ -110,10 +110,10 @@ namespace MN.L10n.BuildTasks
 						var fileListWithIgnores = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
 							.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)));
 
-						var filesListWithoutIgnores = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+						var filesListWithIncludes = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
 							.Where(f => config.IncludePatterns.Any(p => f.ToLower().Contains(p.ToLower())));
 
-						var combinedList = fileListWithIgnores.Union(filesListWithoutIgnores);
+						var combinedList = fileListWithIgnores.Union(filesListWithIncludes);
 
 						fileList.AddRange(combinedList);
 					}
