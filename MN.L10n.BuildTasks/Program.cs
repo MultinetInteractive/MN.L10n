@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace MN.L10n.BuildTasks
 {
@@ -47,7 +48,14 @@ namespace MN.L10n.BuildTasks
 			var lockFileExists = File.Exists(lockFile);
 			if (lockFileExists)
 			{
-				Console.WriteLine("info l10n: Lock file exists, exiting gracefully");
+				Console.WriteLine("info l10n: Lock file exists, waiting until it's gone");
+				while (lockFileExists)
+				{
+					lockFileExists = File.Exists(lockFile);
+					Thread.Sleep(500);
+				}
+
+				MovePhraseFiles(projectFolder, baseDir);
 				return 0;
 			}
 
@@ -99,14 +107,14 @@ namespace MN.L10n.BuildTasks
 					{
 						fileList = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
 						.Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
-						.Where(f => 
-							!defaultIgnoreExtensions.Any(ign => f.ToLower().EndsWith(ign)) && 
+						.Where(f =>
+							!defaultIgnoreExtensions.Any(ign => f.ToLower().EndsWith(ign)) &&
 							!defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign))
 						)
 						.ToList();
 					}
-                    else
-                    {
+					else
+					{
 						var fileListWithIgnores = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
 							.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)));
 
@@ -119,9 +127,9 @@ namespace MN.L10n.BuildTasks
 					}
 
 
-					if(config.ExcludePatterns.Count > 0)
+					if (config.ExcludePatterns.Count > 0)
 					{
-					    fileList = fileList.Where(f => config.ExcludePatterns.All(p => !f.ToLower().Contains(p.ToLower()))).ToList();
+						fileList = fileList.Where(f => config.ExcludePatterns.All(p => !f.ToLower().Contains(p.ToLower()))).ToList();
 					}
 				}
 				else
@@ -174,38 +182,9 @@ namespace MN.L10n.BuildTasks
 				stw.Stop();
 				Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
 
-                var dir = new DirectoryInfo(baseDir.FullName);
-			    
-                var files = dir.GetFiles();
+				MovePhraseFiles(projectFolder, baseDir);
 
-			    var langRegex = new Regex("language-[^\\.]*\\.json");
-
-			    var toCopy = new List<FileInfo>();
-			    foreach (var file in files)
-			    {
-			        if (file.Name == "phrases.json" || file.Name == "languages.json" || langRegex.IsMatch(file.Name))
-			        {
-			            toCopy.Add(file);
-			        }
-			    }
-
-			    var destDirName = Path.Combine(projectFolder, "L10n");
-
-			    if (!Directory.Exists(destDirName))
-			    {
-			        Directory.CreateDirectory(destDirName);
-			    }
-
-			    Console.WriteLine($@"Copying phrase-files from {baseDir.FullName} to {destDirName}");
-                
-			    foreach (var file in toCopy)
-			    {
-			        file.CopyTo(Path.Combine(destDirName, file.Name), true);
-			    }
-
-			    Console.WriteLine($@"Files copied to {destDirName}");
-
-                File.Delete(lockFile);
+				File.Delete(lockFile);
 				return 0;
 			}
 			catch
@@ -218,5 +197,39 @@ namespace MN.L10n.BuildTasks
 				File.Delete(lockFile);
 			}
 		}
-    }
+
+		private static void MovePhraseFiles(string projectFolder, DirectoryInfo baseDir)
+		{
+			var dir = new DirectoryInfo(baseDir.FullName);
+
+			var files = dir.GetFiles();
+
+			var langRegex = new Regex("language-[^\\.]*\\.json");
+
+			var toCopy = new List<FileInfo>();
+			foreach (var file in files)
+			{
+				if (file.Name == "phrases.json" || file.Name == "languages.json" || langRegex.IsMatch(file.Name))
+				{
+					toCopy.Add(file);
+				}
+			}
+
+			var destDirName = Path.Combine(projectFolder, "L10n");
+
+			if (!Directory.Exists(destDirName))
+			{
+				Directory.CreateDirectory(destDirName);
+			}
+
+			Console.WriteLine($@"Copying phrase-files from {baseDir.FullName} to {destDirName}");
+
+			foreach (var file in toCopy)
+			{
+				file.CopyTo(Path.Combine(destDirName, file.Name), true);
+			}
+
+			Console.WriteLine($@"Files copied to {destDirName}");
+		}
+	}
 }
