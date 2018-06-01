@@ -106,12 +106,16 @@ namespace MN.L10n.BuildTasks
 						.ToList();
 					}
                     else
-                    { 
-						fileList.AddRange(
-						    Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
-                            .Where(f => config.IncludePatterns.Any(p => f.ToLower().Contains(p.ToLower())))
-                            .Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)))
-						);
+                    {
+						var fileListWithIgnores = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+							.Where(f => !defaultIgnorePaths.Any(ign => f.ToLower().Contains(ign)));
+
+						var filesListWithIncludes = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
+							.Where(f => config.IncludePatterns.Any(p => f.ToLower().Contains(p.ToLower())));
+
+						var combinedList = fileListWithIgnores.Union(filesListWithIncludes);
+
+						fileList.AddRange(combinedList);
 					}
 
 
