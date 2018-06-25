@@ -243,7 +243,7 @@ namespace MN.L10n.BuildTasks
 			}
 			catch
 			{
-				CheckForLockFile(lockFile, projectFolder, baseDir);
+				return CheckForLockFile(lockFile, projectFolder, baseDir);
 			}
 
 			return -1;
