@@ -29,8 +29,8 @@ namespace MN.L10n.BuildTasks
 			var baseDir = fi;
 			var sourceDir = Environment.CurrentDirectory;
 
-            Console.WriteLine(baseDir.FullName + ";");
-            Console.WriteLine("info l10n: L10n - beginning work: " + sourceDir);
+			Console.WriteLine(baseDir.FullName + ";");
+			Console.WriteLine("info l10n: L10n - beginning work: " + sourceDir);
 
 			stw.Start();
 
@@ -43,23 +43,12 @@ namespace MN.L10n.BuildTasks
 
 			var solutionDir = baseDir.FullName;
 
-            var lockFile = Path.Combine(solutionDir, ".l10nLock");
-
-			var lockFileExists = File.Exists(lockFile);
-			if (lockFileExists)
+			var lockFile = Path.Combine(solutionDir, ".l10nLock");
+			if (CheckForLockFile(lockFile, projectFolder, baseDir) == 0)
 			{
-				Console.WriteLine("info l10n: Lock file exists, waiting until it's gone");
-				while (lockFileExists)
-				{
-					lockFileExists = File.Exists(lockFile);
-					Thread.Sleep(500);
-				}
-
-				MovePhraseFiles(projectFolder, baseDir);
 				return 0;
 			}
 
-			File.WriteAllText(lockFile, DateTime.UtcNow.ToString());
 			try
 			{
 
@@ -230,6 +219,34 @@ namespace MN.L10n.BuildTasks
 			}
 
 			Console.WriteLine($@"Files copied to {destDirName}");
+		}
+
+		private static int CheckForLockFile(string lockFile, string projectFolder, DirectoryInfo baseDir)
+		{
+			var lockFileExists = File.Exists(lockFile);
+			if (lockFileExists)
+			{
+				Console.WriteLine("info l10n: Lock file exists, waiting until it's gone");
+				while (lockFileExists)
+				{
+					lockFileExists = File.Exists(lockFile);
+					Thread.Sleep(500);
+				}
+
+				MovePhraseFiles(projectFolder, baseDir);
+				return 0;
+			}
+
+			try
+			{
+				File.WriteAllText(lockFile, DateTime.UtcNow.ToString());
+			}
+			catch
+			{
+				CheckForLockFile(lockFile, projectFolder, baseDir);
+			}
+
+			return -1;
 		}
 	}
 }
