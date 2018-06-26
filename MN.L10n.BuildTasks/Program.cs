@@ -226,9 +226,25 @@ namespace MN.L10n.BuildTasks
 			var lockFileExists = File.Exists(lockFile);
 			if (lockFileExists)
 			{
+				
 				Console.WriteLine("info l10n: Lock file exists, waiting until it's gone");
 				while (lockFileExists)
 				{
+					var lockContents = File.ReadAllText(lockFile);
+
+					var utcNow = DateTime.UtcNow;
+					if (!DateTime.TryParse(lockContents, out DateTime lockTime))
+					{
+						Console.WriteLine("warn l10n: Corrupted lock file detected, removing");
+						File.Delete(lockFile);
+					}
+
+					if (Math.Abs((utcNow - lockTime).TotalSeconds) > 30)
+					{
+						Console.WriteLine("warn l10n: Build took over 30 seconds, removing lock file");
+						File.Delete(lockFile);
+					}
+
 					lockFileExists = File.Exists(lockFile);
 					Thread.Sleep(500);
 				}
