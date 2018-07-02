@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace MN.L10n.BuildTasks
 {
@@ -55,7 +56,7 @@ namespace MN.L10n.BuildTasks
 				var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
 				if (cfgFile != null)
 				{
-					config = Jil.JSON.Deserialize<L10nConfig>(File.ReadAllText(cfgFile.FullName));
+					config = JsonConvert.DeserializeObject<L10nConfig>(File.ReadAllText(cfgFile.FullName));
 				}
 
 				if (config != null && config.PreventBuildTask)

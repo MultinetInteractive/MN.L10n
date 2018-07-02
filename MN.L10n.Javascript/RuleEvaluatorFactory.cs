@@ -20,11 +20,18 @@
                 }
             }
 
-			Jil.Options jsOptions = Jil.Options.ISO8601PrettyPrint;
+			Newtonsoft.Json.JsonSerializerSettings jsOptions = new Newtonsoft.Json.JsonSerializerSettings
+			{
+				Formatting = Newtonsoft.Json.Formatting.Indented,
+				DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat
+			};
 			if (minified)
-				jsOptions = Jil.Options.ISO8601;
+				jsOptions = new Newtonsoft.Json.JsonSerializerSettings
+				{
+					DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat
+				};
 
-            return "window.l10n = " + Jil.JSON.Serialize(l10nItem, jsOptions) + ";" +
+			return "window.l10n = " + Newtonsoft.Json.JsonConvert.SerializeObject(l10nItem, jsOptions) + ";" +
                    "window.l10n.ruleEvaluator = function(n) { return ~~(" + l10nItem.PluralRule + "); };";
         }
 

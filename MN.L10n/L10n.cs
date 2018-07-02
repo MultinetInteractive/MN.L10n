@@ -1,7 +1,7 @@
-﻿using Jil;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace MN.L10n
 {
@@ -21,12 +21,12 @@ namespace MN.L10n
             return l10n;
         }
 
-        [JilDirective(Ignore = true)]
+        [JsonIgnore]
         public List<string> Languages { get; set; } = new List<string>();
         public ConcurrentDictionary<string, L10nPhrase> Phrases { get; set; } = new ConcurrentDictionary<string, L10nPhrase>();
 
-        [JilDirective(Ignore = true)]
-        public ConcurrentDictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new ConcurrentDictionary<string, L10nLanguage>();
+		[JsonIgnore]
+		public ConcurrentDictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new ConcurrentDictionary<string, L10nLanguage>();
 
         public static L10nLanguage GetL10nLanguage(string language)
         {

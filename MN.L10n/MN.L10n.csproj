@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Company>MultiNet Interactive AB</Company>
     <Authors>Chris Gårdenberg</Authors>
@@ -12,9 +12,12 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.127</Version>
+    <Version>1.0.129</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
-	<PackageReleaseNotes>## 1.0.124 
+	<PackageReleaseNotes>## 1.0.129
+- Switched from Jil to Newtonsoft.Json
+
+## 1.0.124 
 - Change the phrase dictionaries into ConcurrentDictionary
 
 ## 1.0.118
@@ -32,6 +35,7 @@ Translation package</Description>
 	<ApplicationIcon />
 	<OutputType>Library</OutputType>
 	<StartupObject></StartupObject>
+	<AssemblyVersion>1.0.129.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -44,7 +48,7 @@ Translation package</Description>
 
   <ItemGroup>
 	<PackageReference Include="CommonMark.NET" Version="0.15.1" />
-	<PackageReference Include="Jil" Version="2.15.4" />
+	<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 	<PackageReference Include="NGettext" Version="0.6.3" />
 	<!--<PackageReference Update="@(PackageReference)" PrivateAssets="All" />-->
   </ItemGroup>

@@ -1,15 +1,18 @@
 ﻿using System.Collections.Concurrent;
 using System.IO;
 using System.Collections.Generic;
-using Jil;
+using Newtonsoft.Json;
 
 namespace MN.L10n.FileProviders
 {
 	public class FileDataProvider : IL10nDataProvider
 	{
-		private Options SerializerOptions = Options.ISO8601PrettyPrint;
+		private JsonSerializerSettings SerializerOptions = new JsonSerializerSettings {
+			Formatting = Formatting.Indented,
+			DateFormatHandling = DateFormatHandling.IsoDateFormat
+		};
 
-		private string FilePath { get; set; }
+	private string FilePath { get; set; }
 		private string PhraseFile { get; set; }
 		private string LanguagesFile { get; set; }
 		private string LanguageFile { get; set; }
@@ -30,7 +33,7 @@ namespace MN.L10n.FileProviders
 			if (File.Exists(langPath))
 			{
 				var contents = File.ReadAllText(langPath);
-				languages = JSON.Deserialize<List<string>>(contents);
+				languages = JsonConvert.DeserializeObject<List<string>>(contents);
 			}
 
 			var phrasePath = Path.Combine(FilePath, PhraseFile);
@@ -38,7 +41,7 @@ namespace MN.L10n.FileProviders
 			if (File.Exists(phrasePath))
 			{
 				var l10nFileContents = File.ReadAllText(phrasePath);
-				l10n = JSON.Deserialize<L10n>(l10nFileContents, SerializerOptions);
+				l10n = JsonConvert.DeserializeObject<L10n>(l10nFileContents, SerializerOptions);
 				l10n.Languages = languages;
 			}
 			else
@@ -47,7 +50,7 @@ namespace MN.L10n.FileProviders
 				{
 					Languages = languages
 				};
-				File.WriteAllText(phrasePath, JSON.Serialize(l10n, SerializerOptions));
+				File.WriteAllText(phrasePath, JsonConvert.SerializeObject(l10n, SerializerOptions));
 			}
 
 			foreach (var lang in l10n.Languages)
@@ -56,7 +59,7 @@ namespace MN.L10n.FileProviders
 				if (File.Exists(langFileName))
 				{
 					var phraseFileContents = File.ReadAllText(langFileName);
-					var langPhrases = JSON.Deserialize<L10nLanguage>(phraseFileContents, SerializerOptions);
+					var langPhrases = JsonConvert.DeserializeObject<L10nLanguage>(phraseFileContents, SerializerOptions);
 					l10n.LanguagePhrases.TryAdd(lang, langPhrases);
 				}
 				else
@@ -69,7 +72,7 @@ namespace MN.L10n.FileProviders
 						PluralizationRules = new List<string> { "0", "1" },
 						PluralRule = "n != 1"
 					};
-					File.WriteAllText(langFileName, JSON.Serialize(nLang, SerializerOptions));
+					File.WriteAllText(langFileName, JsonConvert.SerializeObject(nLang, SerializerOptions));
 					l10n.LanguagePhrases.TryAdd(lang, nLang);
 				}
 
@@ -84,7 +87,7 @@ namespace MN.L10n.FileProviders
 
 		public bool SaveL10n(L10n l10n)
 		{
-			var l10nFileContents = JSON.Serialize(l10n, SerializerOptions);
+			var l10nFileContents = JsonConvert.SerializeObject(l10n, SerializerOptions);
 			File.WriteAllText(Path.Combine(FilePath, PhraseFile), l10nFileContents);
 			return true;
 		}
