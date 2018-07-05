@@ -111,7 +111,7 @@ namespace MN.L10n.BuildTasks
 						var filesListWithIncludes = Directory.EnumerateFiles(solutionDir, "*.*", SearchOption.AllDirectories)
 							.Where(f => config.IncludePatterns.Any(p => f.ToLower().Contains(p.ToLower())));
 
-						var combinedList = fileListWithIgnores.Union(filesListWithIncludes);
+						var combinedList = fileListWithIgnores.Union(filesListWithIncludes).Where(f => validExtensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
 
 						fileList.AddRange(combinedList);
 					}
@@ -177,9 +177,10 @@ namespace MN.L10n.BuildTasks
 				File.Delete(lockFile);
 				return 0;
 			}
-			catch
+			catch(Exception ex)
 			{
 				File.Delete(lockFile);
+				Console.WriteLine(ex.ToString());
 				return -1;
 			}
 			finally
