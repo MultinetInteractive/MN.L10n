@@ -44,6 +44,13 @@ void Main()
 }
 ```
 
+These are the methods available:
+
+- `_s(string phrase, object args = null)`: Normal string for translation
+- `_sr(string phrase, object args = null)`: Same as above, but for output in MVC/Razor (Returns `IHtmlContent`)
+- `_m(string phrase, object args = null)`: Markdown-string for translation
+- `_mr(string phrase, object args = null)`: Same as above, but for output in MVC/Razor (Returns `IHtmlContent`)
+
 ## Example usage (Javascript)
 First you need to link our javascript into the pages where you want to enable global usage of `_s` and `_m`.
 ```csharp
@@ -132,7 +139,5 @@ protected void Application_Start(object sender, EventArgs e)
 ---
 
 #### Things we use in the code to make the magic happen
-- [Glob.cs](https://github.com/mganss/Glob.cs)
 - [CommonMark.NET](https://github.com/Knagis/CommonMark.NET)
-- [Jil](https://github.com/kevin-montrose/Jil)
 - [NGettext](https://github.com/neris/NGettext/)
