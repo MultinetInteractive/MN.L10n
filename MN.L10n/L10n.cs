@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Html;
 using Newtonsoft.Json;
 
 namespace MN.L10n
@@ -49,13 +50,23 @@ namespace MN.L10n
             if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
         }
 
+		public static IHtmlContent _sr(string phrase, object args = null)
+		{
+			return new HtmlString(_s(phrase, args));
+		}
+
         public static string _s(string phrase, object args = null)
         {
             EnsureInitialized();
             return Instance.__getPhrase(phrase, args);
         }
 
-        public static string _m(string phrase, object args = null)
+		public static IHtmlContent _mr(string phrase, object args = null)
+		{
+			return new HtmlString(_m(phrase, args));
+		}
+
+		public static string _m(string phrase, object args = null)
         {
             EnsureInitialized();
 
