@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MN.L10n.Javascript.Shared\MN.L10n.Javascript.Shared.csproj" />
     <ProjectReference Include="..\MN.L10n\MN.L10n.csproj" />
   </ItemGroup>
 
