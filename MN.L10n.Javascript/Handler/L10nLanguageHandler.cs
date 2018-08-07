@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using MN.L10n.Javascript;
 
 namespace MN.L10n.Handler
 {
@@ -31,7 +32,7 @@ namespace MN.L10n.Handler
 			var minifiedScript = false;
 			if (context.Request["minified"] == "1")
 				minifiedScript = true;
-            context.Response.Write(Javascript.RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(context.Cache, minifiedScript));
+            context.Response.Write(RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(new WebCacheProxy(context.Cache), minifiedScript));
         }
 
         #endregion

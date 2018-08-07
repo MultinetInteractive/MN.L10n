@@ -1,13 +1,20 @@
-﻿namespace MN.L10n.Javascript
+﻿using Microsoft.Extensions.Caching.Memory;
+
+namespace MN.L10n.Javascript
 {
     public class RuleEvaluatorFactory
     {
-        public static string CreateJavascriptRuleEvaluator(string language, System.Web.Caching.Cache cache, bool minified)
+        public static string CreateJavascriptRuleEvaluator(string language, IMemoryCache cache, bool minified)
         {
             L10nLanguage l10nItem = null;
+            var cacheKey = "__l10n_" + language;
+
             if (cache != null)
             {
-                l10nItem = cache["__l10n_" + language] as L10nLanguage;
+                if (cache.TryGetValue(cacheKey, out var l10nObjItem))
+                {
+                    l10nItem = l10nObjItem as L10nLanguage;
+                }
             }
 
             if (l10nItem == null)
@@ -16,7 +23,7 @@
 
                 if (cache != null)
                 {
-                    cache["__l10n_" + language] = l10nItem;
+                    cache.Set(cacheKey, l10nItem);
                 }
             }
 
@@ -35,7 +42,7 @@
                    "window.l10n.ruleEvaluator = function(n) { return ~~(" + l10nItem.PluralRule + "); };";
         }
 
-        public static string CreateJavascriptRuleEvaluator(System.Web.Caching.Cache cache, bool minified)
+        public static string CreateJavascriptRuleEvaluator(IMemoryCache cache, bool minified)
         {
             var language = L10n.GetLanguage();
             return CreateJavascriptRuleEvaluator(language, cache, minified);
