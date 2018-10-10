@@ -13,7 +13,7 @@ namespace MN.L10n.BuildTasks
 {
 	class Program
 	{
-		static int Main(string[] args)
+        static int Main(string[] args)
 		{
 			string projectFolder = string.Empty;
 			if (args.Length == 0)
@@ -35,30 +35,42 @@ namespace MN.L10n.BuildTasks
 
 			stw.Start();
 
-			L10nConfig config = new L10nConfig();
-
 			while (!baseDir.EnumerateFiles().Any(x => x.Extension == ".sln" || x.Extension == ".l10nroot"))
 			{
 				baseDir = baseDir.Parent;
 			}
 
 			var solutionDir = baseDir.FullName;
+            var config = new L10nConfig();
 
-			var lockFile = Path.Combine(solutionDir, ".l10nLock");
-			if (CheckForLockFile(lockFile, projectFolder, baseDir) == 0)
+		    var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
+		    if (cfgFile != null)
+		    {
+		        try
+		        {
+		            config = JsonConvert.DeserializeObject<L10nConfig>(File.ReadAllText(cfgFile.FullName));
+		        }
+		        catch (Exception ex)
+		        {
+		            Console.WriteLine("Unable to read L10n config file : " + ex.ToString());
+		            return -1;
+		        }
+		    }
+
+		    if (config != null && config.PreventBuildTask)
+		    {
+		        Console.WriteLine("info l10n: L10n build task cancelled by config file");
+		        return 0;
+		    }
+
+            var lockFile = Path.Combine(solutionDir, ".l10nLock");
+			if (CheckForLockFile(lockFile, projectFolder, baseDir, config) == 0)
 			{
 				return 0;
 			}
 
-			try
+            try
 			{
-
-				var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
-				if (cfgFile != null)
-				{
-					config = JsonConvert.DeserializeObject<L10nConfig>(File.ReadAllText(cfgFile.FullName));
-				}
-
 				if (config != null && config.PreventBuildTask)
 				{
 					Console.WriteLine("info l10n: L10n build task cancelled by config file");
@@ -172,7 +184,7 @@ namespace MN.L10n.BuildTasks
 				stw.Stop();
 				Console.WriteLine("info l10n: Spent " + stw.Elapsed + " running L10n, found " + PhraseInstance.Phrases.Count + " phrases");
 
-				MovePhraseFiles(projectFolder, baseDir);
+				MovePhraseFiles(projectFolder, baseDir, config);
 
 				File.Delete(lockFile);
 				return 0;
@@ -189,7 +201,7 @@ namespace MN.L10n.BuildTasks
 			}
 		}
 
-		private static void MovePhraseFiles(string projectFolder, DirectoryInfo baseDir)
+		private static void MovePhraseFiles(string projectFolder, DirectoryInfo baseDir, L10nConfig config)
 		{
 			var dir = new DirectoryInfo(baseDir.FullName);
 
@@ -206,24 +218,31 @@ namespace MN.L10n.BuildTasks
 				}
 			}
 
-			var destDirName = Path.Combine(projectFolder, "L10n");
+		    var copyTo = config.CopyFilesTo?.Count > 0 ? config.CopyFilesTo.Select(to => Path.Combine(baseDir.FullName, to, "L10n")) 
+                : new List<string>
+		    {
+		        Path.Combine(projectFolder, "L10n")
+		    };
 
-			if (!Directory.Exists(destDirName))
-			{
-				Directory.CreateDirectory(destDirName);
-			}
+		    foreach (var destDirName in copyTo)
+		    {
+		        if (!Directory.Exists(destDirName))
+		        {
+		            Directory.CreateDirectory(destDirName);
+		        }
 
-			Console.WriteLine($@"Copying phrase-files from {baseDir.FullName} to {destDirName}");
+		        Console.WriteLine($@"Copying phrase-files from {baseDir.FullName} to {destDirName}");
 
-			foreach (var file in toCopy)
-			{
-				file.CopyTo(Path.Combine(destDirName, file.Name), true);
-			}
+		        foreach (var file in toCopy)
+		        {
+		            file.CopyTo(Path.Combine(destDirName, file.Name), true);
+		        }
 
-			Console.WriteLine($@"Files copied to {destDirName}");
+		        Console.WriteLine($@"Files copied to {destDirName}");
+		    }
 		}
 
-		private static int CheckForLockFile(string lockFile, string projectFolder, DirectoryInfo baseDir)
+		private static int CheckForLockFile(string lockFile, string projectFolder, DirectoryInfo baseDir, L10nConfig config)
 		{
 			var lockFileExists = File.Exists(lockFile);
 			if (lockFileExists)
@@ -251,7 +270,7 @@ namespace MN.L10n.BuildTasks
 					Thread.Sleep(500);
 				}
 
-				MovePhraseFiles(projectFolder, baseDir);
+				MovePhraseFiles(projectFolder, baseDir, config);
 				return 0;
 			}
 
@@ -261,7 +280,7 @@ namespace MN.L10n.BuildTasks
 			}
 			catch
 			{
-				return CheckForLockFile(lockFile, projectFolder, baseDir);
+				return CheckForLockFile(lockFile, projectFolder, baseDir, config);
 			}
 
 			return -1;
