@@ -90,7 +90,10 @@ namespace MN.L10n
 								var peek = source[_pos + 1];
 								if (source[_pos] == _stringContainer && peek != _stringContainer && tail != _stringContainer)
 								{
-									Invocations.Add(new PhraseInvocation { Phrase = _tokenContent.ToString(), Row = row });
+									Invocations.Add(new PhraseInvocation {
+										Phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "").Replace("\"\"", "\\\""),
+										Row = row
+									});
 									inToken = false;
 								}
 							}
