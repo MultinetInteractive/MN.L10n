@@ -16,65 +16,50 @@ namespace MN.L10n
 		{
 			List<PhraseInvocation> Invocations = new List<PhraseInvocation>();
 			bool inToken = false;
+			bool isVerbatim = false;
 			StringBuilder _tokenContent = new StringBuilder();
 			char _stringContainer = '"';
 			int row = 1;
 
 			for (int _pos = 0; _pos < source.Length; _pos++)
 			{
-			    char peek = source[_pos];
-
-			    bool TryPeek(int forward)
-			    {
-			        if (source.Length <= _pos + forward)
-			        {
-			            return false;
-			        }
-
-			        peek = source[_pos + forward];
-			        return true;
-			    }
-
 				switch (source[_pos])
 				{
 					case '_': // Possible _s/_m, peek to see
 						if (!inToken)
 						{
 							_tokenContent.Clear();
-						    if (!TryPeek(1))
-						    {
-						        return Invocations;
-						    }
 
+							var peek = source[_pos + 1];
 							switch (peek)
 							{
 								case 's':
 								case 'm':
 									// Even more likely to be _s/_m, proceed
-								    var modifier = 2;
-								    if (!TryPeek(modifier))
-								    {
-								        return Invocations;
-								    }
+									peek = source[_pos + 2];
+									if (peek == '(')
+									{
+										peek = source[_pos + 3];
 
-								    if (peek == '(')
-								    {
-								        do
-								        {
-								            if (!TryPeek(++modifier))
-								            {
-								                return Invocations;
-								            }
-								        } while (Char.IsWhiteSpace(peek));
+										if (peek == '@')
+										{
+											_pos += 1;
+											peek = source[_pos + 3];
+											isVerbatim = true;
+										}
+										else
+										{
+											isVerbatim = false;
+										}
 
-                                        if (peek == '"' || peek == '\'')
-								            {
-								                _stringContainer = peek;
-								                inToken = true;
-								                _pos += modifier + 1;
-								            }
-								        }
-								    break;
+										if (peek == '"' || peek == '\'')
+										{
+											_stringContainer = peek;
+											inToken = true;
+											_pos += 4;
+										}
+									}
+									break;
 								default:
 									continue;
 							}
@@ -90,12 +75,26 @@ namespace MN.L10n
 							row++;
 						if (inToken)
 						{
-							var tail = source[_pos - 1];
-							if (source[_pos] == _stringContainer && tail != '\\' && tail != '(')
+							if (!isVerbatim)
 							{
-								Invocations.Add(new PhraseInvocation { Phrase = _tokenContent.ToString(), Row = row });
-								inToken = false;
+								var tail = source[_pos - 1];
+								if (source[_pos] == _stringContainer && tail != '\\' && tail != '(')
+								{
+									Invocations.Add(new PhraseInvocation { Phrase = _tokenContent.ToString(), Row = row });
+									inToken = false;
+								}
 							}
+							else
+							{
+								var tail = source[_pos - 1];
+								var peek = source[_pos + 1];
+								if (source[_pos] == _stringContainer && peek != _stringContainer && tail != _stringContainer)
+								{
+									Invocations.Add(new PhraseInvocation { Phrase = _tokenContent.ToString(), Row = row });
+									inToken = false;
+								}
+							}
+
 							_tokenContent.Append(source[_pos]);
 						}
 						break;
