@@ -37,6 +37,14 @@ namespace MN.L10n
 								case 'm':
 									// Even more likely to be _s/_m, proceed
 									peek = source[_pos + 2];
+
+									// Special treatment for RawHtml-method
+									if (peek == 'r')
+									{
+										_pos += 1;
+										peek = source[_pos + 2];
+									}
+
 									if (peek == '(')
 									{
 										peek = source[_pos + 3];
