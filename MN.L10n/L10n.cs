@@ -92,9 +92,11 @@ namespace MN.L10n
 
         internal string __getPhrase(string phrase, object args = null)
         {
-            if (!Phrases.ContainsKey(phrase))
+			var cleanedPhrase = phrase.Replace("\r", "");
+
+			if (!Phrases.ContainsKey(cleanedPhrase))
             {
-                Phrases.TryAdd(phrase, new L10nPhrase());
+                Phrases.TryAdd(cleanedPhrase, new L10nPhrase());
             }
 
             var selectedLang = LanguageProvider.GetLanguage();
@@ -102,11 +104,11 @@ namespace MN.L10n
 
             if (LanguagePhrases.TryGetValue(selectedLang, out var lang))
             {
-                if (lang.Phrases.TryGetValue(phrase, out var phr))
+                if (lang.Phrases.TryGetValue(cleanedPhrase, out var phr))
                 {
                     if (phr.r.ContainsKey("0"))
                     {
-                        phrase = phr.r["0"];
+						cleanedPhrase = phr.r["0"];
                     }
 
                     if (isPluralized && lang.AstPluralRule != null)
@@ -116,7 +118,7 @@ namespace MN.L10n
                         var phraseIndex = lang.AstPluralRule.Evaluate(GetCount(args)).ToString();
                         if (phr.r.ContainsKey(phraseIndex))
                         {
-                            phrase = phr.r[phraseIndex];
+							cleanedPhrase = phr.r[phraseIndex];
                         }
                     }
                 }
@@ -126,7 +128,7 @@ namespace MN.L10n
                     {
                         LanguagePhrases[selectedLang].Phrases.TryAdd(phrase, new L10nPhraseObject
                         {
-                            r = new Dictionary<string, string> { { "0", phrase } }
+                            r = new Dictionary<string, string> { { "0", cleanedPhrase } }
                         });
                     }
                     else
@@ -135,14 +137,14 @@ namespace MN.L10n
                         var lpo = new L10nPhraseObject();
                         foreach (var ru in rules)
                         {
-                            lpo.r.Add(ru, phrase);
+                            lpo.r.Add(ru, cleanedPhrase);
                         }
-                        LanguagePhrases[selectedLang].Phrases.TryAdd(phrase, lpo);
+                        LanguagePhrases[selectedLang].Phrases.TryAdd(cleanedPhrase, lpo);
                     }
                 }
             }
 
-            return FormatNamed(phrase, args);
+            return FormatNamed(cleanedPhrase, args);
         }
 
         public static bool IsPluralized(object args = null)
