@@ -218,7 +218,7 @@ namespace MN.L10n.BuildTasks
 				}
 			}
 
-		    var copyTo = config.CopyFilesTo?.Count > 0 ? config.CopyFilesTo.Select(to => Path.Combine(baseDir.FullName, to, "L10n")) 
+		    var copyTo = config.CopyFilesTo?.Count > 0 ? config.CopyFilesTo.Select(to => Path.Combine(baseDir.FullName, to, "L10n"))
                 : new List<string>
 		    {
 		        Path.Combine(projectFolder, "L10n")
@@ -247,7 +247,7 @@ namespace MN.L10n.BuildTasks
 			var lockFileExists = File.Exists(lockFile);
 			if (lockFileExists)
 			{
-				
+
 				Console.WriteLine("info l10n: Lock file exists, waiting until it's gone");
 				while (lockFileExists)
 				{
@@ -266,8 +266,8 @@ namespace MN.L10n.BuildTasks
 						File.Delete(lockFile);
 					}
 
-					lockFileExists = File.Exists(lockFile);
 					Thread.Sleep(500);
+					lockFileExists = File.Exists(lockFile);
 				}
 
 				MovePhraseFiles(projectFolder, baseDir, config);
