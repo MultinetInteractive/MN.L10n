@@ -23,31 +23,59 @@ namespace MN.L10n
 
 			for (int _pos = 0; _pos < source.Length; _pos++)
 			{
+				char peek = source[_pos];
+
+				bool TryPeek(int forward)
+				{
+					if (source.Length <= _pos + forward)
+					{
+						return false;
+					}
+
+					peek = source[_pos + forward];
+					return true;
+				}
+
 				switch (source[_pos])
 				{
 					case '_': // Possible _s/_m, peek to see
 						if (!inToken)
 						{
 							_tokenContent.Clear();
+							if (!TryPeek(1))
+							{
+								return Invocations;
+							}
 
-							var peek = source[_pos + 1];
 							switch (peek)
 							{
 								case 's':
 								case 'm':
 									// Even more likely to be _s/_m, proceed
-									peek = source[_pos + 2];
+									var modifier = 2;
+									if (!TryPeek(modifier))
+									{
+										return Invocations;
+									}
 
 									// Special treatment for RawHtml-method
 									if (peek == 'r')
 									{
-										_pos += 1;
-										peek = source[_pos + 2];
+										if (!TryPeek(++modifier))
+										{
+											return Invocations;
+										}
 									}
 
 									if (peek == '(')
 									{
-										peek = source[_pos + 3];
+										do
+										{
+											if (!TryPeek(++modifier))
+											{
+												return Invocations;
+											}
+										} while (char.IsWhiteSpace(peek));
 
 										if (peek == '@')
 										{
@@ -64,9 +92,10 @@ namespace MN.L10n
 										{
 											_stringContainer = peek;
 											inToken = true;
-											_pos += 4;
+											_pos += modifier + 1;
 										}
 									}
+
 									break;
 								default:
 									continue;
@@ -94,9 +123,9 @@ namespace MN.L10n
 							}
 							else
 							{
-								var tail = source[_pos - 1];
-								var peek = source[_pos + 1];
-								if (source[_pos] == _stringContainer && peek != _stringContainer && tail != _stringContainer)
+								var _tail = source[_pos - 1];
+								var _peek = source[_pos + 1];
+								if (source[_pos] == _stringContainer && _peek != _stringContainer && _tail != _stringContainer)
 								{
 									Invocations.Add(new PhraseInvocation {
 										Phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "").Replace("\"\"", "\\\""),
