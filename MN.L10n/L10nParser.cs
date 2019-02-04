@@ -79,8 +79,10 @@ namespace MN.L10n
 
 										if (peek == '@')
 										{
-											_pos += 1;
-											peek = source[_pos + 3];
+											if (!TryPeek(++modifier))
+											{
+												return Invocations;
+											}
 											isVerbatim = true;
 										}
 										else

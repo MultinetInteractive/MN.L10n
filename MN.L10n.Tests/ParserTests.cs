@@ -62,5 +62,24 @@ namespace MN.L10n.Tests
             var result = parser.Parse(src);
             Assert.AreEqual(0, result.Count);
         }
+
+		[TestMethod]
+		public void TestWorksWithMultiLineText()
+		{
+			var src = @"<text>
+                        @_sr(@""Snart är det dags att välja mellan Basic och Premium!<br />
+Er testperiod av Premium löper ut $expirationDate$.<br />
+Kontakta $ownerName$ och be om uppgradering till Premium redan idag.<br />
+Ni kan också kontakta oss på <a href=""""https://support.semesterlistan.se"""" target=""""_blank"""">supporten</a>. Så hjälper vi till!"", new
+                        {
+                            expirationDate = Legacy.GetTrialExpiration(user.CompanyId).ToShortDateString(),
+                            ownerName = Legacy.GetOwnerString(user.CompanyId)
+                        })
+                    </text>";
+
+			var parser = new L10nParser();
+			var result = parser.Parse(src);
+			Assert.AreEqual(1, result.Count);
+		}
     }
 }
