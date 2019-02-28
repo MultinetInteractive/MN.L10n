@@ -90,7 +90,32 @@ namespace MN.L10n
 			return (T)Instance.LanguageProvider;
 		}
 
-        internal string __getPhrase(string phrase, object args = null)
+		public static IDisposable TemporaryLanguageProvider(IL10nLanguageProvider newProvider)
+		{
+			IDisposable obj = new TransactionLanguageProvider(Instance, newProvider, Instance.LanguageProvider);
+			return obj;
+		}
+
+		internal class TransactionLanguageProvider : IDisposable
+		{
+			public TransactionLanguageProvider(L10n l10n, IL10nLanguageProvider newProvider, IL10nLanguageProvider prevProvider)
+			{
+				Provider = l10n;
+				NewLang = newProvider;
+				PrevLang = prevProvider;
+
+				Provider.LanguageProvider = newProvider;
+			}
+			private IL10nLanguageProvider NewLang;
+			private IL10nLanguageProvider PrevLang;
+			private L10n Provider;
+			public void Dispose()
+			{
+				Provider.LanguageProvider = PrevLang;
+			}
+		}
+
+		internal string __getPhrase(string phrase, object args = null)
         {
 			var cleanedPhrase = phrase.Replace("\r", "");
 
