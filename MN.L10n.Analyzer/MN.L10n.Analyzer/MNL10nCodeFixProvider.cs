@@ -25,7 +25,8 @@ namespace MN.L10n.Analyzer
                 MNL10nAnalyzer.NoParamRule.Id, 
                 MNL10nAnalyzer.MemberAccessorRule.Id, 
                 MNL10nAnalyzer.NoEmptyStringsEndRule.Id, 
-                MNL10nAnalyzer.NoWhitespaceAtStartOrEndRule.Id
+                MNL10nAnalyzer.NoWhitespaceAtStartOrEndRule.Id,
+                MNL10nAnalyzer.NoStringInterpolationRule.Id
                 ); }
 		}
 
