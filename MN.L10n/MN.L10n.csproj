@@ -12,30 +12,13 @@ Translation package</Description>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.138</Version>
+    <Version>1.1.0</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
-	<PackageReleaseNotes>## 1.0.129
-- Switched from Jil to Newtonsoft.Json
-
-## 1.0.124 
-- Change the phrase dictionaries into ConcurrentDictionary
-
-## 1.0.118
-- Ugly exception handling by catching all exceptions and writing them to the log
-
-## 1.0.107
-- I kinda missed a semicolon in the targets-file..
-
-## 1.0.106
-- Updated README
-
-## 1.0.105
-- Added separate file to store Languages in
-- Files to store in Solution = languages.json and all language-{0}.json-files</PackageReleaseNotes>
+	<PackageReleaseNotes>Now includes analyzer</PackageReleaseNotes>
 	<ApplicationIcon />
 	<OutputType>Library</OutputType>
 	<StartupObject></StartupObject>
-	<AssemblyVersion>1.0.137.0</AssemblyVersion>
+	<AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
