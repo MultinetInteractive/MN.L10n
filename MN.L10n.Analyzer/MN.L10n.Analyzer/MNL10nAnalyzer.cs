@@ -18,8 +18,20 @@ namespace MN.L10n.Analyzer
         public static readonly DiagnosticDescriptor NoWhitespaceAtStartOrEndRule = new DiagnosticDescriptor("MN0003", "String starts/ends with whitespace", "The string cannot start or end with whitespaces.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoEmptyStringsEndRule = new DiagnosticDescriptor("MN0004", "Input is an empty string", "The string cannot start or end with whitespace", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoStringInterpolationRule = new DiagnosticDescriptor("MN0005", "Interpolated string used", "L10n can only evaluate string literals when finding used phrases. Never use string interpolation with L10n. It is not supported yet.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor NoStringConcatRule = new DiagnosticDescriptor("MN0006", "String concatenation used", "L10n can only evaluate a single string literal when finding used phrases. Never use string concatenation with L10n. It is not supported yet.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(NoParamRule, MemberAccessorRule, NoWhitespaceAtStartOrEndRule, NoEmptyStringsEndRule, NoStringInterpolationRule); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics {
+            get {
+                return ImmutableArray.Create(
+                    NoParamRule, 
+                    MemberAccessorRule, 
+                    NoWhitespaceAtStartOrEndRule, 
+                    NoEmptyStringsEndRule, 
+                    NoStringInterpolationRule,
+                    NoStringConcatRule
+                    );
+            }
+        }
 
 		public override void Initialize(AnalysisContext context)
 		{
@@ -40,7 +52,7 @@ namespace MN.L10n.Analyzer
             
             var expr = ies.Expression as IdentifierNameSyntax;
             if (expr == null || !validIdentifiers.Contains(expr.Identifier.Text)) return;
-                
+
             var arguments = ies.ArgumentList.Arguments;
             if(arguments.Count == 0)
                 obj.ReportDiagnostic(Diagnostic.Create(NoParamRule, obj.Node.GetLocation()));
@@ -49,6 +61,9 @@ namespace MN.L10n.Analyzer
                 var supposedString = arguments.First();
                 switch(supposedString.Expression)
                 {
+                    case BinaryExpressionSyntax binaryExpression:
+                        obj.ReportDiagnostic(Diagnostic.Create(NoStringConcatRule, obj.Node.GetLocation()));
+                        break;
                     case MemberAccessExpressionSyntax memberAccess:
                     case InvocationExpressionSyntax invocationExpression:
                         obj.ReportDiagnostic(Diagnostic.Create(MemberAccessorRule, obj.Node.GetLocation()));
