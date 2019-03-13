@@ -195,11 +195,21 @@ namespace MN.L10n.BuildTasks
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+
                 using (EventLog el = new EventLog("Application"))
                 {
                     el.Source = "MN.L10n.BuildTasks";
                     el.WriteEntry(ex.ToString(), EventLogEntryType.Error);
+
+                    if (ex is JsonSerializationException)
+                    {
+                        var jex = (JsonSerializationException)ex;
+                        var fdp = new FileDataProvider(solutionDir);
+                        fdp.LoadLanguages(new L10n());
+                    }
                 }
+
+                
 
                 if (File.Exists(lockFile))
                 {

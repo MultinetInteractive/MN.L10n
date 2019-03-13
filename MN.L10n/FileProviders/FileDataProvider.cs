@@ -24,68 +24,78 @@ namespace MN.L10n.FileProviders
 			LanguageFile = l10nPhraseFileNameFormat;
 		}
 		public L10n LoadL10n()
-		{
-			var tp = new NGettext.Plural.Ast.AstTokenParser();
+        {
+            L10n l10n = new L10n();
 
-			var langPath = Path.Combine(FilePath, LanguagesFile);
-			List<string> languages = new List<string> { "default" };
+            LoadLanguages(l10n);
+            LoadTranslations(l10n);
 
-			if (File.Exists(langPath))
-			{
-				var contents = File.ReadAllText(langPath);
-				languages = JsonConvert.DeserializeObject<List<string>>(contents);
-			}
+            return l10n;
+        }
 
-			var phrasePath = Path.Combine(FilePath, PhraseFile);
-			L10n l10n;
-			if (File.Exists(phrasePath))
-			{
-				var l10nFileContents = File.ReadAllText(phrasePath);
-				l10n = JsonConvert.DeserializeObject<L10n>(l10nFileContents, SerializerOptions);
-				l10n.Languages = languages;
-			}
-			else
-			{
-				l10n = new L10n
-				{
-					Languages = languages
-				};
-				File.WriteAllText(phrasePath, JsonConvert.SerializeObject(l10n, SerializerOptions));
-			}
+        public void LoadTranslations(L10n l10n)
+        {
+            var tp = new NGettext.Plural.Ast.AstTokenParser();
+            foreach (var lang in l10n.Languages)
+            {
+                var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang));
+                if (File.Exists(langFileName))
+                {
+                    var phraseFileContents = File.ReadAllText(langFileName);
+                    var langPhrases = JsonConvert.DeserializeObject<L10nLanguage>(phraseFileContents, SerializerOptions);
+                    l10n.LanguagePhrases.TryAdd(lang, langPhrases);
+                }
+                else
+                {
+                    var nLang = new L10nLanguage
+                    {
+                        LanguageName = lang,
+                        Locale = lang,
+                        Phrases = new ConcurrentDictionary<string, L10nPhraseObject>(),
+                        PluralizationRules = new List<string> { "0", "1" },
+                        PluralRule = "n != 1"
+                    };
+                    File.WriteAllText(langFileName, JsonConvert.SerializeObject(nLang, SerializerOptions));
+                    l10n.LanguagePhrases.TryAdd(lang, nLang);
+                }
 
-			foreach (var lang in l10n.Languages)
-			{
-				var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang));
-				if (File.Exists(langFileName))
-				{
-					var phraseFileContents = File.ReadAllText(langFileName);
-					var langPhrases = JsonConvert.DeserializeObject<L10nLanguage>(phraseFileContents, SerializerOptions);
-					l10n.LanguagePhrases.TryAdd(lang, langPhrases);
-				}
-				else
-				{
-					var nLang = new L10nLanguage
-					{
-						LanguageName = lang,
-						Locale = lang,
-						Phrases = new ConcurrentDictionary<string, L10nPhraseObject>(),
-						PluralizationRules = new List<string> { "0", "1" },
-						PluralRule = "n != 1"
-					};
-					File.WriteAllText(langFileName, JsonConvert.SerializeObject(nLang, SerializerOptions));
-					l10n.LanguagePhrases.TryAdd(lang, nLang);
-				}
+                if (l10n.LanguagePhrases[lang].AstPluralRule == null && !string.IsNullOrWhiteSpace(l10n.LanguagePhrases[lang].PluralRule))
+                {
+                    l10n.LanguagePhrases[lang].AstPluralRule = new NGettext.Plural.AstPluralRule(l10n.LanguagePhrases[lang].PluralizationRules.Count, tp.Parse(l10n.LanguagePhrases[lang].PluralRule));
+                }
+            }
+        }
 
-				if (l10n.LanguagePhrases[lang].AstPluralRule == null && !string.IsNullOrWhiteSpace(l10n.LanguagePhrases[lang].PluralRule))
-				{
-					l10n.LanguagePhrases[lang].AstPluralRule = new NGettext.Plural.AstPluralRule(l10n.LanguagePhrases[lang].PluralizationRules.Count, tp.Parse(l10n.LanguagePhrases[lang].PluralRule));
-				}
-			}
+        public void LoadLanguages(L10n l10n)
+        {
+            var langPath = Path.Combine(FilePath, LanguagesFile);
+            List<string> languages = new List<string> { "default" };
 
-			return l10n;
-		}
+            if (File.Exists(langPath))
+            {
+                var contents = File.ReadAllText(langPath);
+                languages = JsonConvert.DeserializeObject<List<string>>(contents);
+            }
 
-		public bool SaveL10n(L10n l10n)
+            var phrasePath = Path.Combine(FilePath, PhraseFile);
+
+            if (File.Exists(phrasePath))
+            {
+                var l10nFileContents = File.ReadAllText(phrasePath);
+                l10n = JsonConvert.DeserializeObject<L10n>(l10nFileContents, SerializerOptions);
+                l10n.Languages = languages;
+            }
+            else
+            {
+                l10n = new L10n
+                {
+                    Languages = languages
+                };
+                File.WriteAllText(phrasePath, JsonConvert.SerializeObject(l10n, SerializerOptions));
+            }
+        }
+
+        public bool SaveL10n(L10n l10n)
 		{
 			var l10nFileContents = JsonConvert.SerializeObject(l10n, SerializerOptions);
 			File.WriteAllText(Path.Combine(FilePath, PhraseFile), l10nFileContents);
