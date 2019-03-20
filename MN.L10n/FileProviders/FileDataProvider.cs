@@ -27,13 +27,13 @@ namespace MN.L10n.FileProviders
         {
             L10n l10n = new L10n();
 
-            LoadLanguages(l10n);
-            LoadTranslations(l10n);
+            LoadLanguages(ref l10n);
+            LoadTranslations(ref l10n);
 
             return l10n;
         }
 
-        public void LoadTranslations(L10n l10n)
+        public void LoadTranslations(ref L10n l10n)
         {
             var tp = new NGettext.Plural.Ast.AstTokenParser();
             foreach (var lang in l10n.Languages)
@@ -66,7 +66,7 @@ namespace MN.L10n.FileProviders
             }
         }
 
-        public void LoadLanguages(L10n l10n)
+        public void LoadLanguages(ref L10n l10n)
         {
             var langPath = Path.Combine(FilePath, LanguagesFile);
             List<string> languages = new List<string> { "default" };

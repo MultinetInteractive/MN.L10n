@@ -39,6 +39,12 @@ namespace MN.L10n
             throw new Exception($"Unknown language : {language}");
         }
 
+        public static L10n GetInstance()
+        {
+            EnsureInitialized();
+            return Instance;
+        }
+
         public static bool SaveDataProvider()
         {
             EnsureInitialized();
@@ -98,6 +104,7 @@ namespace MN.L10n
 
 		internal class TransactionLanguageProvider : IDisposable
 		{
+            bool disposed = false;
 			public TransactionLanguageProvider(L10n l10n, IL10nLanguageProvider newProvider, IL10nLanguageProvider prevProvider)
 			{
 				Provider = l10n;
@@ -110,9 +117,28 @@ namespace MN.L10n
 			private IL10nLanguageProvider PrevLang;
 			private L10n Provider;
 			public void Dispose()
-			{
-				Provider.LanguageProvider = PrevLang;
+			{	
+                Dispose(true);
+                GC.SuppressFinalize(this);
 			}
+
+            ~TransactionLanguageProvider()
+            {
+                Dispose(false);
+            }
+
+            protected void Dispose(bool disposing)
+            {
+                if (!disposed)
+                {
+                    if (disposing)
+                    {
+                        
+                    }
+                    Provider.LanguageProvider = PrevLang;
+                    disposed = true;
+                }
+            }
 		}
 
 		internal string __getPhrase(string phrase, object args = null)

@@ -205,7 +205,8 @@ namespace MN.L10n.BuildTasks
                     {
                         var jex = (JsonSerializationException)ex;
                         var fdp = new FileDataProvider(solutionDir);
-                        fdp.LoadLanguages(new L10n());
+                        var l = new L10n();
+                        fdp.LoadLanguages(ref l);
                     }
                 }
 
