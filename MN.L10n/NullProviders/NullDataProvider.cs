@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MN.L10n.NullProviders
 {
@@ -9,12 +10,17 @@ namespace MN.L10n.NullProviders
 		{
 			return new L10n
 			{
-				Languages = new List<string> { "sv-SE" },
+				Languages = new List<L10nLanguageItem> { new L10nLanguageItem { LanguageId = "sv-SE" } },
 				Phrases = new ConcurrentDictionary<string, L10nPhrase>()
 			};
 		}
 
-		public bool SaveL10n(L10n l10n)
+        public Task LoadTranslationFromSources(L10n l10n)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool SaveL10n(L10n l10n)
 		{
 			return true;
 		}

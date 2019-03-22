@@ -8,12 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MN.L10n.BuildTasks
 {
     class Program
     {
-        static int Main(string[] args)
+        async static Task<int> Main(string[] args)
         {
             string projectFolder = string.Empty;
             if (args.Length == 0)
@@ -82,6 +83,13 @@ namespace MN.L10n.BuildTasks
                     new NullLanguageProvider(),
                     new FileDataProvider(solutionDir)
                 );
+
+                if(config.DownloadTranslationFromSourcesOnBuild)
+                {
+                    Console.WriteLine("info l10n: Loading translations from sources defined in languages.json");
+                    var fdp = L10n.GetDataProvider<FileDataProvider>();
+                    await fdp.LoadTranslationFromSources(PhraseInstance);
+                }
 
                 var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx", ".php" };
 
@@ -205,12 +213,9 @@ namespace MN.L10n.BuildTasks
                     {
                         var jex = (JsonSerializationException)ex;
                         var fdp = new FileDataProvider(solutionDir);
-                        var l = new L10n();
-                        fdp.LoadLanguages(ref l);
+                        var l = fdp.LoadLanguages();
                     }
                 }
-
-                
 
                 if (File.Exists(lockFile))
                 {

@@ -6,11 +6,11 @@
     <OutputType>Exe</OutputType>
     <StartupObject>MN.L10n.BuildTasks.Program</StartupObject>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.39</Version>
+    <Version>1.0.41</Version>
     <Authors>Chris Gårdenberg</Authors>
     <Company>MultiNet Interactive AB</Company>
-    <AssemblyVersion>1.0.39</AssemblyVersion>
-    <FileVersion>1.0.39.0</FileVersion>
+    <AssemblyVersion>1.0.41</AssemblyVersion>
+    <FileVersion>1.0.41.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">

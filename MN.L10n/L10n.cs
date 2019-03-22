@@ -23,7 +23,7 @@ namespace MN.L10n
         }
 
         [JsonIgnore]
-        public List<string> Languages { get; set; } = new List<string>();
+        public List<L10nLanguageItem> Languages { get; set; } = new List<L10nLanguageItem>();
         public ConcurrentDictionary<string, L10nPhrase> Phrases { get; set; } = new ConcurrentDictionary<string, L10nPhrase>();
 
 		[JsonIgnore]
@@ -88,6 +88,12 @@ namespace MN.L10n
         {
             EnsureInitialized();
             return Instance.LanguageProvider.GetLanguage();
+        }
+
+        public static T GetDataProvider<T>() where T: IL10nDataProvider
+        {
+            EnsureInitialized();
+            return (T)Instance.DataProvider;
         }
 
 		public static T GetLanguageProvider<T>() where T : IL10nLanguageProvider

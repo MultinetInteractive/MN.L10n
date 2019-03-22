@@ -21,5 +21,7 @@ namespace MN.L10n.BuildTasks
 
 		public bool PreventBuildTask { get; set; }
 		public bool ShowDetailedLog { get; set; }
+
+        public bool DownloadTranslationFromSourcesOnBuild { get; set; }
 	}
 }
