@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MN.L10n.FileProviders
 {
@@ -124,8 +125,10 @@ namespace MN.L10n.FileProviders
             return true;
         }
 
-        public async Task LoadTranslationFromSources(L10n l10n)
+        public async Task LoadTranslationFromSources(L10n l10n, CancellationToken token)
         {
+            bool errorLoadingSources = false;
+            Exception _ex = null;
             // If we don't have anything to fetch from any sources, don't bother
             if (!l10n.Languages.Any(l => l.Sources.Any())) return;
 
@@ -143,7 +146,19 @@ namespace MN.L10n.FileProviders
                     {
                         if (source.StartsWith("http") && Uri.IsWellFormedUriString(source, UriKind.Absolute))
                         {
-                            var translationSource = await cli.GetStringAsync(source);
+                            string translationSource = string.Empty;
+                            try { await cli.GetStringAsync(source); } catch(Exception ex) { errorLoadingSources = true; _ex = ex; }
+
+                            if(errorLoadingSources)
+                            {
+                                Console.WriteLine("error l10n: Could not load translation from {0}", source);
+                                if (_ex != null)
+                                {
+                                    Console.WriteLine(_ex.ToString());
+                                }
+
+                            }
+
                             if (!string.IsNullOrWhiteSpace(translationSource))
                             {
                                 try
@@ -164,10 +179,20 @@ namespace MN.L10n.FileProviders
                                 }
                             }
                         }
+
+                        if (token.IsCancellationRequested)
+                        {
+                            throw new TaskCanceledException();
+                        }
                     }
 
                     var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang.LanguageId));
                     File.WriteAllText(langFileName, JsonConvert.SerializeObject(l10nLang, SerializerOptions));
+
+                    if (token.IsCancellationRequested)
+                    {
+                        throw new TaskCanceledException();
+                    }
                 }
                 cli.Dispose();
             }

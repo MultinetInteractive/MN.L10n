@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MN.L10n.NullProviders
@@ -15,7 +16,7 @@ namespace MN.L10n.NullProviders
 			};
 		}
 
-        public Task LoadTranslationFromSources(L10n l10n)
+        public Task LoadTranslationFromSources(L10n l10n, CancellationToken token)
         {
             throw new System.NotImplementedException();
         }

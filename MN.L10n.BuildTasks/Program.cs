@@ -14,6 +14,7 @@ namespace MN.L10n.BuildTasks
 {
     class Program
     {
+        static CancellationTokenSource cts = new CancellationTokenSource();
         async static Task<int> Main(string[] args)
         {
             string projectFolder = string.Empty;
@@ -88,7 +89,18 @@ namespace MN.L10n.BuildTasks
                 {
                     Console.WriteLine("info l10n: Loading translations from sources defined in languages.json");
                     var fdp = L10n.GetDataProvider<FileDataProvider>();
-                    await fdp.LoadTranslationFromSources(PhraseInstance);
+                    if (fdp != null)
+                    {
+                        try
+                        {
+                            await fdp.LoadTranslationFromSources(PhraseInstance, cts.Token);
+                        }
+                        catch (TaskCanceledException tce)
+                        {
+                            Console.WriteLine("info l10n: Fetching translations from sources aborted");
+                            Console.WriteLine("info l10n: {0}", tce.ToString());
+                        }
+                    }
                 }
 
                 var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx", ".php" };

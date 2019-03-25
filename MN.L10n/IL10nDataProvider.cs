@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace MN.L10n
 {
@@ -7,6 +8,6 @@ namespace MN.L10n
 		L10n LoadL10n();
 		bool SaveL10n(L10n l10n);
 
-        Task LoadTranslationFromSources(L10n l10n);
+        Task LoadTranslationFromSources(L10n l10n, CancellationToken token);
     }
 }
