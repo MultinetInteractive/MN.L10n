@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
 using Newtonsoft.Json;
 
@@ -43,6 +44,16 @@ namespace MN.L10n
         {
             EnsureInitialized();
             return Instance;
+        }
+
+        public static async Task<bool> ReloadFromDataProviderSources<T>() where T : IL10nDataProvider
+        {
+            var prov = GetDataProvider<T>();
+            if (prov is NullProviders.NullDataProvider)
+                return false;
+
+            await prov.LoadTranslationFromSources(GetInstance());
+            return true;
         }
 
         public static bool SaveDataProvider()
