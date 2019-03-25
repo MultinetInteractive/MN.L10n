@@ -165,9 +165,14 @@ namespace MN.L10n.FileProviders
                             }
                         }
                     }
+
+                    var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang.LanguageId));
+                    File.WriteAllText(langFileName, JsonConvert.SerializeObject(l10nLang, SerializerOptions));
                 }
                 cli.Dispose();
             }
+
+            SaveL10n(l10n);
         }
     }
 }
