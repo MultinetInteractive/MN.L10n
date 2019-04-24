@@ -12,6 +12,7 @@ namespace MN.L10n
     {
         private IL10nDataProvider DataProvider { get; set; }
         private IL10nLanguageProvider LanguageProvider { get; set; }
+        public static event EventHandler TranslationsReloaded;
 
         internal static L10n Instance;
 
@@ -53,7 +54,9 @@ namespace MN.L10n
             if (prov is NullProviders.NullDataProvider)
                 return false;
 
-            await prov.LoadTranslationFromSources(GetInstance(), token);
+            var instance = GetInstance();
+            await prov.LoadTranslationFromSources(instance, token);
+            TranslationsReloaded?.Invoke(instance, EventArgs.Empty);
             return true;
         }
 
