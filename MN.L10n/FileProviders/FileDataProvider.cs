@@ -147,7 +147,7 @@ namespace MN.L10n.FileProviders
                         if (source.StartsWith("http") && Uri.IsWellFormedUriString(source, UriKind.Absolute))
                         {
                             string translationSource = string.Empty;
-                            try { await cli.GetStringAsync(source); } catch(Exception ex) { errorLoadingSources = true; _ex = ex; }
+                            try { translationSource = await cli.GetStringAsync(source); } catch(Exception ex) { errorLoadingSources = true; _ex = ex; }
 
                             if(errorLoadingSources)
                             {
@@ -158,8 +158,7 @@ namespace MN.L10n.FileProviders
                                 }
 
                             }
-
-                            if (!string.IsNullOrWhiteSpace(translationSource))
+                            else if (!string.IsNullOrWhiteSpace(translationSource))
                             {
                                 try
                                 {
