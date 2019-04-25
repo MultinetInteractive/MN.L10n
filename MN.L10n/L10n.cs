@@ -11,18 +11,23 @@ namespace MN.L10n
     public partial class L10n
     {
         private IL10nDataProvider DataProvider { get; set; }
-        private IL10nLanguageProvider LanguageProvider { get; set; }
+        private TransactionLanguageProvider LanguageProvider { get; set; }
         public static event EventHandler TranslationsReloaded;
 
         internal static L10n Instance;
 
-        public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider)
+        public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider, Func<IDictionary<object,object>> getScopeContainer = null)
         {
             var l10n = dataProvider.LoadL10n();
             l10n.DataProvider = dataProvider;
-            l10n.LanguageProvider = langProvider;
+            l10n.LanguageProvider = new TransactionLanguageProvider(langProvider, getScopeContainer);
             Instance = l10n;
             return l10n;
+        }
+
+        public static IDisposable CreateLanguageScope(string lang)
+        {
+            return GetInstance().LanguageProvider.LocalLanguageContext(lang);
         }
         
         [JsonIgnore]
@@ -116,57 +121,6 @@ namespace MN.L10n
             EnsureInitialized();
             return Instance.DataProvider;
         }
-
-		public static T GetLanguageProvider<T>() where T : IL10nLanguageProvider
-		{
-			EnsureInitialized();
-			return (T)Instance.LanguageProvider;
-		}
-
-		public static IDisposable TemporaryLanguageProvider(IL10nLanguageProvider newProvider)
-		{
-			IDisposable obj = new TransactionLanguageProvider(Instance, newProvider, Instance.LanguageProvider);
-			return obj;
-		}
-
-		internal class TransactionLanguageProvider : IDisposable
-		{
-            bool disposed = false;
-			public TransactionLanguageProvider(L10n l10n, IL10nLanguageProvider newProvider, IL10nLanguageProvider prevProvider)
-			{
-				Provider = l10n;
-				NewLang = newProvider;
-				PrevLang = prevProvider;
-
-				Provider.LanguageProvider = newProvider;
-			}
-			private IL10nLanguageProvider NewLang;
-			private IL10nLanguageProvider PrevLang;
-			private L10n Provider;
-			public void Dispose()
-			{	
-                Dispose(true);
-                GC.SuppressFinalize(this);
-			}
-
-            ~TransactionLanguageProvider()
-            {
-                Dispose(false);
-            }
-
-            protected void Dispose(bool disposing)
-            {
-                if (!disposed)
-                {
-                    if (disposing)
-                    {
-                        
-                    }
-                    Provider.LanguageProvider = PrevLang;
-                    disposed = true;
-                }
-            }
-		}
 
 		internal string __getPhrase(string phrase, object args = null)
         {

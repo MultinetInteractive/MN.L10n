@@ -38,22 +38,22 @@ namespace MN.L10n.Analyzer
 
 		public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
-			var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+			//var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
 			// TODO: Replace the following code with your own analysis, generating a CodeAction for each fix to suggest
-			var diagnostic = context.Diagnostics.First();
-			var diagnosticSpan = diagnostic.Location.SourceSpan;
+			//var diagnostic = context.Diagnostics.First();
+			//var diagnosticSpan = diagnostic.Location.SourceSpan;
 
 			// Find the type declaration identified by the diagnostic.
-			var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
+			//var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
 
 			// Register a code action that will invoke the fix.
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: title,
-					createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-					equivalenceKey: title),
-				diagnostic);
+			//context.RegisterCodeFix(
+			//	CodeAction.Create(
+			//		title: title,
+			//		createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
+			//		equivalenceKey: title),
+			//	diagnostic);
 		}
 
 		private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)

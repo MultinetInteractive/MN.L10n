@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n", "MN.L10n\MN.L10n.csproj", "{C224FF20-ACA4-4F7A-81C9-477F3DDE751A}"
 EndProject
@@ -26,8 +26,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.BuildTasks", "MN.L10n.BuildTasks\MN.L10n.BuildTasks.csproj", "{8E6EE15C-5AC8-43A3-9981-AAB51B266E32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.Tests", "MN.L10n.Tests\MN.L10n.Tests.csproj", "{F3D7E5EF-07E9-4E4B-8847-A9E991EE4C8F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.Providers", "MN.L10n.Providers\MN.L10n.Providers.csproj", "{62A02430-2039-4380-9322-543A79BF2073}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.Javascript.Core", "MN.L10n.Javascript.Core\MN.L10n.Javascript.Core.csproj", "{5039D580-827F-462B-BB62-754B1D04C5F3}"
 EndProject
@@ -68,10 +66,6 @@ Global
 		{F3D7E5EF-07E9-4E4B-8847-A9E991EE4C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D7E5EF-07E9-4E4B-8847-A9E991EE4C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D7E5EF-07E9-4E4B-8847-A9E991EE4C8F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62A02430-2039-4380-9322-543A79BF2073}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62A02430-2039-4380-9322-543A79BF2073}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{62A02430-2039-4380-9322-543A79BF2073}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{62A02430-2039-4380-9322-543A79BF2073}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5039D580-827F-462B-BB62-754B1D04C5F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5039D580-827F-462B-BB62-754B1D04C5F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5039D580-827F-462B-BB62-754B1D04C5F3}.Release|Any CPU.ActiveCfg = Release|Any CPU

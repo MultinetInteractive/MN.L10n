@@ -57,6 +57,7 @@
     <Compile Include="ParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaticL10nTests.cs" />
+    <Compile Include="TransactionLanguageScopeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MN.L10n\MN.L10n.csproj">
