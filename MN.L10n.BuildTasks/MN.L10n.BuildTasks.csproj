@@ -11,6 +11,7 @@
     <Company>MultiNet Interactive AB</Company>
     <AssemblyVersion>1.0.43</AssemblyVersion>
     <FileVersion>1.0.43.0</FileVersion>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">

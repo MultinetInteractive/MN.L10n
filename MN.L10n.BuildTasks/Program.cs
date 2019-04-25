@@ -88,7 +88,7 @@ namespace MN.L10n.BuildTasks
                 if(config.DownloadTranslationFromSourcesOnBuild)
                 {
                     Console.WriteLine("info l10n: Loading translations from sources defined in languages.json");
-                    var fdp = L10n.GetDataProvider<FileDataProvider>();
+                    var fdp = L10n.GetDataProvider();
                     if (fdp != null)
                     {
                         try
