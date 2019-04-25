@@ -16,9 +16,9 @@ namespace MN.L10n.NullProviders
 			};
 		}
 
-        public Task LoadTranslationFromSources(L10n l10n, CancellationToken token)
+        public Task<bool> LoadTranslationFromSources(L10n l10n, CancellationToken token)
         {
-            throw new System.NotImplementedException();
+	        return Task.FromResult(false);
         }
 
         public bool SaveL10n(L10n l10n)

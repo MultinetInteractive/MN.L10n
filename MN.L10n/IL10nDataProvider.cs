@@ -8,6 +8,6 @@ namespace MN.L10n
 		L10n LoadL10n();
 		bool SaveL10n(L10n l10n);
 
-        Task LoadTranslationFromSources(L10n l10n, CancellationToken token);
+        Task<bool> LoadTranslationFromSources(L10n l10n, CancellationToken token);
     }
 }

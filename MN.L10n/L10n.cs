@@ -24,7 +24,7 @@ namespace MN.L10n
             Instance = l10n;
             return l10n;
         }
-
+        
         [JsonIgnore]
         public List<L10nLanguageItem> Languages { get; set; } = new List<L10nLanguageItem>();
         public ConcurrentDictionary<string, L10nPhrase> Phrases { get; set; } = new ConcurrentDictionary<string, L10nPhrase>();
@@ -48,16 +48,22 @@ namespace MN.L10n
             return Instance;
         }
 
-        public static async Task<bool> ReloadFromDataProviderSources<T>(CancellationToken token) where T : IL10nDataProvider
+        public static async Task<bool> ReloadFromDataProviderSources(CancellationToken token)
         {
-            var prov = GetDataProvider<T>();
-            if (prov is NullProviders.NullDataProvider)
-                return false;
-
+            var prov = GetDataProvider();
             var instance = GetInstance();
-            await prov.LoadTranslationFromSources(instance, token);
-            TranslationsReloaded?.Invoke(instance, EventArgs.Empty);
-            return true;
+            var success = await prov.LoadTranslationFromSources(instance, token);
+            if (success)
+            {
+                TranslationsReloaded?.Invoke(instance, EventArgs.Empty);
+            }
+
+            return success;
+        }
+        
+        public static void RemoveAllTranslationReloadedListeners()
+        {
+            TranslationsReloaded = null;
         }
 
         public static bool SaveDataProvider()
@@ -105,10 +111,10 @@ namespace MN.L10n
             return Instance.LanguageProvider.GetLanguage();
         }
 
-        public static T GetDataProvider<T>() where T: IL10nDataProvider
+        public static IL10nDataProvider GetDataProvider()
         {
             EnsureInitialized();
-            return (T)Instance.DataProvider;
+            return Instance.DataProvider;
         }
 
 		public static T GetLanguageProvider<T>() where T : IL10nLanguageProvider

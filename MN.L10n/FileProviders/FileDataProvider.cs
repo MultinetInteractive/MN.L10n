@@ -125,12 +125,12 @@ namespace MN.L10n.FileProviders
             return true;
         }
 
-        public async Task LoadTranslationFromSources(L10n l10n, CancellationToken token)
+        public async Task<bool> LoadTranslationFromSources(L10n l10n, CancellationToken token)
         {
             bool errorLoadingSources = false;
             Exception _ex = null;
             // If we don't have anything to fetch from any sources, don't bother
-            if (!l10n.Languages.Any(l => l.Sources.Any())) return;
+            if (!l10n.Languages.Any(l => l.Sources.Any())) return false;
 
             using (var cli = new HttpClient())
             {
@@ -198,6 +198,7 @@ namespace MN.L10n.FileProviders
             }
 
             SaveL10n(l10n);
+            return true;
         }
     }
 }
