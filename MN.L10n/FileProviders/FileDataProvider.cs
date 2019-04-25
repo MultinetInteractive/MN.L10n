@@ -158,8 +158,7 @@ namespace MN.L10n.FileProviders
                                 }
 
                             }
-
-                            if (!string.IsNullOrWhiteSpace(translationSource))
+                            else if (!string.IsNullOrWhiteSpace(translationSource))
                             {
                                 try
                                 {
