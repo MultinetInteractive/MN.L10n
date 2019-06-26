@@ -54,6 +54,21 @@ namespace MN.L10n.Tests
         }
 
         [TestMethod]
+        public void TestParserWithVerbatimLinebreak()
+        {
+            var src = @"<a href=javascript:void(0)>
+                      _s(
+                         @""Hej
+Nej""
+                      )
+                      </a>";
+            var parser = new L10nParser();
+            var result = parser.Parse(src);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(@"Hej\nNej", result[0].Phrase.Trim());
+        }
+
+        [TestMethod]
         public void TestDoesNotGoOutOfBounds()
         {
             var src = @"<a href=javascript:void(0)>
