@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Chris Gårdenberg</Authors>
+    <Company>MultiNet Interactive AB</Company>
+    <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
 </Project>
