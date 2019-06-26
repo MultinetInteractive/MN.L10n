@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.Analyzer.Test", "MN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.Analyzer.Vsix", "MN.L10n.Analyzer\MN.L10n.Analyzer.Vsix\MN.L10n.Analyzer.Vsix.csproj", "{0FBE481E-769A-4818-896E-3CD4580CA7A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.SystemWeb", "MN.L10n.SystemWeb\MN.L10n.SystemWeb.csproj", "{8096E105-0A0B-446F-89DE-599312C7E25E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{0FBE481E-769A-4818-896E-3CD4580CA7A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FBE481E-769A-4818-896E-3CD4580CA7A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FBE481E-769A-4818-896E-3CD4580CA7A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8096E105-0A0B-446F-89DE-599312C7E25E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8096E105-0A0B-446F-89DE-599312C7E25E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8096E105-0A0B-446F-89DE-599312C7E25E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8096E105-0A0B-446F-89DE-599312C7E25E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
