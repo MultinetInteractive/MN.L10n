@@ -7,6 +7,7 @@
     <Company>MultiNet Interactive AB</Company>
     <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>

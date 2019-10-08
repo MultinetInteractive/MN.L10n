@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net471</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.9</Version>
+    <Version>1.0.10</Version>
     <AssemblyVersion>1.0.9.0</AssemblyVersion>
   </PropertyGroup>
 
