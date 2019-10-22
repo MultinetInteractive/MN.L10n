@@ -7,13 +7,9 @@
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.2" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MN.L10n\MN.L10n.csproj" />

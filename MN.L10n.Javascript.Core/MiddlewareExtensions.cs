@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
+using System;
 
 namespace MN.L10n.Javascript.Core
 {
@@ -23,7 +21,7 @@ namespace MN.L10n.Javascript.Core
             configure?.Invoke(opts);
 
             return builder.UseWhen(
-                context => 
+                context =>
                 context.Request.Path.HasValue && context.Request.Path.Value == opts.Url,
                 innerBuilder => innerBuilder.UseMiddleware<L10nJavascriptMiddleware>()
             );

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
+using System;
+using System.Threading.Tasks;
 
 namespace MN.L10n.Javascript.Core
 {
@@ -20,10 +17,9 @@ namespace MN.L10n.Javascript.Core
                 MaxAge = TimeSpan.FromHours(1)
             };
 
-            var cache = context.RequestServices.GetService(typeof(IMemoryCache)) as IMemoryCache;
             var minifiedScript = context.Request.Query["minified"] == "1";
 
-            var response = RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(cache, minifiedScript);
+            var response = RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(minifiedScript);
             return context.Response.WriteAsync(response);
         }
     }
