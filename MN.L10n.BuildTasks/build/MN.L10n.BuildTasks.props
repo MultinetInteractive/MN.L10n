@@ -11,7 +11,7 @@
     <_L10nBuildTask>$(MSBuildThisFileDirectory)MN.L10n.BuildTasks.exe</_L10nBuildTask>
   </PropertyGroup>
 
-  <Target Name="L10n" AfterTargets="AfterBuild">
+  <Target Name="L10n" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Release'">
     <Exec Command="&quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;">
     </Exec>
   </Target>
