@@ -1,18 +1,18 @@
-﻿using System.Collections.Concurrent;
-using System.IO;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Linq;
+﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MN.L10n.FileProviders
 {
     public class FileDataProvider : IL10nDataProvider
     {
-        private JsonSerializerSettings SerializerOptions = new JsonSerializerSettings
+        private readonly JsonSerializerSettings SerializerOptions = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
             DateFormatHandling = DateFormatHandling.IsoDateFormat
@@ -147,9 +147,9 @@ namespace MN.L10n.FileProviders
                         if (source.StartsWith("http") && Uri.IsWellFormedUriString(source, UriKind.Absolute))
                         {
                             string translationSource = string.Empty;
-                            try { translationSource = await cli.GetStringAsync(source); } catch(Exception ex) { errorLoadingSources = true; _ex = ex; }
+                            try { translationSource = await cli.GetStringAsync(source); } catch (Exception ex) { errorLoadingSources = true; _ex = ex; }
 
-                            if(errorLoadingSources)
+                            if (errorLoadingSources)
                             {
                                 Console.WriteLine("error l10n: Could not load translation from {0}", source);
                                 if (_ex != null)
@@ -164,14 +164,14 @@ namespace MN.L10n.FileProviders
                                 {
                                     var translationPhrases = JsonConvert.DeserializeObject<L10nLanguage>(translationSource, SerializerOptions);
                                     if (translationPhrases.Phrases.Count > 0)
-                                    { 
-                                        foreach(var phrase in translationPhrases.Phrases)
+                                    {
+                                        foreach (var phrase in translationPhrases.Phrases)
                                         {
                                             l10nLang.Phrases[phrase.Key] = phrase.Value;
                                         }
                                     }
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     Console.WriteLine("error l10n: Cannot read translation from {0}", source);
                                     Console.WriteLine(ex.ToString());

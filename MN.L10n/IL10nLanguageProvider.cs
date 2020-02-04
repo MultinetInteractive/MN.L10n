@@ -2,6 +2,6 @@
 {
     public interface IL10nLanguageProvider
     {
-		string GetLanguage();
+        string GetLanguage();
     }
 }

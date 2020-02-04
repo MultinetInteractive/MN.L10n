@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Html;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Html;
-using Newtonsoft.Json;
 
 namespace MN.L10n
 {
@@ -14,9 +14,11 @@ namespace MN.L10n
         private TransactionLanguageProvider LanguageProvider { get; set; }
         public static event EventHandler TranslationsReloaded;
 
+#pragma warning disable S2223 // Non-constant static fields should not be visible
         internal static L10n Instance;
+#pragma warning restore S2223 // Non-constant static fields should not be visible
 
-        public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider, Func<IDictionary<object,object>> getScopeContainer = null)
+        public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider, Func<IDictionary<object, object>> getScopeContainer = null)
         {
             var l10n = dataProvider.LoadL10n();
             l10n.DataProvider = dataProvider;
@@ -29,13 +31,13 @@ namespace MN.L10n
         {
             return GetInstance().LanguageProvider.LocalLanguageContext(lang);
         }
-        
+
         [JsonIgnore]
         public List<L10nLanguageItem> Languages { get; set; } = new List<L10nLanguageItem>();
         public ConcurrentDictionary<string, L10nPhrase> Phrases { get; set; } = new ConcurrentDictionary<string, L10nPhrase>();
 
-		[JsonIgnore]
-		public ConcurrentDictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new ConcurrentDictionary<string, L10nLanguage>();
+        [JsonIgnore]
+        public ConcurrentDictionary<string, L10nLanguage> LanguagePhrases { get; set; } = new ConcurrentDictionary<string, L10nLanguage>();
 
         public static L10nLanguage GetL10nLanguage(string language)
         {
@@ -60,12 +62,14 @@ namespace MN.L10n
             var success = await prov.LoadTranslationFromSources(instance, token);
             if (success)
             {
+#pragma warning disable S4220 // Events should have proper arguments
                 TranslationsReloaded?.Invoke(instance, EventArgs.Empty);
+#pragma warning restore S4220 // Events should have proper arguments
             }
 
             return success;
         }
-        
+
         public static void RemoveAllTranslationReloadedListeners()
         {
             TranslationsReloaded = null;
@@ -82,10 +86,12 @@ namespace MN.L10n
             if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
         }
 
-		public static IHtmlContent _sr(string phrase, object args = null)
-		{
-			return new HtmlString(_s(phrase, args));
-		}
+        public static IHtmlContent _sr(string phrase, object args = null)
+        {
+#pragma warning disable MN0007 // Invalid type for keywords
+            return new HtmlString(_s(phrase, args));
+#pragma warning restore MN0007 // Invalid type for keywords
+        }
 
         public static string _s(string phrase, object args = null)
         {
@@ -93,12 +99,14 @@ namespace MN.L10n
             return Instance.__getPhrase(phrase, args);
         }
 
-		public static IHtmlContent _mr(string phrase, object args = null)
-		{
-			return new HtmlString(_m(phrase, args));
-		}
+        public static IHtmlContent _mr(string phrase, object args = null)
+        {
+#pragma warning disable MN0007 // Invalid type for keywords
+            return new HtmlString(_m(phrase, args));
+#pragma warning restore MN0007 // Invalid type for keywords
+        }
 
-		public static string _m(string phrase, object args = null)
+        public static string _m(string phrase, object args = null)
         {
             EnsureInitialized();
 
@@ -122,11 +130,11 @@ namespace MN.L10n
             return Instance.DataProvider;
         }
 
-		internal string __getPhrase(string phrase, object args = null)
+        internal string __getPhrase(string phrase, object args = null)
         {
-			var cleanedPhrase = phrase.Replace("\r", "");
+            var cleanedPhrase = phrase.Replace("\r", "");
 
-			if (!Phrases.ContainsKey(cleanedPhrase))
+            if (!Phrases.ContainsKey(cleanedPhrase))
             {
                 Phrases.TryAdd(cleanedPhrase, new L10nPhrase());
             }
@@ -140,7 +148,7 @@ namespace MN.L10n
                 {
                     if (phr.r.ContainsKey("0"))
                     {
-						cleanedPhrase = phr.r["0"];
+                        cleanedPhrase = phr.r["0"];
                     }
 
                     if (isPluralized && lang.AstPluralRule != null)
@@ -150,7 +158,7 @@ namespace MN.L10n
                         var phraseIndex = lang.AstPluralRule.Evaluate(GetCount(args)).ToString();
                         if (phr.r.ContainsKey(phraseIndex))
                         {
-							cleanedPhrase = phr.r[phraseIndex];
+                            cleanedPhrase = phr.r[phraseIndex];
                         }
                     }
                 }
