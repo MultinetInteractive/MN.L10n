@@ -1,30 +1,30 @@
-using System;
+﻿using FakeItEasy;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
-using FakeItEasy;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MN.L10n.Tests
 {
     [TestClass]
     public class StaticL10nTests
-    {   
-        [TestMethod]
-        public async Task ReloadFromSourceNotInitialized()
-        {
-            try
-            {
-                await L10n.ReloadFromDataProviderSources(CancellationToken.None);
-                Assert.Fail("Not initialized exception expected");
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message == null || !ex.Message.Contains("L10n.CreateInstance"))
-                {
-                    throw;
-                }
-            }
-        }
+    {
+        // We cannot guarantee that L10n have not been initialized before running this test.
+        //[TestMethod]
+        //public async Task ReloadFromSourceNotInitialized()
+        //{
+        //    try
+        //    {
+        //        await L10n.ReloadFromDataProviderSources(CancellationToken.None);
+        //        Assert.Fail("Not initialized exception expected");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (ex.Message == null || !ex.Message.Contains("L10n.CreateInstance"))
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
         [TestMethod]
         public async Task ReloadFromSources()
@@ -48,7 +48,7 @@ namespace MN.L10n.Tests
         public async Task ReloadFromSourcesDoesNotCallHookWhenReloadFails()
         {
             CreateFakes();
-            L10n.TranslationsReloaded += (sender, args) => Assert.Fail("Unexpected call to reloaded hook"); 
+            L10n.TranslationsReloaded += (sender, args) => Assert.Fail("Unexpected call to reloaded hook");
             await L10n.ReloadFromDataProviderSources(CancellationToken.None);
         }
 
@@ -59,7 +59,7 @@ namespace MN.L10n.Tests
             A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, CancellationToken.None))
                 .Returns(Task.FromResult(true));
             var hookWasCalled = false;
-            L10n.TranslationsReloaded += (sender, args) => hookWasCalled = true; 
+            L10n.TranslationsReloaded += (sender, args) => hookWasCalled = true;
             await L10n.ReloadFromDataProviderSources(CancellationToken.None);
             Assert.IsTrue(hookWasCalled, "Translations reloaded was not called");
         }
@@ -68,14 +68,14 @@ namespace MN.L10n.Tests
         public async Task RemoveTranslationReloadedListeners()
         {
             var fakes = CreateFakes();
-            L10n.TranslationsReloaded += (sender, args) => Assert.Fail("Unexpected call to reloaded hook"); 
+            L10n.TranslationsReloaded += (sender, args) => Assert.Fail("Unexpected call to reloaded hook");
             A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, CancellationToken.None))
                 .Returns(Task.FromResult(true));
-            
+
             L10n.RemoveAllTranslationReloadedListeners();
             await L10n.ReloadFromDataProviderSources(CancellationToken.None);
         }
-        
+
         private class Fakes
         {
             public L10n L10n { get; set; }
@@ -96,7 +96,7 @@ namespace MN.L10n.Tests
             fakes.L10n = l10n;
             return fakes;
         }
-        
+
         [TestCleanup]
         public void CleanupTests()
         {

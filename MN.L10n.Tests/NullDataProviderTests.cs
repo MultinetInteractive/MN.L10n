@@ -1,13 +1,13 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MN.L10n.NullProviders;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MN.L10n.NullProviders;
 
 namespace MN.L10n.Tests
 {
     [TestClass]
     public class NullDataProviderTests
-    {   
+    {
         [TestMethod]
         public void LoadL10n()
         {
@@ -25,7 +25,7 @@ namespace MN.L10n.Tests
             var reloaded = await provider.LoadTranslationFromSources(l10n, CancellationToken.None);
             Assert.IsFalse(reloaded);
         }
-        
+
         private NullDataProvider CreateNullProvider()
         {
             return new NullDataProvider();
