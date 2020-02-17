@@ -85,7 +85,7 @@ namespace MN.L10n.BuildTasks
                     new FileDataProvider(solutionDir)
                 );
 
-                if(config.DownloadTranslationFromSourcesOnBuild)
+                if (config.DownloadTranslationFromSourcesOnBuild)
                 {
                     Console.WriteLine("info l10n: Loading translations from sources defined in languages.json");
                     var fdp = L10n.GetDataProvider();
@@ -198,7 +198,44 @@ namespace MN.L10n.BuildTasks
                         }
                     }
                     if (config.ShowDetailedLog) Console.WriteLine("info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
-                };
+                }
+
+                if (!string.IsNullOrWhiteSpace(config.SourceLanguage) && PhraseInstance.LanguagePhrases.Any(l => l.Key == config.SourceLanguage))
+                {
+                    var l10nLanguage = PhraseInstance.LanguagePhrases.First(l => l.Key == config.SourceLanguage).Value;
+
+                    foreach (var sourceString in PhraseInstance.Phrases)
+                    {
+                        if (!PhraseInstance.LanguagePhrases[config.SourceLanguage].Phrases.TryGetValue(sourceString.Key, out L10nPhraseObject phrase))
+                        {
+                            phrase = new L10nPhraseObject
+                            {
+                                r = new Dictionary<string, string> { { "0", sourceString.Key } }
+                            };
+                        }
+
+                        // String is supposed to be pluralized, so we add the input for that in the source language file
+                        if (sourceString.Key.Contains("$__count$"))
+                        {
+                            foreach (var pluralRuleItem in l10nLanguage.PluralizationRules)
+                            {
+                                if (!phrase.r.ContainsKey(pluralRuleItem) || string.IsNullOrWhiteSpace(phrase.r[pluralRuleItem]))
+                                {
+                                    phrase.r[pluralRuleItem] = sourceString.Key;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (string.IsNullOrWhiteSpace(phrase.r["0"]))
+                            {
+                                phrase.r["0"] = sourceString.Key;
+                            }
+                        }
+
+                        PhraseInstance.LanguagePhrases[config.SourceLanguage].Phrases.TryAdd(sourceString.Key, phrase);
+                    }
+                }
 
                 phraseRewriter.SavePhrasesToFile();
                 stw.Stop();

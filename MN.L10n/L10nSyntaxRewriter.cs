@@ -7,7 +7,7 @@ namespace MN.L10n
         internal L10n _phrases;
         internal Dictionary<string, Dictionary<object, L10nPhraseObject>> _phraseDic = new Dictionary<string, Dictionary<object, L10nPhraseObject>>();
 
-        private readonly List<string> unusedPhrases = new List<string>();
+        public readonly List<string> unusedPhrases = new List<string>();
         public PhrasesRewriter(L10n phraseRepo) : base()
         {
             _phrases = phraseRepo;

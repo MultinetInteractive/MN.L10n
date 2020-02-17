@@ -122,6 +122,9 @@ namespace MN.L10n.FileProviders
         {
             var l10nFileContents = JsonConvert.SerializeObject(l10n, SerializerOptions);
             File.WriteAllText(Path.Combine(FilePath, PhraseFile), l10nFileContents);
+
+            SaveTranslation(l10n);
+
             return true;
         }
 
@@ -197,6 +200,19 @@ namespace MN.L10n.FileProviders
             }
 
             SaveL10n(l10n);
+            return true;
+        }
+
+        public bool SaveTranslation(L10n l10n)
+        {
+            foreach (var lang in l10n.Languages)
+            {
+                var l10nLang = l10n.LanguagePhrases[lang.LanguageId];
+
+                var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang.LanguageId));
+                File.WriteAllText(langFileName, JsonConvert.SerializeObject(l10nLang, SerializerOptions));
+            }
+
             return true;
         }
     }

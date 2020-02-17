@@ -25,5 +25,10 @@ namespace MN.L10n.NullProviders
         {
             return true;
         }
+
+        public bool SaveTranslation(L10n l10n)
+        {
+            return true;
+        }
     }
 }
