@@ -238,6 +238,11 @@ namespace MN.L10n.BuildTasks
                             PhraseInstance.LanguagePhrases[config.SourceLanguage].Phrases.TryAdd(sourceString.Key, phrase);
                         }
                     }
+
+                    foreach (var removedPhrase in phraseRewriter.unusedPhrases)
+                    {
+                        PhraseInstance.LanguagePhrases[config.SourceLanguage].Phrases.TryRemove(removedPhrase, out _);
+                    }
                 }
 
                 phraseRewriter.SavePhrasesToFile();
