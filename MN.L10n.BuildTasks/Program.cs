@@ -233,7 +233,10 @@ namespace MN.L10n.BuildTasks
                             }
                         }
 
-                        PhraseInstance.LanguagePhrases[config.SourceLanguage].Phrases.TryAdd(sourceString.Key, phrase);
+                        if (!phraseRewriter.unusedPhrases.Contains(sourceString.Key))
+                        {
+                            PhraseInstance.LanguagePhrases[config.SourceLanguage].Phrases.TryAdd(sourceString.Key, phrase);
+                        }
                     }
                 }
 
