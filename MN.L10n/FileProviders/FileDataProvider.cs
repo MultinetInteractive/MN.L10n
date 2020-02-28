@@ -112,6 +112,11 @@ namespace MN.L10n.FileProviders
 
                 if (l10n.LanguagePhrases[lang].AstPluralRule == null && !string.IsNullOrWhiteSpace(l10n.LanguagePhrases[lang].PluralRule))
                 {
+                    // Our plural rules only have support for simple cardinal rules (with a single variable)
+                    if (!l10n.LanguagePhrases[lang].PluralRule.StartsWith("n"))
+                    {
+                        l10n.LanguagePhrases[lang].PluralRule = "n != 1";
+                    }
                     l10n.LanguagePhrases[lang].AstPluralRule = new NGettext.Plural.AstPluralRule(l10n.LanguagePhrases[lang].PluralizationRules.Count, tp.Parse(l10n.LanguagePhrases[lang].PluralRule));
                 }
             }
