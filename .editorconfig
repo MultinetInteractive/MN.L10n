@@ -1,24 +1,4 @@
-# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+﻿[*.cs]
 
-root = true
-
-# All files
-[*]
-indent_style = space
-
-# Code files
-[*.{cs,csx,vb,vbx}]
-indent_size = 4
-insert_final_newline = true
-charset = utf-8-bom
-
-# XML project files
-[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
-indent_size = 2
-
-# XML config files
-[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
-indent_size = 2
-
-[*.js]
-indent_size = 2
+# S101: Types should be named in PascalCase
+dotnet_diagnostic.S101.severity = none
