@@ -86,7 +86,7 @@ namespace MN.L10n
                                             isVerbatim = false;
                                         }
 
-                                        if (peek == '"' || peek == '\'')
+                                        if (peek == '"' || peek == '\'' || peek == '`')
                                         {
                                             _stringContainer = peek;
                                             inToken = true;

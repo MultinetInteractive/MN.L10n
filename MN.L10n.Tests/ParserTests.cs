@@ -95,5 +95,15 @@ Ni kan också kontakta oss på <a href=""""https://support.semesterlistan.se""""
             var result = parser.Parse(src);
             Assert.AreEqual(1, result.Count);
         }
+
+        [TestMethod]
+        public void TestWorksWithLiteralTemplateStrings()
+        {
+            var src = @"function javascriptMethod() { return _s(`This text will also be found by the parser!`); }";
+
+            var parser = new L10nParser();
+            var result = parser.Parse(src);
+            Assert.AreEqual(1, result.Count);
+        }
     }
 }
