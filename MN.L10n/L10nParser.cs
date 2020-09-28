@@ -22,7 +22,9 @@ namespace MN.L10n
 
             for (int _pos = 0; _pos < source.Length; _pos++)
             {
+#pragma warning disable S1854 // Unused assignments should be removed
                 char peek = source[_pos];
+#pragma warning restore S1854 // Unused assignments should be removed
 
                 bool TryPeek(int forward)
                 {
@@ -86,7 +88,7 @@ namespace MN.L10n
                                             isVerbatim = false;
                                         }
 
-                                        if (peek == '"' || peek == '\'')
+                                        if (peek == '"' || peek == '\'' || peek == '`')
                                         {
                                             _stringContainer = peek;
                                             inToken = true;
