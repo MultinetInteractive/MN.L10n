@@ -285,7 +285,7 @@ Example config
 
 ## How do I `languages.json`
 
-Example config (Also from Lega Online)
+Example config
 
 ```jsonc
 [
@@ -295,8 +295,6 @@ Example config (Also from Lega Online)
 
   /* Sources contains an array of URLs from where we should download translations on build */
   "Sources": [
-   "https://translate.satra.multinet.se/glotpress/projects/lega-online/sv/default/export-translations/?format=l10n",
-   "https://translate.satra.multinet.se/glotpress/projects/lega-online/dynamic/sv/default/export-translations/?format=l10n"
   ]
  }
 ]
