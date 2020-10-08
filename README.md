@@ -223,8 +223,6 @@ Reserved variables
 
 Normally, L10n *does not* allow dynamic phrases (you'll get those warnings from the `MN.L10n.Analyzer`, when you have it installed).
 
-But Linus (@lice) fixed a way to use dynamic phrases, examples can be found in [Lega Online, Dynamic Phrase generator](https://ghe.satra.multinet.se/MultiNetInteractiveAB/lo/tree/master/legaonline.dynamicPhraseGenerator).
-
 So, I won't be going into this here. L10n is not made for dynamic phrases. :smile:
 
 ---
