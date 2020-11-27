@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MN.L10n.BuildTasks
 {
-    static class Program
+    public static class Program
     {
         static CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -21,7 +21,7 @@ namespace MN.L10n.BuildTasks
         const string L10nRoot = ".l10nroot";
         const string L10nLockFile = ".l10nLock";
 
-        async static Task<int> Main(string[] args)
+        public async static Task<int> Main(string[] args)
         {
             string projectFolder = string.Empty;
             if (args.Length == 0)
@@ -319,7 +319,7 @@ namespace MN.L10n.BuildTasks
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-
+#if NET48
                 using (EventLog el = new EventLog("Application"))
                 {
                     el.Source = "MN.L10n.BuildTasks";
@@ -332,6 +332,7 @@ namespace MN.L10n.BuildTasks
                         var l = fdp.LoadLanguages();
                     }
                 }
+#endif
 
                 RemoveLockFile(lockFile);
                 RemoveCacheFile(cacheFilePath);

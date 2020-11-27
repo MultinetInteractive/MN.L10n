@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>dotnet_l10n_buildtask</RootNamespace>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>l10n-buildtask</ToolCommandName>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MN.L10n.BuildTasks\MN.L10n.BuildTasks.csproj" />
+  </ItemGroup>
+
+</Project>
