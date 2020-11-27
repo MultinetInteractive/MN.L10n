@@ -12,15 +12,22 @@ using System.Threading.Tasks;
 
 namespace MN.L10n.BuildTasks
 {
-    class Program
+    static class Program
     {
         static CancellationTokenSource cts = new CancellationTokenSource();
+
+        const string L10nBuildCache = ".l10nBuildCache";
+        const string L10nConfig = ".l10nconfig";
+        const string L10nRoot = ".l10nroot";
+        const string L10nLockFile = ".l10nLock";
+
         async static Task<int> Main(string[] args)
         {
             string projectFolder = string.Empty;
             if (args.Length == 0)
             {
-                throw new ArgumentNullException("projectFolder");
+                Console.WriteLine("info l10n: Missing project folder");
+                return -1;
             }
             else
             {
@@ -37,7 +44,7 @@ namespace MN.L10n.BuildTasks
 
             stw.Start();
 
-            while (!baseDir.EnumerateFiles().Any(x => x.Extension == ".sln" || x.Extension == ".l10nroot"))
+            while (!baseDir.EnumerateFiles().Any(x => x.Extension == ".sln" || x.Extension == L10nRoot))
             {
                 baseDir = baseDir.Parent;
             }
@@ -45,7 +52,7 @@ namespace MN.L10n.BuildTasks
             var solutionDir = baseDir.FullName;
             var config = new L10nConfig();
 
-            var cfgFile = baseDir.GetFiles(".l10nconfig").FirstOrDefault();
+            var cfgFile = baseDir.GetFiles(L10nConfig).FirstOrDefault();
             if (cfgFile != null)
             {
                 try
@@ -54,9 +61,46 @@ namespace MN.L10n.BuildTasks
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Unable to read L10n config file : " + ex.ToString());
+                    Console.WriteLine("err l10n: Unable to read L10n config file : " + ex.ToString());
                     return -1;
                 }
+            }
+
+            L10nBuildCache cache = null;
+
+            var cacheFile = baseDir.GetFiles(L10nBuildCache).FirstOrDefault();
+            var cacheFilePath = Path.Combine(solutionDir, L10nBuildCache);
+            if (cacheFile != null)
+            {
+                try
+                {
+                    cache = JsonConvert.DeserializeObject<L10nBuildCache>(File.ReadAllText(cacheFile.FullName));
+
+                    if ((DateTimeOffset.UtcNow - cache.BuildStarted).TotalMinutes < 5)
+                    {
+                        Console.WriteLine("info l10n: Found cache that was recently started, skipping this round.");
+                        return 0;
+                    }
+                }
+                catch { /* If the cache is broken, ignore it, create a new one */ }
+            }
+
+            if (cache == null)
+            {
+                cache = new L10nBuildCache
+                {
+                    BuildStarted = DateTimeOffset.UtcNow,
+                    FoundPhrases = 0,
+                    ScannedFiles = 0
+                };
+
+                SaveCacheInfo(cacheFilePath, cache);
+            }
+
+            if (cache.BuildFinished.HasValue && (DateTimeOffset.UtcNow - cache.BuildFinished.Value).TotalMinutes < 5)
+            {
+                Console.WriteLine("info l10n: Found cache younger than 5 minutes, not processing again.");
+                return 0;
             }
 
             if (config != null && config.PreventBuildTask)
@@ -65,7 +109,7 @@ namespace MN.L10n.BuildTasks
                 return 0;
             }
 
-            var lockFile = Path.Combine(solutionDir, ".l10nLock");
+            var lockFile = Path.Combine(solutionDir, L10nLockFile);
             if (CheckForLockFile(lockFile, projectFolder, baseDir, config) == 0)
             {
                 return 0;
@@ -76,7 +120,7 @@ namespace MN.L10n.BuildTasks
                 if (config != null && config.PreventBuildTask)
                 {
                     Console.WriteLine("info l10n: L10n build task cancelled by config file");
-                    File.Delete(lockFile);
+                    RemoveLockFile(lockFile);
                     return 0;
                 }
 
@@ -105,6 +149,11 @@ namespace MN.L10n.BuildTasks
 
                 var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx", ".php" };
 
+                if (config.OverrideValidExtensions?.Any() ?? false)
+                {
+                    validExtensions = config.OverrideValidExtensions.ToArray();
+                }
+
                 var defaultIgnorePaths = new[] {
                     "/.git/", "\\.git\\",
                     "/node_modules/", "\\node_modules\\",
@@ -123,6 +172,8 @@ namespace MN.L10n.BuildTasks
 
                 List<string> fileList = new List<string>();
 
+                Stopwatch fileCollectorTimer = new Stopwatch();
+                fileCollectorTimer.Start();
                 if (config != null)
                 {
                     if (config.IncludePatterns.Count == 0)
@@ -162,6 +213,13 @@ namespace MN.L10n.BuildTasks
                     .ToList();
                 }
 
+                fileCollectorTimer.Stop();
+
+                Console.WriteLine($"info l10n: Took {fileCollectorTimer.Elapsed} to find all files");
+
+                cache.ScannedFiles = fileList.Count;
+                SaveCacheInfo(cacheFilePath, cache);
+
                 var phraseRewriter = new PhrasesRewriter(PhraseInstance);
 
                 var parser = new L10nParser();
@@ -197,7 +255,7 @@ namespace MN.L10n.BuildTasks
                             phraseRewriter.unusedPhrases.Remove(_phrase.Phrase);
                         }
                     }
-                    if (config.ShowDetailedLog) Console.WriteLine("info l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
+                    if (config.ShowDetailedLog) Console.WriteLine("debug l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
                 }
 
                 if (!string.IsNullOrWhiteSpace(config.SourceLanguage) && PhraseInstance.LanguagePhrases.Any(l => l.Key == config.SourceLanguage))
@@ -251,10 +309,11 @@ namespace MN.L10n.BuildTasks
 
                 MovePhraseFiles(projectFolder, baseDir, config);
 
-                if (File.Exists(lockFile))
-                {
-                    File.Delete(lockFile);
-                }
+                cache.FoundPhrases = PhraseInstance.Phrases.Count;
+                cache.BuildFinished = DateTimeOffset.UtcNow;
+                SaveCacheInfo(cacheFilePath, cache);
+
+                RemoveLockFile(lockFile);
                 return 0;
             }
             catch (Exception ex)
@@ -274,18 +333,34 @@ namespace MN.L10n.BuildTasks
                     }
                 }
 
-                if (File.Exists(lockFile))
-                {
-                    File.Delete(lockFile);
-                }
+                RemoveLockFile(lockFile);
+                RemoveCacheFile(cacheFilePath);
                 return -1;
             }
             finally
             {
-                if (File.Exists(lockFile))
-                {
-                    File.Delete(lockFile);
-                }
+                RemoveLockFile(lockFile);
+            }
+        }
+
+        private static void SaveCacheInfo(string cacheFile, L10nBuildCache cache)
+        {
+            File.WriteAllText(cacheFile, JsonConvert.SerializeObject(cache, Formatting.Indented));
+        }
+
+        private static void RemoveLockFile(string lockFile)
+        {
+            if (File.Exists(lockFile))
+            {
+                File.Delete(lockFile);
+            }
+        }
+
+        private static void RemoveCacheFile(string cacheFile)
+        {
+            if (File.Exists(cacheFile))
+            {
+                File.Delete(cacheFile);
             }
         }
 
@@ -345,13 +420,13 @@ namespace MN.L10n.BuildTasks
                     if (!DateTime.TryParse(lockContents, out DateTime lockTime))
                     {
                         Console.WriteLine("warn l10n: Corrupted lock file detected, removing");
-                        File.Delete(lockFile);
+                        RemoveLockFile(lockFile);
                     }
 
                     if (Math.Abs((utcNow - lockTime).TotalSeconds) > 30)
                     {
                         Console.WriteLine("warn l10n: Build took over 30 seconds, removing lock file");
-                        File.Delete(lockFile);
+                        RemoveLockFile(lockFile);
                     }
 
                     Thread.Sleep(500);

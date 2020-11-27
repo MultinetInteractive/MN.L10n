@@ -33,5 +33,10 @@ namespace MN.L10n.BuildTasks
         /// Defines which language identifier is the default one (Source language)
         /// </summary>
         public string SourceLanguage { get; set; }
+        /// <summary>
+        /// Use this to override what valid file extensions you want to use L10n for
+        /// Default: ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx", ".php"
+        /// </summary>
+        public List<string> OverrideValidExtensions { get; set; } = new List<string>();
     }
 }
