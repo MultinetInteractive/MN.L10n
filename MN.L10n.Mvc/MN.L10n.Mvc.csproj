@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>net471</TargetFrameworks>
+	<TargetFrameworks>net48</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Chris Gårdenberg</Authors>
     <Company>MultiNet Interactive AB</Company>
@@ -9,7 +9,7 @@
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
     <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
