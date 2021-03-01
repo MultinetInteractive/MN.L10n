@@ -93,7 +93,7 @@ namespace MN.L10n
 #pragma warning restore MN0007 // Invalid type for keywords
         }
 
-        public static string _s(string phrase, object args = null)
+        public static L10nTranslatedString _s(string phrase, object args = null)
         {
             EnsureInitialized();
             return Instance.__getPhrase(phrase, args);
@@ -106,11 +106,11 @@ namespace MN.L10n
 #pragma warning restore MN0007 // Invalid type for keywords
         }
 
-        public static string _m(string phrase, object args = null)
+        public static L10nTranslatedString _m(string phrase, object args = null)
         {
             EnsureInitialized();
 
-            return Instance.ConvertFromMarkdown(Instance.__getPhrase(phrase, args));
+            return new L10nTranslatedString(Instance.ConvertFromMarkdown(Instance.__getPhrase(phrase, args)));
         }
 
         public string ConvertFromMarkdown(string phrase)
@@ -130,7 +130,7 @@ namespace MN.L10n
             return Instance.DataProvider;
         }
 
-        internal string __getPhrase(string phrase, object args = null)
+        internal L10nTranslatedString __getPhrase(string phrase, object args = null)
         {
             var cleanedPhrase = phrase.Replace("\r", "");
 
@@ -215,9 +215,9 @@ namespace MN.L10n
             return 0;
         }
 
-        public static string FormatNamed(string formatString, object args = null)
+        public static L10nTranslatedString FormatNamed(string formatString, object args = null)
         {
-            if (args == null) return formatString;
+            if (args == null) return new L10nTranslatedString(formatString);
 
             var t = args.GetType();
             var tmpVal = formatString;
@@ -226,7 +226,7 @@ namespace MN.L10n
                 tmpVal = tmpVal.Replace("$" + p.Name + "$", p.GetValue(args)?.ToString());
             }
 
-            return tmpVal;
+            return new L10nTranslatedString(tmpVal);
         }
     }
 }
