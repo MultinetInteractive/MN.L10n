@@ -33,7 +33,7 @@ function _l10nGetPhrase(_phrase, _args) {
 function _l10nReplaceKeywords(_phrase, _args) {
   for (var p in _args) {
     if (_args.hasOwnProperty(p)) {
-      _phrase = _phrase.replace('$' + p + '$', _args[p]);
+      _phrase = _phrase.split('$' + p + '$').join(_args[p]);
     }
   }
   return _phrase;
