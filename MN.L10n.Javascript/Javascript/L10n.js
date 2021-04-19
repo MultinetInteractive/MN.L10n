@@ -46,7 +46,7 @@ function _l10nReplaceKeywords(_phrase, _args) {
  * @returns {string}
  */
 function _s(_phrase, _args) {
-  return _l10nReplaceKeywords(_l10nGetPhrase(_phrase, _args));
+  return _l10nReplaceKeywords(_l10nGetPhrase(_phrase, _args), _args);
 }
 
 /**
@@ -56,7 +56,7 @@ function _s(_phrase, _args) {
  * @returns {string}
  */
 function _m(_phrase, _args) {
-  return _l10nReplaceKeywords(micromarkdown.parse(_l10nGetPhrase(_phrase, _args)));
+  return _l10nReplaceKeywords(micromarkdown.parse(_l10nGetPhrase(_phrase, _args)), _args);
 }
 window._s = _s;
 window._m = _m;
