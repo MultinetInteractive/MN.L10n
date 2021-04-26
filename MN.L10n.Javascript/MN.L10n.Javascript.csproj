@@ -3,12 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>net48</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.14</Version>
+    <Version>1.0.15</Version>
     <AssemblyVersion>1.0.11.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="Javascript\L10n.js" />
+    <Content Include="Javascript\L10n.js.map" />
   </ItemGroup>
 
   <ItemGroup>

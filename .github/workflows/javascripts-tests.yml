@@ -1,0 +1,19 @@
+name: Javascript Tests
+
+on:
+  push:
+
+defaults:
+  run:
+    working-directory: "MN.L10n.Javascript/Javascript"
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+      - run: yarn install
+      - run: yarn test-coverage
