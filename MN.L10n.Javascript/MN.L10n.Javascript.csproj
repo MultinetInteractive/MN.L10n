@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Content Include="Javascript\L10n.js" />
+    <Content Include="Javascript\L10n.js.map" />
   </ItemGroup>
 
   <ItemGroup>
