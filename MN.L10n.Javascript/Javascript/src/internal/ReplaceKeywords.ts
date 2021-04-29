@@ -10,7 +10,7 @@ export function replaceKeywords(
 
   for (var p in args) {
     if (args.hasOwnProperty(p)) {
-      phrase = phrase.split("$" + p + "$").join(args[p].toString());
+      phrase = phrase.split("$" + p + "$").join(args[p]?.toString() ?? "");
     }
   }
   return phrase;
