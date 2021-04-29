@@ -40,6 +40,14 @@ describe("replaceKeywords", () => {
     ).toBe("Hello $tester$ world");
   });
 
+  it("replaces keyword 5", () => {
+    expect(
+      replaceKeywords("Hello $tester$ $name$", {
+        name: undefined,
+      })
+    ).toBe("Hello $tester$ ");
+  });
+
   //unclear if this behavior is expected, but it is how it works currently.
   //should not matter during normal usage
   it("does not use prototype args property", () => {
