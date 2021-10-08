@@ -1,29 +1,28 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MN.L10n.NullProviders;
+﻿using MN.L10n.NullProviders;
 using System.Threading;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace MN.L10n.Tests
 {
-    [TestClass]
     public class NullDataProviderTests
     {
-        [TestMethod]
+        [Fact]
         public void LoadL10n()
         {
             var provider = CreateNullProvider();
             var l10n = provider.LoadL10n();
-            Assert.AreEqual(0, l10n.Phrases.Count);
-            Assert.AreEqual(1, l10n.Languages.Count);
+            Assert.Empty(l10n.Phrases);
+            Assert.Single(l10n.Languages);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task ReloadFromSources()
         {
             var provider = CreateNullProvider();
             var l10n = provider.LoadL10n();
             var reloaded = await provider.LoadTranslationFromSources(l10n, CancellationToken.None);
-            Assert.IsFalse(reloaded);
+            Assert.False(reloaded);
         }
 
         private NullDataProvider CreateNullProvider()

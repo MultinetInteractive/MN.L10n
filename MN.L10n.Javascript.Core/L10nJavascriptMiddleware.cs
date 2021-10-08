@@ -5,8 +5,15 @@ using System.Threading.Tasks;
 
 namespace MN.L10n.Javascript.Core
 {
-    public class L10nJavascriptMiddleware : IMiddleware
+    internal class L10nJavascriptMiddleware : IMiddleware
     {
+        private readonly IL10nJavascriptMiddlewareConfig _config;
+
+        public L10nJavascriptMiddleware(IL10nJavascriptMiddlewareConfig config)
+        {
+            _config = config;
+        }
+
         public Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             context.Response.ContentType = "text/javascript; charset=utf8";
@@ -19,7 +26,7 @@ namespace MN.L10n.Javascript.Core
 
             var minifiedScript = context.Request.Query["minified"] == "1";
 
-            var response = RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(minifiedScript);
+            var response = RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(minifiedScript, _config.IncludeTranslations);
             return context.Response.WriteAsync(response);
         }
     }

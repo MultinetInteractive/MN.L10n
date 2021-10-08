@@ -1,8 +1,11 @@
-﻿namespace MN.L10n.Javascript
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+
+namespace MN.L10n.Javascript
 {
     public static class RuleEvaluatorFactory
     {
-        public static string CreateJavascriptRuleEvaluator(string language, bool minified)
+        public static string CreateJavascriptRuleEvaluator(string language, bool minified, bool includeTranslations)
         {
             L10nLanguage l10nItem = L10n.GetL10nLanguage(language);
 
@@ -17,14 +20,25 @@
                     DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat
                 };
 
-            return "window.l10n = " + Newtonsoft.Json.JsonConvert.SerializeObject(l10nItem, jsOptions) + ";" +
+            var jsL10n = includeTranslations
+                ? l10nItem
+                : new L10nLanguage
+                {
+                    Locale = l10nItem.Locale,
+                    Phrases = new ConcurrentDictionary<string, L10nPhraseObject>(),
+                    LanguageName = l10nItem.LanguageName,
+                    PluralizationRules = l10nItem.PluralizationRules,
+                    PluralRule = l10nItem.PluralRule
+                };
+
+            return "window.l10n = " + Newtonsoft.Json.JsonConvert.SerializeObject(jsL10n, jsOptions) + ";" +
                    "window.l10n.ruleEvaluator = function(n) { return ~~(" + l10nItem.PluralRule + "); };";
         }
 
-        public static string CreateJavascriptRuleEvaluator(bool minified)
+        public static string CreateJavascriptRuleEvaluator(bool minified, bool includeTranslations)
         {
             var language = L10n.GetLanguage();
-            return CreateJavascriptRuleEvaluator(language, minified);
+            return CreateJavascriptRuleEvaluator(language, minified, includeTranslations);
         }
     }
 }
