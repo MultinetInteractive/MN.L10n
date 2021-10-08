@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace MN.L10n.JavascriptTranslationMiddleware
@@ -16,14 +17,17 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         private readonly IFileHandle _fileHandle;
         private readonly Lazy<TranslatedFileInformation> _lazyFileInformation; 
         private readonly SemaphoreSlim _translateSemaphor = new(1);
+        private readonly ILogger _logger;
 
-        public FileTranslator(IJavascriptTranslationL10nLanguageProvider languageProvider, IFileHandle fileHandle, string languageId)
+        public FileTranslator(IJavascriptTranslationL10nLanguageProvider languageProvider, IFileHandle fileHandle, string languageId, ILogger<FileTranslator> logger)
         {
             _languageId = languageId;
+            _logger = logger;
             _fileHandle = fileHandle;
             _languageProvider = languageProvider;
             _lazyFileInformation = new Lazy<TranslatedFileInformation>(GetFileInformation);
             L10n.TranslationsReloaded += L10nOnTranslationsReloaded;
+            _logger = logger;
         }
 
         private void L10nOnTranslationsReloaded(object? sender, EventArgs e)
@@ -40,6 +44,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             {
                 if (File.Exists(fileInformation.FilePath) && reuseExisting)
                 {
+                    _logger.LogTrace("File already exists, reusing it");
                     return fileInformation;
                 }
 
@@ -101,6 +106,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
 
         private async Task HandleTranslationsChangedAsync()
         {
+            _logger.LogTrace("Updating translated file because of translations change");
             await _translateSemaphor.WaitAsync();
             try
             {
@@ -115,8 +121,10 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         private async Task TranslateAndWriteTranslatedFileAsync(TranslatedFileInformation fileInfo)
         {
             var contents = await _fileHandle.GetFileContentsAsync();
+            _logger.LogTrace("Translating file contents");
             var translatedContents = TranslateFileContents(contents);
             await using var fileWriter = File.CreateText(fileInfo.FilePath);
+            _logger.LogTrace($"Writing translated contents to disk at {fileInfo.FilePath}");
             await fileWriter.WriteAsync(translatedContents);
         }
 

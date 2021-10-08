@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace MN.L10n.JavascriptTranslationMiddleware
 {
@@ -13,19 +14,23 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         private readonly IJavascriptTranslationMiddlewareConfiguration _config;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ITranslatorProvider _translatorProvider;
+        private readonly ILogger _logger;
 
-        public JavascriptTranslationMiddleware(IJavascriptTranslationMiddlewareConfiguration config, IWebHostEnvironment webHostEnvironment, ITranslatorProvider translatorProvider)
+        public JavascriptTranslationMiddleware(IJavascriptTranslationMiddlewareConfiguration config, IWebHostEnvironment webHostEnvironment, ITranslatorProvider translatorProvider, ILogger<JavascriptTranslationMiddleware> logger)
         {
             _config = config;
             _webHostEnvironment = webHostEnvironment;
             _translatorProvider = translatorProvider;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
+            _logger.LogTrace($"Begin invoke at {context.Request.Path}");
             await ProcessRequest(context);
             await next(context);
-        }
+            _logger.LogTrace("End invoke");
+        } 
         
         private async Task ProcessRequest(HttpContext context)
         {
@@ -41,29 +46,49 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             }
 
             var languageId = remainingParts[0];
+            _logger.LogTrace($"LanguageId resolved as {languageId}");
             var diskPath = string.Join("/", remainingParts.Skip(1));
 
             var fileHandle = GetFileHandle(diskPath);
             if (!fileHandle.Exists)
             {
+                _logger.LogDebug($"Unable to resolve file at {fileHandle.Path}");
                 return;
             }
 
             var isSupportedFileType = fileHandle.FileName.EndsWith(".js", StringComparison.InvariantCultureIgnoreCase);
+
+            var translate = true;
+            if (!isSupportedFileType)
+            {
+                translate = false;
+                _logger.LogTrace($"file {fileHandle.FileName} has an usupported fileType");
+            }
             
-            if (!isSupportedFileType || !await _config.ShouldTranslateAsync(context, fileHandle))
+            if (!await _config.ShouldTranslateAsync(context, fileHandle))
+            {
+                translate = false;
+                _logger.LogTrace($"file {fileHandle.FileName} was not translated because ShouldTranslateAsync returned false");
+            }
+
+            if (!translate)
             {
                 var path = string.Join('/', rewriteContext.MatchingSegment, diskPath);
+                _logger.LogTrace($"Updated path to be {path}");
                 context.Request.Path = path;
-                
                 return;
             }
             
             var translator = _translatorProvider.GetOrCreateTranslator(languageId, fileHandle);
             var enableCache = await _config.EnableCacheAsync(context);
+            _logger.LogTrace($"Translating file at {fileHandle.Path}, {(enableCache ? "using cache" : "not using cache")}");
             var translatedFileInformation = await translator.TranslateFile(enableCache);
+            _logger.LogTrace($"Translated file saved at {translatedFileInformation.FilePath}");
 
-            context.Request.Path = string.Join('/', rewriteContext.MatchingSegment, translatedFileInformation.RelativeRequestPath);
+            var newPath = string.Join('/', rewriteContext.MatchingSegment,
+                translatedFileInformation.RelativeRequestPath);
+            context.Request.Path = newPath;
+            _logger.LogTrace($"Updated path to be {newPath}");
         }
         
         private bool TryGetRewriteContext(HttpContext context, [NotNullWhen(true)] out RewriteContext? rewriteContext)
