@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -12,36 +13,46 @@ namespace MN.L10n.JavascriptTranslationMiddleware
     {
         private readonly string _languageId;
         private readonly IJavascriptTranslationL10nLanguageProvider _languageProvider;
+        private readonly IFileHandle _fileHandle;
+        private readonly Lazy<TranslatedFileInformation> _lazyFileInformation; 
+        private readonly SemaphoreSlim _translateSemaphor = new(1);
 
-        public FileTranslator(IJavascriptTranslationL10nLanguageProvider languageProvider, string languageId)
+        public FileTranslator(IJavascriptTranslationL10nLanguageProvider languageProvider, IFileHandle fileHandle, string languageId)
         {
             _languageId = languageId;
+            _fileHandle = fileHandle;
             _languageProvider = languageProvider;
+            _lazyFileInformation = new Lazy<TranslatedFileInformation>(GetFileInformation);
+            L10n.TranslationsReloaded += L10nOnTranslationsReloaded;
         }
 
-        public async Task<string> TranslateFileContentsAsync(FileHandle fileHandle, bool enableCache)
+        private void L10nOnTranslationsReloaded(object? sender, EventArgs e)
         {
-            //We don't want to read the file contents from disk at all if the translation is already cached 
-            if (enableCache && _translatedFileContents.TryGetValue(fileHandle.FileName, out var cachedTranslatedContents))
-            {
-                return cachedTranslatedContents;
-            }
-
-            var contents = await fileHandle.GetFileContentsAsync();
-            return TranslateFileContents(fileHandle.FileName, contents, enableCache);
-        }
-
-        public string TranslateFileContents(string fileName, string contents)
-        {
-            if (!enableCache)
-            {
-                return Translate(contents);
-            }
-            
-            return _translatedFileContents.GetOrAdd(fileName, _ => Translate(contents));
+            HandleTranslationsChangedAsync().GetAwaiter();
         }
         
-        private string Translate(string contents)
+        public async Task<TranslatedFileInformation> TranslateFile(bool reuseExisting)
+        {
+            var fileInformation = _lazyFileInformation.Value;
+            await _translateSemaphor.WaitAsync();
+
+            try
+            {
+                if (File.Exists(fileInformation.FilePath) && reuseExisting)
+                {
+                    return fileInformation;
+                }
+
+                await TranslateAndWriteTranslatedFileAsync(fileInformation);
+                return fileInformation;
+            }
+            finally
+            {
+                _translateSemaphor.Release();
+            }
+        }
+        
+        public string TranslateFileContents(string contents)
         {
             if (!_languageProvider.TryGetLanguage(_languageId, out var language)) return contents;
 
@@ -86,6 +97,59 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                 addPhrasesCode.Append($"x[\"{key}\"] = {JsonConvert.SerializeObject(value)};");
 
             return $@"(function(){{ {addPhrasesCode} }})();{Environment.NewLine}{translatedCode}";
+        }
+
+        private async Task HandleTranslationsChangedAsync()
+        {
+            await _translateSemaphor.WaitAsync();
+            try
+            {
+                await TranslateAndWriteTranslatedFileAsync(_lazyFileInformation.Value);
+            }
+            finally
+            {
+                _translateSemaphor.Release();
+            }
+        }
+
+        private async Task TranslateAndWriteTranslatedFileAsync(TranslatedFileInformation fileInfo)
+        {
+            var contents = await _fileHandle.GetFileContentsAsync();
+            var translatedContents = TranslateFileContents(contents);
+            await using var fileWriter = File.CreateText(fileInfo.FilePath);
+            await fileWriter.WriteAsync(translatedContents);
+        }
+
+        private TranslatedFileInformation GetFileInformation()
+        {
+            var parts = _fileHandle.Path.Split(Path.DirectorySeparatorChar);
+            var tmpNameParts = _fileHandle.FileName.Split(".");
+            
+            var extension = tmpNameParts[^1];
+            var fileName = string.Join(".", tmpNameParts.SkipLast(1));
+
+            var newFileName = fileName + $"__{_languageId}.{extension}";
+
+            var filePath = string.Join(Path.DirectorySeparatorChar, parts.SkipLast(1).Append(newFileName));
+            var relativePath = string.Join("/", _fileHandle.RelativeRequestPath.Split("/").SkipLast(1).Append(newFileName));
+
+            return new TranslatedFileInformation(filePath, relativePath);
+        }
+
+        ~FileTranslator()
+        {
+            L10n.TranslationsReloaded -= L10nOnTranslationsReloaded;
+        }
+    }
+
+    public class TranslatedFileInformation
+    {
+        public string FilePath { get; }
+        public string RelativeRequestPath { get; }
+        public TranslatedFileInformation(string filePath, string relativeRequestPath)
+        {
+            FilePath = filePath;
+            RelativeRequestPath = relativeRequestPath;
         }
     }
 }

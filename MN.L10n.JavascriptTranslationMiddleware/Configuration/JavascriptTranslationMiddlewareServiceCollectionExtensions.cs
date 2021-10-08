@@ -18,7 +18,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                 services.AddSingleton(config)
                     .AddSingleton<IJavascriptTranslationL10nLanguageProvider, JavascriptTranslationL10NLanguageProvider
                     >()
-                    .AddSingleton<ITranslatorProvider, TranslatorProvider>()
+                    .AddSingleton<ITranslatorProvider, FileTranslatorProvider>()
                     .AddScoped<JavascriptTranslationMiddleware>();
         }
     }

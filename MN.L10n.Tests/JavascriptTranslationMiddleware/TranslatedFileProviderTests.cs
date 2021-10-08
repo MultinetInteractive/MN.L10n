@@ -12,12 +12,10 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
         [Fact]
         public void TranslatesSimpleFile()
         {
-            const string fileName = "testfile";
             var (fakes, translator) = CreateFakes();
             fakes.AddPhrase("Dra och släpp de kategorierna du vill lägga till i trädet till vänster", "Do the thing");
             
-            var translation = translator.TranslateFileContents(fileName,
-                "console.log(_s(\"Dra och släpp de kategorierna du vill lägga till i trädet till vänster\"));", false);
+            var translation = translator.TranslateFileContents("console.log(_s(\"Dra och släpp de kategorierna du vill lägga till i trädet till vänster\"));");
             
             Assert.Equal($"console.log(_s(\"Do the thing\"));", translation);
         }
@@ -25,12 +23,10 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
         [Fact]
         public void TranslatesEvaledCall()
         {
-            const string fileName = "testfile";
             var (fakes, translator) = CreateFakes();
             fakes.AddPhrase("Nej", "No");
             
-            var translation = translator.TranslateFileContents(fileName,
-                "console.log(eval(\"_s(\\\"Nej\\\")\";", false);
+            var translation = translator.TranslateFileContents("console.log(eval(\"_s(\\\"Nej\\\")\";");
             
             Assert.Equal($"console.log(eval(\"_s(\\\"No\\\")\";", translation);
         }
@@ -43,8 +39,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
             const string phrase = "$__count$ minuter sedan";
             fakes.AddPhrase(phrase, "Now", "$__count$ minutes ago");
             
-            var translation = translator.TranslateFileContents(fileName,
-                "_s(\"$__count$ minuter sedan\", {__count: 7});", false);
+            var translation = translator.TranslateFileContents("_s(\"$__count$ minuter sedan\", {__count: 7});");
             
             Assert.Equal($"(function(){{ var x = l10n.Phrases;x[\"{phrase}\"] = {{\"r\":{{\"0\":\"Now\",\"1\":\"$__count$ minutes ago\"}}}}; }})();\r\n_s(\"$__count$ minuter sedan\", {{__count: 7}});", translation);
         }
@@ -57,8 +52,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
             const string phrase = "$__count$ minuter sedan";
             fakes.AddPhrase(phrase, "Now", "$__count$ minutes ago");
             
-            var translation = translator.TranslateFileContents(fileName,
-                "eval(\"_s(\\\"$__count$ minuter sedan\\\", {__count: 7});\");", false);
+            var translation = translator.TranslateFileContents("eval(\"_s(\\\"$__count$ minuter sedan\\\", {__count: 7});\");");
             
             Assert.Equal($"(function(){{ var x = l10n.Phrases;x[\"{phrase}\"] = {{\"r\":{{\"0\":\"Now\",\"1\":\"$__count$ minutes ago\"}}}}; }})();\r\neval(\"_s(\\\"$__count$ minuter sedan\\\", {{__count: 7}});\");", translation);
         }
@@ -73,8 +67,9 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
                 Locale = "en-GB",
                 Phrases = new ConcurrentDictionary<string, L10nPhraseObject>()
             };
+            
             var fakes = new Fakes(language);
-            var translator = new FileTranslator(fakes.LanguageProvider, languageId);
+            var translator = new FileTranslator(fakes.LanguageProvider, fakes.FileHandle, languageId);
 
             L10nLanguage tmp;
             A.CallTo(() => fakes.LanguageProvider.TryGetLanguage(languageId, out tmp))
@@ -89,6 +84,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
             private readonly L10nLanguage _language;
             public IJavascriptTranslationL10nLanguageProvider LanguageProvider =
                 A.Fake<IJavascriptTranslationL10nLanguageProvider>();
+            public readonly IFileHandle FileHandle = A.Fake<IFileHandle>();
 
             public Fakes(L10nLanguage language)
             {

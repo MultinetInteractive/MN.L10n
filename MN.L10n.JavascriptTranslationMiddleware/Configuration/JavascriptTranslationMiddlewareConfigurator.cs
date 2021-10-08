@@ -26,13 +26,6 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         /// <param name="predicate"></param>
         /// <returns></returns>
         IJavascriptTranslationMiddlewareConfigurator TranslateWhen(Func<HttpContext, FileHandle, Task<bool>>? predicate);
-
-        /// <summary>
-        /// Triggered after the headers are set before the response is written
-        /// Only triggered after translating a javascript file, not triggered if the requested file is not JS or
-        /// if Translation is disabled 
-        /// </summary>
-        event EventHandler<HttpContext>? OnBeforeResponse;
     }
 
     internal class JavascriptTranslationMiddlewareConfigurator : IJavascriptTranslationMiddlewareConfigurator
@@ -41,7 +34,6 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         private readonly string _compiledFolder;
         private Func<HttpContext, FileHandle, Task<bool>>? _shouldTranslateAsync;
         private Func<HttpContext, Task<bool>>? _shouldEnableCacheAsync;
-        public event EventHandler<HttpContext>? OnBeforeResponse;
 
         public JavascriptTranslationMiddlewareConfigurator(string compiledFolder)
         {
@@ -79,8 +71,6 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             if (_shouldTranslateAsync is not null) config.ShouldTranslateAsync = _shouldTranslateAsync;
 
             if (_shouldEnableCacheAsync is not null) config.EnableCacheAsync = _shouldEnableCacheAsync;
-
-            config.OnBeforeResponse = (middleware, ctx) => OnBeforeResponse?.Invoke(middleware, ctx);
 
             return config;
         }

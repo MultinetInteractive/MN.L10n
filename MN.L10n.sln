@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.Tests", "MN.L10n.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-l10n-buildtask", "dotnet-l10n-buildtask\dotnet-l10n-buildtask.csproj", "{4CB11774-2E67-44FD-99C2-FCE1BCD31F77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheTest", "TheTest\TheTest.csproj", "{C7B09D09-093F-490E-B4AB-6FE2E22EEFB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.TestWebApp", "MN.L10n.TestWebApp\MN.L10n.TestWebApp.csproj", "{C7B09D09-093F-490E-B4AB-6FE2E22EEFB1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.JavascriptTranslationMiddleware", "MN.L10n.JavascriptTranslationMiddleware\MN.L10n.JavascriptTranslationMiddleware.csproj", "{296F4F0D-4020-486A-8EAE-F77AF23F7AD3}"
 EndProject

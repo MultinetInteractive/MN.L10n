@@ -5,7 +5,7 @@ namespace MN.L10n.Javascript
 {
     public static class RuleEvaluatorFactory
     {
-        public static string CreateJavascriptRuleEvaluator(string language, bool minified, bool includeTranslations)
+        public static string CreateJavascriptRuleEvaluator(string language, bool minified, bool includeTranslations = true)
         {
             L10nLanguage l10nItem = L10n.GetL10nLanguage(language);
 
@@ -35,7 +35,7 @@ namespace MN.L10n.Javascript
                    "window.l10n.ruleEvaluator = function(n) { return ~~(" + l10nItem.PluralRule + "); };";
         }
 
-        public static string CreateJavascriptRuleEvaluator(bool minified, bool includeTranslations)
+        public static string CreateJavascriptRuleEvaluator(bool minified, bool includeTranslations = true)
         {
             var language = L10n.GetLanguage();
             return CreateJavascriptRuleEvaluator(language, minified, includeTranslations);

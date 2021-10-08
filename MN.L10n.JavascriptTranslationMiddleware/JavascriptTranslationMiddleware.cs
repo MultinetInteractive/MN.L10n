@@ -2,11 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Net.Http.Headers;
 
 namespace MN.L10n.JavascriptTranslationMiddleware
 {
@@ -25,25 +23,21 @@ namespace MN.L10n.JavascriptTranslationMiddleware
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            var requestHandled = await ProcessRequest(context);
-
-            if (!requestHandled)
-            {
-                await next(context);
-            }
+            await ProcessRequest(context);
+            await next(context);
         }
         
-        private async Task<bool> ProcessRequest(HttpContext context)
+        private async Task ProcessRequest(HttpContext context)
         {
             if (!TryGetRewriteContext(context, out var rewriteContext))
             {
-                return false;
+                return;
             }
 
             var remainingParts = rewriteContext.Remaining.Value!.Split('/', StringSplitOptions.RemoveEmptyEntries);
             if (remainingParts.Length == 0)
             {
-                return false;
+                return;
             }
 
             var languageId = remainingParts[0];
@@ -52,7 +46,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             var fileHandle = GetFileHandle(diskPath);
             if (!fileHandle.Exists)
             {
-                return false;
+                return;
             }
 
             var isSupportedFileType = fileHandle.FileName.EndsWith(".js", StringComparison.InvariantCultureIgnoreCase);
@@ -62,22 +56,14 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                 var path = string.Join('/', rewriteContext.MatchingSegment, diskPath);
                 context.Request.Path = path;
                 
-                return false;
+                return;
             }
-                
-            var translator = _translatorProvider.GetOrCreateTranslator(languageId);
-            context.Response.GetTypedHeaders().ContentType = new MediaTypeHeaderValue("text/javascript")
-            {
-                Encoding = Encoding.UTF8,
-                Charset = "utf-8"
-            };
-
+            
+            var translator = _translatorProvider.GetOrCreateTranslator(languageId, fileHandle);
             var enableCache = await _config.EnableCacheAsync(context);
-            _config.OnBeforeResponse?.Invoke(this, context);
-            var translatedContents = await translator.TranslateFileContentsAsync(fileHandle, enableCache);
-            await context.Response.WriteAsync(translatedContents);
+            var translatedFileInformation = await translator.TranslateFile(enableCache);
 
-            return true;
+            context.Request.Path = string.Join('/', rewriteContext.MatchingSegment, translatedFileInformation.RelativeRequestPath);
         }
         
         private bool TryGetRewriteContext(HttpContext context, [NotNullWhen(true)] out RewriteContext? rewriteContext)
