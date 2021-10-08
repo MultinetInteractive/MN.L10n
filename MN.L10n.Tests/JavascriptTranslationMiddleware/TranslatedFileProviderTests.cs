@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using MN.L10n.JavascriptTranslationMiddleware;
 using Xunit;
 
@@ -69,7 +70,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
             };
             
             var fakes = new Fakes(language);
-            var translator = new FileTranslator(fakes.LanguageProvider, fakes.FileHandle, languageId);
+            var translator = new FileTranslator(fakes.LanguageProvider, fakes.FileHandle, languageId, fakes.Logger);
 
             L10nLanguage tmp;
             A.CallTo(() => fakes.LanguageProvider.TryGetLanguage(languageId, out tmp))
@@ -85,6 +86,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
             public IJavascriptTranslationL10nLanguageProvider LanguageProvider =
                 A.Fake<IJavascriptTranslationL10nLanguageProvider>();
             public readonly IFileHandle FileHandle = A.Fake<IFileHandle>();
+            public readonly ILogger<FileTranslator> Logger = A.Fake<ILogger<FileTranslator>>();
 
             public Fakes(L10nLanguage language)
             {
