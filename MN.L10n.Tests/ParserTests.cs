@@ -1,29 +1,28 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace MN.L10n.Tests
 {
-    [TestClass]
     public class ParserTests
     {
-        [TestMethod]
+        [Fact]
         public void TestParserNoMatches()
         {
             var src = @"<a href=javascript:void(0)></a>";
             var parser = new L10nParser();
-            Assert.AreEqual(0, parser.Parse(src).Count);
+            Assert.Empty(parser.Parse(src));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestParserSimpleMatch()
         {
             var src = @"<a href=javascript:void(0)>_s(""Hej"")</a>";
             var parser = new L10nParser();
             var result = parser.Parse(src);
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual("Hej", result[0].Phrase);
+            Assert.Single(result);
+            Assert.Equal("Hej", result[0].Phrase);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestParserWithLinebreak()
         {
             var src = @"<a href=javascript:void(0)>_s(
@@ -31,11 +30,11 @@ namespace MN.L10n.Tests
                       )</a>";
             var parser = new L10nParser();
             var result = parser.Parse(src);
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual("Hej", result[0].Phrase.Trim());
+            Assert.Single(result);
+            Assert.Equal("Hej", result[0].Phrase.Trim());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestParserWithLinebreak2()
         {
             var src = @"<a href=javascript:void(0)>
@@ -47,12 +46,12 @@ namespace MN.L10n.Tests
                       )</a>";
             var parser = new L10nParser();
             var result = parser.Parse(src);
-            Assert.AreEqual(2, result.Count);
-            Assert.AreEqual("Hej", result[0].Phrase.Trim());
-            Assert.AreEqual("Nej", result[1].Phrase.Trim());
+            Assert.Equal(2, result.Count);
+            Assert.Equal("Hej", result[0].Phrase.Trim());
+            Assert.Equal("Nej", result[1].Phrase.Trim());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestParserWithVerbatimLinebreak()
         {
             var src = @"<a href=javascript:void(0)>
@@ -63,21 +62,21 @@ Nej""
                       </a>";
             var parser = new L10nParser();
             var result = parser.Parse(src);
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(@"Hej\nNej", result[0].Phrase.Trim());
+            Assert.Single(result);
+            Assert.Equal(@"Hej\nNej", result[0].Phrase.Trim());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDoesNotGoOutOfBounds()
         {
             var src = @"<a href=javascript:void(0)>
                       _s(";
             var parser = new L10nParser();
             var result = parser.Parse(src);
-            Assert.AreEqual(0, result.Count);
+            Assert.Empty(result);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestWorksWithMultiLineText()
         {
             var src = @"<text>
@@ -93,17 +92,17 @@ Ni kan också kontakta oss på <a href=""""https://support.semesterlistan.se""""
 
             var parser = new L10nParser();
             var result = parser.Parse(src);
-            Assert.AreEqual(1, result.Count);
+            Assert.Single(result);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestWorksWithLiteralTemplateStrings()
         {
             var src = @"function javascriptMethod() { return _s(`This text will also be found by the parser!`); }";
 
             var parser = new L10nParser();
             var result = parser.Parse(src);
-            Assert.AreEqual(1, result.Count);
+            Assert.Single(result);
         }
     }
 }

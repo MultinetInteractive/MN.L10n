@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>TheTest</RootNamespace>
+        <Authors>lice, chbe</Authors>
+        <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
+        <Copyright>© 20XX MultiNet Interactive AB</Copyright>
+        <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\MN.L10n.JavascriptTranslationMiddleware\MN.L10n.JavascriptTranslationMiddleware.csproj" />
+      <ProjectReference Include="..\MN.L10n\MN.L10n.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="wwwroot" />
+      <Watch Remove="wwwroot\compiled\**" />
+    </ItemGroup>
+</Project>
