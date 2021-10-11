@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
+[assembly: InternalsVisibleTo("MN.L10n.Tests")]
 namespace MN.L10n
 {
     [JsonConverter(typeof(L10nTranslatedStringJsonConverter))]
@@ -57,17 +59,17 @@ namespace MN.L10n
     {
         public static IEnumerable<string> ToStringCollection(this IEnumerable<L10nTranslatedString> translatedStrings)
         {
-            return translatedStrings.Select(str => str.ToString());
+            return translatedStrings?.Select(str => str.ToString());
         }
 
         public static string[] ToStringArray(this IEnumerable<L10nTranslatedString> translatedStrings)
         {
-            return translatedStrings.ToStringCollection().ToArray();
+            return translatedStrings.ToStringCollection()?.ToArray();
         }
 
         public static List<string> ToStringList(this IEnumerable<L10nTranslatedString> translatedStrings)
         {
-            return translatedStrings.ToStringCollection().ToList();
+            return translatedStrings.ToStringCollection()?.ToList();
         }
     }
 }
