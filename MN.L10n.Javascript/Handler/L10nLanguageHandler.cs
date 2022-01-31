@@ -31,7 +31,7 @@ namespace MN.L10n.Handler
             var minifiedScript = false;
             if (context.Request["minified"] == "1")
                 minifiedScript = true;
-            context.Response.Write(RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(minifiedScript));
+            context.Response.Write(RuleEvaluatorFactory.CreateJavascriptRuleEvaluator(minifiedScript, true));
         }
 
         #endregion

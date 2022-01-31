@@ -1,29 +1,29 @@
-﻿using FakeItEasy;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using FakeItEasy;
 using System.Collections.Generic;
+using Xunit;
 
 namespace MN.L10n.Tests
 {
-    [TestClass]
-    public class TransactionLanguageScopeTests
+    public class TransactionLanguageScopeTests : IDisposable
     {
-        [TestMethod]
+        [Fact]
         public void CheckStackIsWorking()
         {
             CreateFakes();
             using (L10n.CreateLanguageScope("1"))
             {
-                Assert.AreEqual("1", L10n.GetLanguage());
+                Assert.Equal("1", L10n.GetLanguage());
                 using (L10n.CreateLanguageScope("2"))
                 {
-                    Assert.AreEqual("2", L10n.GetLanguage());
+                    Assert.Equal("2", L10n.GetLanguage());
                     using (L10n.CreateLanguageScope("3"))
                     {
-                        Assert.AreEqual("3", L10n.GetLanguage());
+                        Assert.Equal("3", L10n.GetLanguage());
                     }
-                    Assert.AreEqual("2", L10n.GetLanguage());
+                    Assert.Equal("2", L10n.GetLanguage());
                 }
-                Assert.AreEqual("1", L10n.GetLanguage());
+                Assert.Equal("1", L10n.GetLanguage());
             }
         }
 
@@ -49,8 +49,7 @@ namespace MN.L10n.Tests
             return fakes;
         }
 
-        [TestCleanup]
-        public void CleanupTests()
+        public void Dispose()
         {
             L10n.RemoveAllTranslationReloadedListeners();
         }
