@@ -40,6 +40,9 @@ namespace MN.L10n.FileProviders
         public L10n LoadLanguages()
         {
             var langPath = Path.Combine(FilePath, LanguagesFile);
+
+            Directory.CreateDirectory(FilePath);
+
             List<L10nLanguageItem> languages = new List<L10nLanguageItem> { new L10nLanguageItem { LanguageId = "default" } };
 
             if (File.Exists(langPath))
