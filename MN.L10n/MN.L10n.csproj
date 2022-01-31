@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0;net5.0;net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Company>MultiNet Interactive AB</Company>
     <Authors>Chris Gårdenberg</Authors>
@@ -52,7 +52,7 @@ Translation package</Description>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  
+
   <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
 	<!--
     The include needs to happen after output has been copied to build output folder
