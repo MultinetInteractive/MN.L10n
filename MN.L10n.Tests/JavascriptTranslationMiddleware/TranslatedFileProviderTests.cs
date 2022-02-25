@@ -57,6 +57,39 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
             
             Assert.Equal($"(function(){{ var x = l10n.Phrases;x[\"{phrase}\"] = {{\"r\":{{\"0\":\"Now\",\"1\":\"$__count$ minutes ago\"}}}}; }})();\r\neval(\"_s(\\\"$__count$ minuter sedan\\\", {{__count: 7}});\");", translation);
         }
+
+        [Fact]
+        public void HandlesTranslationWithQuotes()
+        {
+            var (fakes, translator) = CreateFakes();
+            fakes.AddPhrase("Dra och släpp de kategorierna du vill lägga till i trädet till vänster", "Do \"the\" thing");
+            
+            var translation = translator.TranslateFileContents("_s(\"Dra och släpp de kategorierna du vill lägga till i trädet till vänster\");");
+            
+            Assert.Equal("_s(\"Do \\\"the\\\" thing\");", translation);
+        }
+        
+        [Fact]
+        public void HandlesTranslationWithQuotes2()
+        {
+            var (fakes, translator) = CreateFakes();
+            fakes.AddPhrase("Dra och släpp de kategorierna du vill lägga till i trädet till vänster", "Do \"the\" thing");
+            
+            var translation = translator.TranslateFileContents("_s('Dra och släpp de kategorierna du vill lägga till i trädet till vänster');");
+            
+            Assert.Equal("_s('Do \"the\" thing');", translation);
+        }
+        
+        [Fact]
+        public void HandlesTranslationWithQuotes3()
+        {
+            var (fakes, translator) = CreateFakes();
+            fakes.AddPhrase("Dra och släpp de kategorierna du vill lägga till i trädet till vänster", "Do 'the' thing");
+            
+            var translation = translator.TranslateFileContents("_s('Dra och släpp de kategorierna du vill lägga till i trädet till vänster');");
+            
+            Assert.Equal("_s('Do \\\'the\\\' thing');", translation);
+        }
         
         private (Fakes fakes, FileTranslator translator) CreateFakes(string languageId = "2")
         {

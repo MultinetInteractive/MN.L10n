@@ -12,6 +12,7 @@ namespace MN.L10n
             public int StartChar { get; set; }
             public int EndChar { get; set; }
             public bool IsEscaped { get; set; }
+            public char StringContainer { get; set; }
         }
 
         public List<PhraseInvocation> Parse(string source, bool allowEscapedStrings = false)
@@ -149,7 +150,8 @@ namespace MN.L10n
                                         Row = row,
                                         StartChar = startChar,
                                         EndChar = _pos,
-                                        IsEscaped =  isEscaped
+                                        IsEscaped =  isEscaped,
+                                        StringContainer = _stringContainer
                                     });
                                     inToken = false;
                                 }
@@ -165,7 +167,8 @@ namespace MN.L10n
                                         Phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "").Replace("\"\"", "\\\""),
                                         Row = row,
                                         StartChar = startChar,
-                                        EndChar =  _pos
+                                        EndChar =  _pos,
+                                        StringContainer = _stringContainer
                                     });
                                     inToken = false;
                                 }
