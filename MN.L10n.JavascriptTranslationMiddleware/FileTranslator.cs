@@ -56,6 +56,21 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                 _translateSemaphor.Release();
             }
         }
+
+        private static string? GetEscapedTranslation(string? translation, char stringContainer)
+        {
+            if (translation == null)
+            {
+                return null;
+            }
+
+            var quote = stringContainer == '\'' ? '\'' : '"';
+            
+            //Den här escapar quotes och lägger till dom runt strängen så vi behöver ta bort omliggande quotes här
+            //eftersom de redan finns i sourcen vi jobbar med.
+            var quotedAndEscaped = JsonConvert.ToString(translation, quote);
+            return quotedAndEscaped[1..^1];
+        }
         
         public string TranslateFileContents(string contents)
         {
@@ -81,7 +96,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                     else
                     {
                         var translation = languagePhrase.r.First().Value;
-                        translationBuilder.Append(translation);
+                        translationBuilder.Append(GetEscapedTranslation(translation, invocation.StringContainer));
 
                         if (invocation.IsEscaped) translationBuilder.Append('\\');
 

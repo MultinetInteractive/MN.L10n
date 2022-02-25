@@ -4,7 +4,7 @@
       <TargetFramework>net5.0</TargetFramework>
       <Nullable>Enable</Nullable>
       <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-      <PackageVersion>1.0.1</PackageVersion>
+      <PackageVersion>1.0.2</PackageVersion>
       <Authors>lice, chbe</Authors>
       <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
       <Copyright>© 20XX MultiNet Interactive AB</Copyright>
