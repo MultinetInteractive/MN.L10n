@@ -66,8 +66,8 @@ namespace MN.L10n.JavascriptTranslationMiddleware
 
             var quote = stringContainer == '\'' ? '\'' : '"';
             
-            //Den här escapar quotes och lägger till dom runt strängen så vi behöver ta bort omliggande quotes här
-            //eftersom de redan finns i sourcen vi jobbar med.
+            //This escapes quotes / special characters and surrounding quotes.
+            //We remove the surrounding quotes since the source already contain them. 
             var quotedAndEscaped = JsonConvert.ToString(translation, quote);
             return quotedAndEscaped[1..^1];
         }
