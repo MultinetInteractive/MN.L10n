@@ -54,7 +54,7 @@ namespace MN.L10n.Analyzer
         };
 
         private static HashSet<string> L10nParameters(string input) =>
-            new HashSet<string>(input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            new HashSet<string>(input.Split(new[] { " ", ",", "\n", ".", "\r", "\t", "?", "!" }, StringSplitOptions.RemoveEmptyEntries).Select(w => w.Trim())
             .Where(word => word.StartsWith("$") && word.EndsWith("$")));
 
         private void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext obj)

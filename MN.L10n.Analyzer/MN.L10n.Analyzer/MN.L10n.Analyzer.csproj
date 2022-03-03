@@ -19,7 +19,7 @@
     <Copyright></Copyright>
     <PackageTags>MN.L10n.Analyzer, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>2.0.0</Version>
+    <Version>2.1.1</Version>
     <Company>MultiNet Interactive AB</Company>
   </PropertyGroup>
 
