@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MN.L10n.Analyzer
 {
@@ -53,9 +54,9 @@ namespace MN.L10n.Analyzer
             "L10n._s", "L10n._sr", "L10n._m", "L10n._mr",
         };
 
-        private static HashSet<string> L10nParameters(string input) =>
-            new HashSet<string>(input.Split(new[] { " ", ",", "\n", ".", "\r", "\t", "?", "!" }, StringSplitOptions.RemoveEmptyEntries).Select(w => w.Trim())
-            .Where(word => word.StartsWith("$") && word.EndsWith("$")));
+        static Regex r = new Regex(@"(\$(?:[a-zA-Z0-9_]+?)\$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        public static HashSet<string> L10nParameters(string input) => new HashSet<string>(r.Matches(input).Cast<Match>().Select(m => m.Groups[1].Value));
 
         private void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext obj)
         {
