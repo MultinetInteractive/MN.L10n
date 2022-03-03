@@ -15,12 +15,13 @@ export type TranslatedString = string & {
   readonly __l10nuid__: never;
 };
 
-type InvalidEmptyStringResult = never;
-
 declare global {
-  function _s(l10nString: ""): InvalidEmptyStringResult;
   function _s<T extends string>(
-    l10nString: string extends T ? never : StringWithoutFormatArgs<T>
+    l10nString: string extends T
+      ? never
+      : "" extends T
+      ? never
+      : StringWithoutFormatArgs<T>
   ): TranslatedString;
   function _s<T extends string>(
     l10nString: string extends T
