@@ -124,25 +124,21 @@ namespace MN.L10n.Analyzer
                     }
                     else
                     {
-                        if (l10nParameters?.Count == 0)
+                        if (l10nParameters == null || l10nParameters.Count == 0)
                         {
                             return;
                         }
 
                         var argumentAsObject = obj.SemanticModel.GetSymbolInfo(supposedArgument.Expression).Symbol;
 
-                        switch (argumentAsObject)
+                        var missingParameters = l10nParameters.Except(argumentAsObject.ContainingType.MemberNames.Select(p => $"${p}$"));
+
+                        if (missingParameters.Any())
                         {
-                            case IMethodSymbol methodSymbol:
-                                var missingParameters = l10nParameters.Except(methodSymbol.Parameters.Select(p => $"${p.MetadataName}$"));
-                                if (missingParameters.Any())
-                                {
-                                    foreach (var p in missingParameters)
-                                    {
-                                        obj.ReportDiagnostic(Diagnostic.Create(MissingKeywordsInReplacementObjectRule, obj.Node.GetLocation(), p));
-                                    }
-                                }
-                                break;
+                            foreach (var p in missingParameters)
+                            {
+                                obj.ReportDiagnostic(Diagnostic.Create(MissingKeywordsInReplacementObjectRule, obj.Node.GetLocation(), p));
+                            }
                         }
                     }
                 }

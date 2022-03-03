@@ -190,7 +190,7 @@ namespace MN.L10n.Analyzer.Test
               class TypeName
               {
                 public void Main() {
-                    _s(""Testing $someParameter$"", null);
+                    _s(""Testing testing"", null);
                 }
               }
           }";
@@ -208,7 +208,7 @@ namespace MN.L10n.Analyzer.Test
               class TypeName
               {
                 public void Main() {
-                    L10n._s(""Testing $someParameter$"", null);
+                    L10n._s(""Testing testing"", null);
                 }
               }
           }";
@@ -333,6 +333,7 @@ namespace MN.L10n.Analyzer.Test
                 public void Main() {
                     _s(""Testing $someParameter$"", new { wrongParameter = ""I am Cornholio"" });
                     L10n._s(""Testing $someParameter$"", new { wrongParameter = ""I am Cornholio"" });
+                    _s(""Testing $someParameter$"", new { someParameter = ""I am Cornholio"" });
                 }
               }
           }";
