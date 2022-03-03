@@ -16,10 +16,12 @@ namespace MN.L10n.Analyzer
         public static readonly DiagnosticDescriptor NoEmptyStringsEndRule = new DiagnosticDescriptor("MN0004", "Input is an empty string", "The string cannot start or end with whitespace", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoStringInterpolationRule = new DiagnosticDescriptor("MN0005", "Interpolated string used", "L10n can only evaluate string literals when finding used phrases. Never use string interpolation with L10n. It is not supported yet.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoStringConcatRule = new DiagnosticDescriptor("MN0006", "String concatenation used", "L10n can only evaluate a single string literal when finding used phrases. Never use string concatenation with L10n. It is not supported yet.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
-        public static readonly DiagnosticDescriptor ArgumentsNotAnClass = new DiagnosticDescriptor("MN0007", "Invalid type for keywords", "L10n requires a class or anonymous type for keywords.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor ArgumentsNotAnClass = new DiagnosticDescriptor("MN0007", "Invalid type for keywords", "L10n requires a class or anonymous type (or explicitly null) for keywords.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics {
-            get {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
                 return ImmutableArray.Create(
                     NoParamRule,
                     MemberAccessorRule,
@@ -90,7 +92,7 @@ namespace MN.L10n.Analyzer
                 {
                     var supposedArgument = arguments[1];
 
-                    if (!(supposedArgument.Expression is ObjectCreationExpressionSyntax || supposedArgument.Expression is AnonymousObjectCreationExpressionSyntax))
+                    if (!(supposedArgument.Expression is ObjectCreationExpressionSyntax || supposedArgument.Expression is AnonymousObjectCreationExpressionSyntax || (supposedArgument.Expression.RawKind == (int)SyntaxKind.NullLiteralExpression)))
                     {
                         obj.ReportDiagnostic(Diagnostic.Create(ArgumentsNotAnClass, obj.Node.GetLocation()));
                     }
