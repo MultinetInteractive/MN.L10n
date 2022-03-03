@@ -43,7 +43,8 @@ namespace MN.L10n.Analyzer
 
         private static string[] validIdentifiers = new[]
         {
-            "_s", "_sr", "_m", "_mr"
+            "_s", "_sr", "_m", "_mr",
+            "L10n._s", "L10n._sr", "L10n._m", "L10n._mr",
         };
 
         private void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext obj)
@@ -51,8 +52,10 @@ namespace MN.L10n.Analyzer
             var ies = obj.Node as InvocationExpressionSyntax;
             if (ies == null) return;
 
-            var expr = ies.Expression as IdentifierNameSyntax;
-            if (expr == null || !validIdentifiers.Contains(expr.Identifier.Text)) return;
+            var identifier = (ies.Expression as IdentifierNameSyntax)?.Identifier.Text
+                ?? (ies.Expression as MemberAccessExpressionSyntax)?.ToString();
+
+            if (!validIdentifiers.Contains(identifier)) return;
 
             var arguments = ies.ArgumentList.Arguments;
             if (arguments.Count == 0)
@@ -92,7 +95,7 @@ namespace MN.L10n.Analyzer
                 {
                     var supposedArgument = arguments[1];
 
-                    if (!(supposedArgument.Expression is ObjectCreationExpressionSyntax || supposedArgument.Expression is AnonymousObjectCreationExpressionSyntax || (supposedArgument.Expression.RawKind == (int)SyntaxKind.NullLiteralExpression)))
+                    if (!(supposedArgument.Expression is ObjectCreationExpressionSyntax || supposedArgument.Expression is AnonymousObjectCreationExpressionSyntax || supposedArgument.Expression.RawKind == (int)SyntaxKind.NullLiteralExpression))
                     {
                         obj.ReportDiagnostic(Diagnostic.Create(ArgumentsNotAnClass, obj.Node.GetLocation()));
                     }
