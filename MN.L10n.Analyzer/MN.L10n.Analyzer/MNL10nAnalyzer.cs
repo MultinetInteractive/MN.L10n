@@ -2,6 +2,8 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -11,12 +13,14 @@ namespace MN.L10n.Analyzer
     public class MNL10nAnalyzer : DiagnosticAnalyzer
     {
         public static readonly DiagnosticDescriptor NoParamRule = new DiagnosticDescriptor("MN0001", "Missing arguments", "Need to send variables to '{0}'", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
-        public static readonly DiagnosticDescriptor MemberAccessorRule = new DiagnosticDescriptor("MN0002", "Input is not a known string", "L10n can only evaluate string literals when finding used phrases. If the phrase is known you can ignore this, but you should only use L10n with known strings when possible.", "L10n", DiagnosticSeverity.Warning, isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor MemberAccessorRule = new DiagnosticDescriptor("MN0002", "Input is not a known string", "L10n can only evaluate string literals when finding used phrases. If the phrase is known you can ignore this, but you should only use L10n with known strings when possible.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoWhitespaceAtStartOrEndRule = new DiagnosticDescriptor("MN0003", "String starts/ends with whitespace", "The string cannot start or end with whitespaces.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoEmptyStringsEndRule = new DiagnosticDescriptor("MN0004", "Input is an empty string", "The string cannot start or end with whitespace", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoStringInterpolationRule = new DiagnosticDescriptor("MN0005", "Interpolated string used", "L10n can only evaluate string literals when finding used phrases. Never use string interpolation with L10n. It is not supported yet.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
         public static readonly DiagnosticDescriptor NoStringConcatRule = new DiagnosticDescriptor("MN0006", "String concatenation used", "L10n can only evaluate a single string literal when finding used phrases. Never use string concatenation with L10n. It is not supported yet.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
-        public static readonly DiagnosticDescriptor ArgumentsNotAnClass = new DiagnosticDescriptor("MN0007", "Invalid type for keywords", "L10n requires a class or anonymous type (or explicitly null) for keywords.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor ArgumentsNotAnClassOrNullRule = new DiagnosticDescriptor("MN0007", "Invalid type for keywords", "L10n requires a class or anonymous type (or explicitly null) for keywords.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor MissingKeywordReplacementObjectRule = new DiagnosticDescriptor("MN0008", "Missing object for keyword replacement", "L10n requires a class or anonymous type (or explicitly null) for keywords.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor MissingKeywordsInReplacementObjectRule = new DiagnosticDescriptor("MN0009", "Missing property for keyword replacement", "L10n is missing '{0}' in the object for keywords.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -29,7 +33,9 @@ namespace MN.L10n.Analyzer
                     NoEmptyStringsEndRule,
                     NoStringInterpolationRule,
                     NoStringConcatRule,
-                    ArgumentsNotAnClass
+                    ArgumentsNotAnClassOrNullRule,
+                    MissingKeywordReplacementObjectRule,
+                    MissingKeywordsInReplacementObjectRule
                     );
             }
         }
@@ -47,6 +53,10 @@ namespace MN.L10n.Analyzer
             "L10n._s", "L10n._sr", "L10n._m", "L10n._mr",
         };
 
+        private static HashSet<string> L10nParameters(string input) =>
+            new HashSet<string>(input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            .Where(word => word.StartsWith("$") && word.EndsWith("$")));
+
         private void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext obj)
         {
             var ies = obj.Node as InvocationExpressionSyntax;
@@ -56,6 +66,8 @@ namespace MN.L10n.Analyzer
                 ?? (ies.Expression as MemberAccessExpressionSyntax)?.ToString();
 
             if (!validIdentifiers.Contains(identifier)) return;
+
+            HashSet<string> l10nParameters = null;
 
             var arguments = ies.ArgumentList.Arguments;
             if (arguments.Count == 0)
@@ -88,6 +100,17 @@ namespace MN.L10n.Analyzer
                                 obj.ReportDiagnostic(Diagnostic.Create(NoWhitespaceAtStartOrEndRule, obj.Node.GetLocation()));
                             }
                         }
+
+                        if (text.Contains("$"))
+                        {
+                            l10nParameters = L10nParameters(text);
+
+                            if (arguments.Count == 1)
+                            {
+                                obj.ReportDiagnostic(Diagnostic.Create(MissingKeywordReplacementObjectRule, obj.Node.GetLocation()));
+                            }
+                        }
+
                         break;
                 }
 
@@ -97,7 +120,30 @@ namespace MN.L10n.Analyzer
 
                     if (!(supposedArgument.Expression is ObjectCreationExpressionSyntax || supposedArgument.Expression is AnonymousObjectCreationExpressionSyntax || supposedArgument.Expression.RawKind == (int)SyntaxKind.NullLiteralExpression))
                     {
-                        obj.ReportDiagnostic(Diagnostic.Create(ArgumentsNotAnClass, obj.Node.GetLocation()));
+                        obj.ReportDiagnostic(Diagnostic.Create(ArgumentsNotAnClassOrNullRule, obj.Node.GetLocation()));
+                    }
+                    else
+                    {
+                        if (l10nParameters?.Count == 0)
+                        {
+                            return;
+                        }
+
+                        var argumentAsObject = obj.SemanticModel.GetSymbolInfo(supposedArgument.Expression).Symbol;
+
+                        switch (argumentAsObject)
+                        {
+                            case IMethodSymbol methodSymbol:
+                                var missingParameters = l10nParameters.Except(methodSymbol.Parameters.Select(p => $"${p.MetadataName}$"));
+                                if (missingParameters.Any())
+                                {
+                                    foreach (var p in missingParameters)
+                                    {
+                                        obj.ReportDiagnostic(Diagnostic.Create(MissingKeywordsInReplacementObjectRule, obj.Node.GetLocation(), p));
+                                    }
+                                }
+                                break;
+                        }
                     }
                 }
             }
