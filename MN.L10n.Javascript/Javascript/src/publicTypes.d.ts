@@ -21,6 +21,8 @@ declare global {
       ? never
       : "" extends T
       ? never
+      : TranslatedString extends T
+      ? never
       : StringWithoutFormatArgs<T>
   ): TranslatedString;
   function _s<T extends string>(

@@ -1,6 +1,6 @@
 {
   "name": "@multinet/mn-l10n",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Multinet translation library",
   "main": "dist/L10n.js",
   "types": "dist/types",
