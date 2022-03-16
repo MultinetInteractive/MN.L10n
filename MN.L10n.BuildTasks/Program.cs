@@ -229,8 +229,14 @@ namespace MN.L10n.BuildTasks
                     p.Value.Sources = new List<string>();
                 }
 
+                // In case we catch some files that are temporal, we need to yeet these.
+                fileList = fileList.Where(f => File.Exists(f)).ToList();
+
                 foreach (var file in fileList.Distinct())
                 {
+                    // Additional security to ignore missing files
+                    if (!File.Exists(file)) continue;
+
                     var fileContents = File.ReadAllText(file);
                     var shortFile = file.Replace(solutionDir, "");
                     var invocations = parser.Parse(fileContents);
