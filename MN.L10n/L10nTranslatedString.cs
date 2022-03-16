@@ -46,12 +46,17 @@ namespace MN.L10n
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var value = reader.ReadAsString();
-            if(value == null) {
+            if(reader.Value is string value)
+            {
+                return new L10nTranslatedString(value);
+            }
+
+            if (objectType == typeof(L10nTranslatedString?))
+            {
                 return null;
             }
-		
-            return new L10nTranslatedString(value);
+
+            return new L10nTranslatedString(null);
         }
     }
 
