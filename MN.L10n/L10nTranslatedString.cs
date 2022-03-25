@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
@@ -10,7 +11,7 @@ namespace MN.L10n
 {
     [JsonConverter(typeof(L10nTranslatedStringJsonConverter))]
     [DebuggerDisplay("TranslatedString: {_translatedString}")]
-    public readonly struct L10nTranslatedString
+    public readonly struct L10nTranslatedString : IComparable
     {
         private readonly string _translatedString;
 
@@ -24,6 +25,24 @@ namespace MN.L10n
         public override string ToString()
         {
             return _translatedString;
+        }
+        
+        public int CompareTo(object obj)
+        {
+        	if (obj == null)
+        	{
+        		return _translatedString.CompareTo(null);
+        	}
+        	if (obj is string s)
+        	{
+        		return _translatedString.CompareTo(s);
+        	}
+        	if (obj is L10nTranslatedString t)
+        	{
+        		return _translatedString.CompareTo(t._translatedString);
+        	}
+    
+        	throw new Exception($"Unable to compare a L10nTranslatedString to an object of type {obj.GetType().Name}");
         }
     }
     
