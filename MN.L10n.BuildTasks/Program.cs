@@ -129,7 +129,7 @@ namespace MN.L10n.BuildTasks
                     new FileDataProvider(solutionDir)
                 );
 
-                if (config.DownloadTranslationFromSourcesOnBuild)
+                if (config.DownloadTranslationFromSourcesOnBuild || args.Contains("--download-translations"))
                 {
                     Console.WriteLine("info l10n: Loading translations from sources defined in languages.json");
                     var fdp = L10n.GetDataProvider();
