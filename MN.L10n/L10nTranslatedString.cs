@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
@@ -9,6 +8,7 @@ using Newtonsoft.Json;
 [assembly: InternalsVisibleTo("MN.L10n.Tests")]
 namespace MN.L10n
 {
+    [Serializable]
     [JsonConverter(typeof(L10nTranslatedStringJsonConverter))]
     [DebuggerDisplay("TranslatedString: {_translatedString}")]
     public readonly struct L10nTranslatedString : IComparable
