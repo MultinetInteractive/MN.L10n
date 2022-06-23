@@ -34,8 +34,8 @@ Translation package</Description>
   <ItemGroup>
 	<PackageReference Include="CommonMark.NET" Version="0.15.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.2.0" />
-	<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-	<PackageReference Include="NGettext" Version="0.6.6" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	<PackageReference Include="NGettext" Version="0.6.7" />
 	<!--<PackageReference Update="@(PackageReference)" PrivateAssets="All" />-->
   </ItemGroup>
   <ItemGroup>
