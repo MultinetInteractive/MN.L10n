@@ -129,7 +129,7 @@ namespace MN.L10n.BuildTasks
                     new FileDataProvider(solutionDir)
                 );
 
-                if (config.DownloadTranslationFromSourcesOnBuild)
+                if (config.DownloadTranslationFromSourcesOnBuild || args.Contains("--download-translations"))
                 {
                     Console.WriteLine("info l10n: Loading translations from sources defined in languages.json");
                     var fdp = L10n.GetDataProvider();
@@ -144,6 +144,12 @@ namespace MN.L10n.BuildTasks
                             Console.WriteLine("info l10n: Fetching translations from sources aborted");
                             Console.WriteLine("info l10n: {0}", tce.ToString());
                         }
+                    }
+
+                    if (args.Contains("--download-translations"))
+                    {
+                        Console.WriteLine("info l10n: Translations downloaded, exiting");
+                        return 0;
                     }
                 }
 
