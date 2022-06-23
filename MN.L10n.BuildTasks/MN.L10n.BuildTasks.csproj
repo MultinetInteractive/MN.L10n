@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject>MN.L10n.BuildTasks.Program</StartupObject>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <Authors>Chris Gårdenberg</Authors>
     <Company>MultiNet Interactive AB</Company>
     <AssemblyVersion>2.0.1</AssemblyVersion>

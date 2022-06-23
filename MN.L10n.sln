@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n", "MN.L10n\MN.L10n.csproj", "{C224FF20-ACA4-4F7A-81C9-477F3DDE751A}"
 EndProject
@@ -36,11 +36,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.SystemWeb", "MN.L10
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.Tests", "MN.L10n.Tests\MN.L10n.Tests.csproj", "{80D8F7EE-7A63-41DB-9FD4-D0D4D1D69F21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-l10n-buildtask", "dotnet-l10n-buildtask\dotnet-l10n-buildtask.csproj", "{4CB11774-2E67-44FD-99C2-FCE1BCD31F77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-l10n-buildtask", "dotnet-l10n-buildtask\dotnet-l10n-buildtask.csproj", "{4CB11774-2E67-44FD-99C2-FCE1BCD31F77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.TestWebApp", "MN.L10n.TestWebApp\MN.L10n.TestWebApp.csproj", "{C7B09D09-093F-490E-B4AB-6FE2E22EEFB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.TestWebApp", "MN.L10n.TestWebApp\MN.L10n.TestWebApp.csproj", "{C7B09D09-093F-490E-B4AB-6FE2E22EEFB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MN.L10n.JavascriptTranslationMiddleware", "MN.L10n.JavascriptTranslationMiddleware\MN.L10n.JavascriptTranslationMiddleware.csproj", "{296F4F0D-4020-486A-8EAE-F77AF23F7AD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MN.L10n.JavascriptTranslationMiddleware", "MN.L10n.JavascriptTranslationMiddleware\MN.L10n.JavascriptTranslationMiddleware.csproj", "{296F4F0D-4020-486A-8EAE-F77AF23F7AD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
