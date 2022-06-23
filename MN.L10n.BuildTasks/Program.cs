@@ -145,6 +145,12 @@ namespace MN.L10n.BuildTasks
                             Console.WriteLine("info l10n: {0}", tce.ToString());
                         }
                     }
+
+                    if (args.Contains("--download-translations"))
+                    {
+                        Console.WriteLine("info l10n: Translations downloaded, exiting");
+                        return 0;
+                    }
                 }
 
                 var validExtensions = new[] { ".aspx", ".ascx", ".js", ".jsx", ".cs", ".cshtml", ".ts", ".tsx", ".master", ".ashx", ".php" };
