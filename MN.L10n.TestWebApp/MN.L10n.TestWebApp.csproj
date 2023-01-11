@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <RootNamespace>TheTest</RootNamespace>
         <Authors>lice, chbe</Authors>
         <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>

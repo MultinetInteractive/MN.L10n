@@ -55,19 +55,29 @@ namespace MN.L10n
             return Instance;
         }
 
+        internal static SemaphoreSlim reloadSemaphore = new SemaphoreSlim(1, 1);
+
         public static async Task<bool> ReloadFromDataProviderSources(CancellationToken token)
         {
-            var prov = GetDataProvider();
-            var instance = GetInstance();
-            var success = await prov.LoadTranslationFromSources(instance, token);
-            if (success)
+            await reloadSemaphore.WaitAsync();
+            try
             {
+                var prov = GetDataProvider();
+                var instance = GetInstance();
+                var success = await prov.LoadTranslationFromSources(instance, token);
+                if (success)
+                {
 #pragma warning disable S4220 // Events should have proper arguments
-                TranslationsReloaded?.Invoke(instance, EventArgs.Empty);
+                    TranslationsReloaded?.Invoke(instance, EventArgs.Empty);
 #pragma warning restore S4220 // Events should have proper arguments
-            }
+                }
 
-            return success;
+                return success;
+            }
+            finally
+            {
+                reloadSemaphore.Release();
+            }
         }
 
         public static void RemoveAllTranslationReloadedListeners()

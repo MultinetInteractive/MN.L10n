@@ -38,7 +38,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces.",
+                Message = "The string cannot start or end with whitespaces",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 14, 6)
@@ -48,7 +48,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces.",
+                Message = "The string cannot start or end with whitespaces",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
@@ -84,7 +84,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces.",
+                Message = "The string cannot start or end with whitespaces",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 14, 6)
@@ -94,7 +94,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces.",
+                Message = "The string cannot start or end with whitespaces",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
@@ -133,7 +133,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0007",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords.",
+                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
@@ -171,7 +171,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0007",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords.",
+                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
@@ -242,7 +242,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0008",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords.",
+                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
@@ -278,7 +278,7 @@ namespace MN.L10n.Analyzer.Test
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0008",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords.",
+                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
@@ -360,7 +360,7 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0009",
-                Message = "L10n is missing '$someParameter$' in the object for keywords.",
+                Message = "L10n is missing '$someParameter$' in the object for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 7, 6)
@@ -369,7 +369,7 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0009",
-                Message = "L10n is missing '$someParameter$' in the object for keywords.",
+                Message = "L10n is missing '$someParameter$' in the object for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 8, 6)
@@ -379,7 +379,7 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0009",
-                Message = "L10n is missing '$email$' in the object for keywords.",
+                Message = "L10n is missing '$email$' in the object for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 10, 21)
@@ -389,7 +389,7 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0009",
-                Message = "L10n is missing '$verificationlink$' in the object for keywords.",
+                Message = "L10n is missing '$verificationlink$' in the object for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 10, 21)
@@ -399,7 +399,7 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
             expectations.Add(new DiagnosticResult
             {
                 Id = "MN0009",
-                Message = "L10n is missing '$ipaddress$' in the object for keywords.",
+                Message = "L10n is missing '$ipaddress$' in the object for keywords",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 10, 21)
