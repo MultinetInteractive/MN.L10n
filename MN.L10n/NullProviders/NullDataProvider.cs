@@ -16,19 +16,8 @@ namespace MN.L10n.NullProviders
             };
         }
 
-        public Task<bool> LoadTranslationFromSources(L10n l10n, CancellationToken token)
-        {
-            return Task.FromResult(false);
-        }
-
-        public bool SaveL10n(L10n l10n)
-        {
-            return true;
-        }
-
-        public bool SaveTranslation(L10n l10n)
-        {
-            return true;
-        }
+        public Task<bool> LoadTranslationFromSources(L10n l10n, bool removeAllPhrases, CancellationToken token) => Task.FromResult(false);
+        public bool SaveL10n(L10n l10n) => true;
+        public bool SaveTranslation(L10n l10n) => true;
     }
 }

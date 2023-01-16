@@ -30,7 +30,7 @@ namespace MN.L10n.Tests
         public async Task ReloadFromSources()
         {
             CreateFakes();
-            var reloaded = await L10n.ReloadFromDataProviderSources(CancellationToken.None);
+            var reloaded = await L10n.ReloadFromDataProviderSources(true, CancellationToken.None);
             Assert.False(reloaded);
         }
 
@@ -38,9 +38,9 @@ namespace MN.L10n.Tests
         public async Task ReloadFromSources2()
         {
             var fakes = CreateFakes();
-            A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, CancellationToken.None))
+            A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, true, CancellationToken.None))
                 .Returns(Task.FromResult(true));
-            var reloaded = await L10n.ReloadFromDataProviderSources(CancellationToken.None);
+            var reloaded = await L10n.ReloadFromDataProviderSources(true, CancellationToken.None);
             Assert.True(reloaded);
         }
 
@@ -49,18 +49,18 @@ namespace MN.L10n.Tests
         {
             CreateFakes();
             L10n.TranslationsReloaded += (sender, args) => throw new XunitException("Unexpected call to reloaded hook");
-            await L10n.ReloadFromDataProviderSources(CancellationToken.None);
+            await L10n.ReloadFromDataProviderSources(true, CancellationToken.None);
         }
 
         [Fact]
         public async Task ReloadFromSourceCallsHookWhenReloadSucceeds()
         {
             var fakes = CreateFakes();
-            A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, CancellationToken.None))
+            A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, true, CancellationToken.None))
                 .Returns(Task.FromResult(true));
             var hookWasCalled = false;
             L10n.TranslationsReloaded += (sender, args) => hookWasCalled = true;
-            await L10n.ReloadFromDataProviderSources(CancellationToken.None);
+            await L10n.ReloadFromDataProviderSources(true, CancellationToken.None);
             Assert.True(hookWasCalled, "Translations reloaded was not called");
         }
 
@@ -69,11 +69,11 @@ namespace MN.L10n.Tests
         {
             var fakes = CreateFakes();
             L10n.TranslationsReloaded += (sender, args) => throw new XunitException("Unexpected call to reloaded hook");
-            A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, CancellationToken.None))
+            A.CallTo(() => fakes.DataProvider.LoadTranslationFromSources(fakes.L10n, true, CancellationToken.None))
                 .Returns(Task.FromResult(true));
 
             L10n.RemoveAllTranslationReloadedListeners();
-            await L10n.ReloadFromDataProviderSources(CancellationToken.None);
+            await L10n.ReloadFromDataProviderSources(true, CancellationToken.None);
         }
 
         private class Fakes

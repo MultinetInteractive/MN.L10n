@@ -21,7 +21,7 @@ namespace MN.L10n.Tests
         {
             var provider = CreateNullProvider();
             var l10n = provider.LoadL10n();
-            var reloaded = await provider.LoadTranslationFromSources(l10n, CancellationToken.None);
+            var reloaded = await provider.LoadTranslationFromSources(l10n, true, CancellationToken.None);
             Assert.False(reloaded);
         }
 

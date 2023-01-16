@@ -136,7 +136,7 @@ namespace MN.L10n.FileProviders
             return true;
         }
 
-        public async Task<bool> LoadTranslationFromSources(L10n l10n, CancellationToken token)
+        public async Task<bool> LoadTranslationFromSources(L10n l10n, bool removeAllPhrases, CancellationToken token)
         {
             bool errorLoadingSources = false;
             Exception _ex = null;
@@ -153,6 +153,13 @@ namespace MN.L10n.FileProviders
                     var sources = lang.Sources.ToList();
                     // Read the sources in reverse order, "original" translations should be first in the list
                     sources.Reverse();
+
+                    // If we have sources, and the removeAllPhrases is true, remove all current phrases, to get rid of old ones as well
+                    if(sources.Count > 0 && removeAllPhrases)
+                    {
+                        l10nLang.Phrases.Clear();
+                    }
+
                     foreach (var source in sources)
                     {
                         if (source.StartsWith("http") && Uri.IsWellFormedUriString(source, UriKind.Absolute))

@@ -137,7 +137,7 @@ namespace MN.L10n.BuildTasks
                     {
                         try
                         {
-                            await fdp.LoadTranslationFromSources(PhraseInstance, cts.Token);
+                            await fdp.LoadTranslationFromSources(PhraseInstance, true, cts.Token);
                         }
                         catch (TaskCanceledException tce)
                         {

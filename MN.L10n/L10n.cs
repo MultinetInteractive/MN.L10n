@@ -57,14 +57,14 @@ namespace MN.L10n
 
         internal static SemaphoreSlim reloadSemaphore = new SemaphoreSlim(1, 1);
 
-        public static async Task<bool> ReloadFromDataProviderSources(CancellationToken token)
+        public static async Task<bool> ReloadFromDataProviderSources(bool removeAllPhrases, CancellationToken token)
         {
             await reloadSemaphore.WaitAsync();
             try
             {
                 var prov = GetDataProvider();
                 var instance = GetInstance();
-                var success = await prov.LoadTranslationFromSources(instance, token);
+                var success = await prov.LoadTranslationFromSources(instance, removeAllPhrases, token);
                 if (success)
                 {
 #pragma warning disable S4220 // Events should have proper arguments
