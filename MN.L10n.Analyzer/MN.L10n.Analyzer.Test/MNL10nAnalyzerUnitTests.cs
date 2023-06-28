@@ -1,18 +1,16 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using TestHelper;
+using Xunit;
 
 namespace MN.L10n.Analyzer.Test
 {
-    [TestClass]
     public class UnitTest : CodeFixVerifier
     {
-
         //No diagnostics expected to show up
-        [TestMethod]
+        [Fact]
         public void Test_MN0003_DoNotAllowWhiteSpaceAtStartOrEndOfString()
         {
             var test = @"
@@ -58,7 +56,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0003_DoNotAllowWhiteSpaceAtStartOrEndOfString_WithClassName()
         {
             var test = @"
@@ -105,7 +103,7 @@ namespace MN.L10n.Analyzer.Test
         }
 
         //No diagnostics expected to show up
-        [TestMethod]
+        [Fact]
         public void Test_MN0007_DoNotAllowNonClassAsKeywordArgument()
         {
             var test = @"
@@ -143,7 +141,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0007_DoNotAllowNonClassAsKeywordArgument_WithClassName()
         {
             var test = @"
@@ -181,7 +179,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0007_AllowNullAsKeywordArgument()
         {
             var test = @"
@@ -199,7 +197,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test);
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0007_AllowNullAsKeywordArgument_WithClassName()
         {
             var test = @"
@@ -217,7 +215,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test);
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0008_DoNotAllowMissingKeywordArgument()
         {
             var test = @"
@@ -252,7 +250,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0008_DoNotAllowMissingKeywordArgument_WithClassName()
         {
             var test = @"
@@ -288,7 +286,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0008_NoMissingKeywordArgument()
         {
             var test = @"
@@ -305,7 +303,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test);
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0008_NoMissingKeywordArgument_WithClassName()
         {
             var test = @"
@@ -322,7 +320,7 @@ namespace MN.L10n.Analyzer.Test
             VerifyCSharpDiagnostic(test);
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_MN0009_MissingKeywordsInObjectArgument()
         {
             var test = @"

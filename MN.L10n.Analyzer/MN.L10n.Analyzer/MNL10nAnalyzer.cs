@@ -48,10 +48,10 @@ namespace MN.L10n.Analyzer
             context.RegisterSyntaxNodeAction(AnalyzeSyntaxNode, SyntaxKind.InvocationExpression);
         }
 
-        private static string[] validIdentifiers = new[]
+        private static readonly string[] validIdentifiers = new[]
         {
-            "_s", "_sr", "_m", "_mr",
-            "L10n._s", "L10n._sr", "L10n._m", "L10n._mr",
+            "_s", "_m",
+            "L10n._s", "L10n._m",
         };
 
         static Regex r = new Regex(@"(\$(?:[a-zA-Z0-9_]+?)\$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -60,8 +60,7 @@ namespace MN.L10n.Analyzer
 
         private void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext obj)
         {
-            var ies = obj.Node as InvocationExpressionSyntax;
-            if (ies == null) return;
+            if (!(obj.Node is InvocationExpressionSyntax ies)) return;
 
             var identifier = (ies.Expression as IdentifierNameSyntax)?.Identifier.Text
                 ?? (ies.Expression as MemberAccessExpressionSyntax)?.ToString();

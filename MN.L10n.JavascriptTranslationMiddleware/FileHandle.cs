@@ -21,7 +21,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         public string FileName => _fileInfo.Name;
         public string Path => _fileInfo.PhysicalPath;
         public string RelativeRequestPath { get; }
-        
+
         public FileHandle(IFileInfo fileInfo, string relativeRequestPath)
         {
             _fileInfo = fileInfo;

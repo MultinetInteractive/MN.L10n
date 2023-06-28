@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Html;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,9 +13,7 @@ namespace MN.L10n
         private TransactionLanguageProvider LanguageProvider { get; set; }
         public static event EventHandler TranslationsReloaded;
 
-#pragma warning disable S2223 // Non-constant static fields should not be visible
         internal static L10n Instance;
-#pragma warning restore S2223 // Non-constant static fields should not be visible
 
         public static L10n CreateInstance(IL10nLanguageProvider langProvider, IL10nDataProvider dataProvider, Func<IDictionary<object, object>> getScopeContainer = null)
         {
@@ -96,24 +93,10 @@ namespace MN.L10n
             if (Instance == null) throw new Exception("You must use L10n.CreateInstance(langProvider, dataProvider, fileResolver) to create an instance before using this.");
         }
 
-        public static IHtmlContent _sr(string phrase, object args = null)
-        {
-#pragma warning disable MN0007 // Invalid type for keywords
-            return new HtmlString(_s(phrase, args));
-#pragma warning restore MN0007 // Invalid type for keywords
-        }
-
         public static L10nTranslatedString _s(string phrase, object args = null)
         {
             EnsureInitialized();
             return Instance.__getPhrase(phrase, args);
-        }
-
-        public static IHtmlContent _mr(string phrase, object args = null)
-        {
-#pragma warning disable MN0007 // Invalid type for keywords
-            return new HtmlString(_m(phrase, args));
-#pragma warning restore MN0007 // Invalid type for keywords
         }
 
         public static L10nTranslatedString _m(string phrase, object args = null)
