@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-      <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+      <TargetFramework>net7.0</TargetFramework>
       <Nullable>Enable</Nullable>
       <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-      <PackageVersion>1.0.4</PackageVersion>
+      <PackageVersion>2.0.0</PackageVersion>
       <Authors>lice, chbe, chga</Authors>
       <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
       <Copyright>© 20XX MultiNet Interactive AB</Copyright>
       <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
       <RepositoryType>git</RepositoryType>
+      <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

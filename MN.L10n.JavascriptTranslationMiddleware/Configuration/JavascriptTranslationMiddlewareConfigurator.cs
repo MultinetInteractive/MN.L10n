@@ -7,25 +7,14 @@ namespace MN.L10n.JavascriptTranslationMiddleware
 {
     public interface IJavascriptTranslationMiddlewareConfigurator
     {
-        /// <summary>
-        /// Add a path prefix for which the plugin should run. For example if you add /plugin the plugin will run for all requests starting with /plugin
-        /// </summary>
-        /// <param name="prefix"></param>
-        /// <returns></returns>
         IJavascriptTranslationMiddlewareConfigurator AddPathPrefix(PathString prefix);
-        /// <summary>
-        /// Use to set when the translations should be cached, by default it always is
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         IJavascriptTranslationMiddlewareConfigurator EnableCacheWhen(Func<HttpContext, Task<bool>> predicate);
 
-        /// <summary>
-        /// Use to configure when the translationmiddleware should translate JS files. By default it always does.
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        IJavascriptTranslationMiddlewareConfigurator TranslateWhen(Func<HttpContext, FileHandle, Task<bool>>? predicate);
+        IJavascriptTranslationMiddlewareConfigurator TranslateWhen(
+            Func<HttpContext, FileHandle, Task<bool>>? predicate);
+
+        IJavascriptTranslationMiddlewareConfigurator EnableVersionedFileRedirect(Action<VersionedFileRedirectConfig>? configure = null);
+        IJavascriptTranslationMiddlewareConfigurator DisableVersionedFileRedirect();
     }
 
     internal class JavascriptTranslationMiddlewareConfigurator : IJavascriptTranslationMiddlewareConfigurator
@@ -34,6 +23,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         private readonly string _compiledFolder;
         private Func<HttpContext, FileHandle, Task<bool>>? _shouldTranslateAsync;
         private Func<HttpContext, Task<bool>>? _shouldEnableCacheAsync;
+        private VersionedFileRedirectConfig? _versionedFileRedirectConfig = new();
 
         public JavascriptTranslationMiddlewareConfigurator(string compiledFolder)
         {
@@ -57,6 +47,19 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             _shouldTranslateAsync = predicate;
             return this;
         }
+        
+        public IJavascriptTranslationMiddlewareConfigurator EnableVersionedFileRedirect(Action<VersionedFileRedirectConfig>? configure = null)
+        {
+            _versionedFileRedirectConfig = new VersionedFileRedirectConfig();
+            configure?.Invoke(_versionedFileRedirectConfig);
+            return this;
+        }
+        
+        public IJavascriptTranslationMiddlewareConfigurator DisableVersionedFileRedirect()
+        {
+            _versionedFileRedirectConfig = null;
+            return this;
+        }
 
         public IJavascriptTranslationMiddlewareConfiguration Build()
         {
@@ -67,7 +70,10 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                     $"At least one pathPrefix must be provided, plase call {nameof(AddPathPrefix)} while configuring the {nameof(JavascriptTranslationMiddleware)}");
 
             var config =
-                new JavascriptTranslationMiddlewareConfiguration(_pathPrefixes.ToArray(), _compiledFolder.Trim());
+                new JavascriptTranslationMiddlewareConfiguration(_pathPrefixes.ToArray(), _compiledFolder.Trim())
+                {
+                    VersionedFileRedirectConfig = _versionedFileRedirectConfig
+                };
             if (_shouldTranslateAsync is not null) config.ShouldTranslateAsync = _shouldTranslateAsync;
 
             if (_shouldEnableCacheAsync is not null) config.EnableCacheAsync = _shouldEnableCacheAsync;
