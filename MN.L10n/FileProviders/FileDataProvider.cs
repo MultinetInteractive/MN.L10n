@@ -22,6 +22,8 @@ namespace MN.L10n.FileProviders
         private string PhraseFile { get; set; }
         private string LanguagesFile { get; set; }
         private string LanguageFile { get; set; }
+        public bool SaveChangesToDisk { get; set; } = true;
+        
         public FileDataProvider(string path, string l10nFileName = "phrases.json", string l10nPhraseFileNameFormat = "language-{0}.json", string l10nLanguagesFileName = "languages.json")
         {
             FilePath = path;
@@ -61,7 +63,7 @@ namespace MN.L10n.FileProviders
                         languages.Add(new L10nLanguageItem { LanguageId = locLang });
                     }
 
-                    File.WriteAllText(langPath, JsonConvert.SerializeObject(languages, SerializerOptions));
+                    WriteToDiskIfAllowed(langPath, JsonConvert.SerializeObject(languages, SerializerOptions));
                 }
             }
 
@@ -80,7 +82,7 @@ namespace MN.L10n.FileProviders
                 {
                     Languages = languages
                 };
-                File.WriteAllText(phrasePath, JsonConvert.SerializeObject(l10n, SerializerOptions));
+                WriteToDiskIfAllowed(phrasePath, JsonConvert.SerializeObject(l10n, SerializerOptions));
 
                 return l10n;
             }
@@ -109,7 +111,7 @@ namespace MN.L10n.FileProviders
                         PluralizationRules = new List<string> { "0", "1" },
                         PluralRule = "n != 1"
                     };
-                    File.WriteAllText(langFileName, JsonConvert.SerializeObject(nLang, SerializerOptions));
+                    WriteToDiskIfAllowed(langFileName, JsonConvert.SerializeObject(nLang, SerializerOptions));
                     l10n.LanguagePhrases.TryAdd(lang, nLang);
                 }
 
@@ -129,7 +131,7 @@ namespace MN.L10n.FileProviders
         public bool SaveL10n(L10n l10n)
         {
             var l10nFileContents = JsonConvert.SerializeObject(l10n, SerializerOptions);
-            File.WriteAllText(Path.Combine(FilePath, PhraseFile), l10nFileContents);
+            WriteToDiskIfAllowed(Path.Combine(FilePath, PhraseFile), l10nFileContents);
 
             SaveTranslation(l10n);
 
@@ -204,7 +206,7 @@ namespace MN.L10n.FileProviders
                     }
 
                     var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang.LanguageId));
-                    File.WriteAllText(langFileName, JsonConvert.SerializeObject(l10nLang, SerializerOptions));
+                    WriteToDiskIfAllowed(langFileName, JsonConvert.SerializeObject(l10nLang, SerializerOptions));
 
                     if (token.IsCancellationRequested)
                     {
@@ -225,10 +227,18 @@ namespace MN.L10n.FileProviders
                 var l10nLang = l10n.LanguagePhrases[lang.LanguageId];
 
                 var langFileName = Path.Combine(FilePath, string.Format(LanguageFile, lang.LanguageId));
-                File.WriteAllText(langFileName, JsonConvert.SerializeObject(l10nLang, SerializerOptions));
+                WriteToDiskIfAllowed(langFileName, JsonConvert.SerializeObject(l10nLang, SerializerOptions));
             }
 
             return true;
+        }
+
+        private void WriteToDiskIfAllowed(string pathAndFilename, string contents)
+        {
+            if (SaveChangesToDisk)
+            {
+                File.WriteAllText(pathAndFilename, contents);
+            }
         }
     }
 }
