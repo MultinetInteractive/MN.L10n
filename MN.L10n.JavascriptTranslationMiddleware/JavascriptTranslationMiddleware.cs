@@ -27,22 +27,26 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             _logger.LogTrace($"Begin invoke at {context.Request.Path}");
-            await ProcessRequest(context);
-            await next(context);
+            var requestCompleted = await ProcessRequest(context);
+            if (!requestCompleted)
+            {
+                await next(context);
+            }
+
             _logger.LogTrace("End invoke");
         } 
         
-        private async Task ProcessRequest(HttpContext context)
+        private async Task<bool> ProcessRequest(HttpContext context)
         {
             if (!TryGetRewriteContext(context, out var rewriteContext))
             {
-                return;
+                return false;
             }
 
             var remainingParts = rewriteContext.Remaining.Value!.Split('/', StringSplitOptions.RemoveEmptyEntries);
             if (remainingParts.Length == 0)
             {
-                return;
+                return false;
             }
 
             var languageId = remainingParts[0];
@@ -53,7 +57,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             if (!fileHandle.Exists)
             {
                 _logger.LogDebug($"Unable to resolve file at {fileHandle.Path}");
-                return;
+                return false;
             }
 
             var isSupportedFileType = fileHandle.FileName.EndsWith(".js", StringComparison.InvariantCultureIgnoreCase);
@@ -76,19 +80,59 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                 var path = string.Join('/', rewriteContext.MatchingSegment, diskPath);
                 _logger.LogTrace($"Updated path to be {path}");
                 context.Request.Path = path;
-                return;
+                return false;
             }
             
             var translator = _translatorProvider.GetOrCreateTranslator(languageId, fileHandle);
             var enableCache = await _config.EnableCacheAsync(context);
             _logger.LogTrace($"Translating file at {fileHandle.Path}, {(enableCache ? "using cache" : "not using cache")}");
-            var translatedFileInformation = await translator.TranslateFile(enableCache);
+            var result = await translator.TranslateFile(enableCache);
+            var translatedFileInformation = result.FileInformation;
+            var versionedRedirectConfig = _config.VersionedFileRedirectConfig;
+            if (versionedRedirectConfig != null && result.FileVersion != null)
+            {
+                var requestedVersion = context.Request.Query["v"];
+                if (requestedVersion != result.FileVersion)
+                {
+                    context.Response.StatusCode = 302;
+                    var redirectTo = $"{context.Request.Path}?v={result.FileVersion}";
+                    context.Response.Headers["Location"] = redirectTo;
+                    var maxAge = versionedRedirectConfig.MaxAge;
+                    var referer = context.Request.Headers.Referer.ToString();
+                    if (!string.IsNullOrWhiteSpace(versionedRedirectConfig.RefererMaxAgeOverrideParameterName) &&
+                        !string.IsNullOrWhiteSpace(referer) && referer.Contains(versionedRedirectConfig.RefererMaxAgeOverrideParameterName))
+                    {
+                        var refererMaxAge = referer.Split($"{versionedRedirectConfig.RefererMaxAgeOverrideParameterName}=")[1].Split("&")[0];
+                        if (int.TryParse(refererMaxAge, out var refererMaxAgeParsed))
+                        {
+                            maxAge = refererMaxAgeParsed;
+                        }
+                    }
+                    
+                    if (maxAge >= 0)
+                    {
+                        var cacheControlHeader = $"public, max-age={maxAge}";
+                        if (versionedRedirectConfig.StaleWhileRevalidate >= 0)
+                        {
+                            cacheControlHeader += $", stale-while-revalidate={versionedRedirectConfig.StaleWhileRevalidate}";   
+                        }
+                        context.Response.Headers.CacheControl = cacheControlHeader;
+                    }
+
+                    versionedRedirectConfig.OnRedirect?.Invoke(context);
+                    
+                    _logger.LogTrace("Redirecting to {location}", redirectTo);
+                    await context.Response.CompleteAsync();
+                    return true;
+                }
+            }
             _logger.LogTrace($"Translated file saved at {translatedFileInformation.FilePath}");
 
             var newPath = string.Join('/', rewriteContext.MatchingSegment,
                 translatedFileInformation.RelativeRequestPath);
             context.Request.Path = newPath;
             _logger.LogTrace($"Updated path to be {newPath}");
+            return false;
         }
         
         private bool TryGetRewriteContext(HttpContext context, [NotNullWhen(true)] out RewriteContext? rewriteContext)

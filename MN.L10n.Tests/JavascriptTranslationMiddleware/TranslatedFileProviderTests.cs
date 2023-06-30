@@ -101,7 +101,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
             };
 
             var fakes = new Fakes(language);
-            var translator = new FileTranslator(fakes.LanguageProvider, fakes.FileHandle, languageId, fakes.Logger);
+            var translator = new FileTranslator(fakes.LanguageProvider, fakes.FileHandle, languageId, fakes.Logger, true);
 
             L10nLanguage tmp;
             A.CallTo(() => fakes.LanguageProvider.TryGetLanguage(languageId, out tmp))

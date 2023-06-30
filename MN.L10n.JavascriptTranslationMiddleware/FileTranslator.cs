@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,9 +18,12 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         private readonly IFileHandle _fileHandle;
         private readonly Lazy<TranslatedFileInformation> _lazyFileInformation; 
         private readonly SemaphoreSlim _translateSemaphor = new(1);
+        private readonly SemaphoreSlim _fileVersionSemaphore = new(1);
         private readonly ILogger _logger;
+        private readonly bool _enableFileVersionGeneration;
+        private string? _computedFileVersion;
 
-        public FileTranslator(IJavascriptTranslationL10nLanguageProvider languageProvider, IFileHandle fileHandle, string languageId, ILogger<FileTranslator> logger)
+        public FileTranslator(IJavascriptTranslationL10nLanguageProvider languageProvider, IFileHandle fileHandle, string languageId, ILogger<FileTranslator> logger, bool enableFileVersionGeneration)
         {
             _languageId = languageId;
             _logger = logger;
@@ -28,6 +32,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             _lazyFileInformation = new Lazy<TranslatedFileInformation>(GetFileInformation);
             L10n.TranslationsReloaded += L10nOnTranslationsReloaded;
             _logger = logger;
+            _enableFileVersionGeneration = enableFileVersionGeneration;
         }
 
         private void L10nOnTranslationsReloaded(object? sender, EventArgs e)
@@ -35,7 +40,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             HandleTranslationsChangedAsync().GetAwaiter();
         }
         
-        public async Task<TranslatedFileInformation> TranslateFile(bool reuseExisting)
+        public async Task<TranslationResult> TranslateFile(bool reuseExisting)
         {
             var fileInformation = _lazyFileInformation.Value;
             await _translateSemaphor.WaitAsync();
@@ -45,16 +50,61 @@ namespace MN.L10n.JavascriptTranslationMiddleware
                 if (File.Exists(fileInformation.FilePath) && reuseExisting)
                 {
                     _logger.LogTrace("File already exists, reusing it");
-                    return fileInformation;
+                    return new TranslationResult
+                    {
+                        FileInformation = fileInformation,
+                        FileVersion = await GetFileVersionAsync(fileInformation)
+                    };
                 }
 
                 await TranslateAndWriteTranslatedFileAsync(fileInformation);
-                return fileInformation;
+                return new TranslationResult
+                {
+                    FileInformation = fileInformation,
+                    FileVersion = await GetFileVersionAsync(fileInformation)
+                };
             }
             finally
             {
                 _translateSemaphor.Release();
             }
+        }
+
+        private async Task<string?> GetFileVersionAsync(TranslatedFileInformation fileInformation)
+        {
+            if (!_enableFileVersionGeneration)
+            {
+                return null;
+            }
+
+            if (_computedFileVersion != null)
+            {
+                return _computedFileVersion;
+            }
+
+            try
+            {
+                await _fileVersionSemaphore.WaitAsync();
+                if (_computedFileVersion != null)
+                {
+                    return _computedFileVersion;
+                }
+
+                await using var stream = File.OpenRead(fileInformation.FilePath);
+                return await ComputeFileVersionFromStreamAsync(stream);
+            }
+            finally
+            {
+                _fileVersionSemaphore.Release();
+            }
+        }
+
+        private async Task<string> ComputeFileVersionFromStreamAsync(Stream stream)
+        {
+            using var md5 = MD5.Create();
+            var hash = await md5.ComputeHashAsync(stream);
+            var fileVersion = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            return _computedFileVersion = fileVersion;
         }
 
         private static string? GetEscapedTranslation(string? translation, char stringContainer)
@@ -123,17 +173,27 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         {
             _logger.LogTrace("Updating translated file because of translations change");
             await _translateSemaphor.WaitAsync();
+            await _fileVersionSemaphore.WaitAsync();
             try
             {
-                await TranslateAndWriteTranslatedFileAsync(_lazyFileInformation.Value);
+                var translatedContents = await TranslateAndWriteTranslatedFileAsync(_lazyFileInformation.Value);
+                if (_enableFileVersionGeneration)
+                {
+                    await ComputeFileVersionFromStreamAsync(new MemoryStream(Encoding.UTF8.GetBytes(translatedContents)));
+                }
+                else
+                {
+                    _computedFileVersion = null;
+                }
             }
             finally
             {
                 _translateSemaphor.Release();
+                _fileVersionSemaphore.Release();
             }
         }
 
-        private async Task TranslateAndWriteTranslatedFileAsync(TranslatedFileInformation fileInfo)
+        private async Task<string> TranslateAndWriteTranslatedFileAsync(TranslatedFileInformation fileInfo)
         {
             var contents = await _fileHandle.GetFileContentsAsync();
             _logger.LogTrace("Translating file contents");
@@ -141,6 +201,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             await using var fileWriter = File.CreateText(fileInfo.FilePath);
             _logger.LogTrace($"Writing translated contents to disk at {fileInfo.FilePath}");
             await fileWriter.WriteAsync(translatedContents);
+            return translatedContents;
         }
 
         private TranslatedFileInformation GetFileInformation()
@@ -163,6 +224,12 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         {
             L10n.TranslationsReloaded -= L10nOnTranslationsReloaded;
         }
+    }
+
+    public class TranslationResult
+    {
+        public string? FileVersion { get; set; }
+        public required TranslatedFileInformation FileInformation { get; set; }
     }
 
     public class TranslatedFileInformation
