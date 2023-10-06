@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Linq;
+using Xunit;
 
 namespace MN.L10n.Tests
 {
@@ -17,7 +18,7 @@ namespace MN.L10n.Tests
         {
             var src = @"<a href=javascript:void(0)>_s(""Hej"")</a>";
             var parser = new L10nParser();
-            var result = parser.Parse(src);
+            var result = parser.Parse(src).ToList();
             Assert.Single(result);
             Assert.Equal("Hej", result[0].Phrase);
         }
@@ -29,7 +30,7 @@ namespace MN.L10n.Tests
                          ""Hej""
                       )</a>";
             var parser = new L10nParser();
-            var result = parser.Parse(src);
+            var result = parser.Parse(src).ToList();
             Assert.Single(result);
             Assert.Equal("Hej", result[0].Phrase.Trim());
         }
@@ -45,7 +46,7 @@ namespace MN.L10n.Tests
                          ""Nej""
                       )</a>";
             var parser = new L10nParser();
-            var result = parser.Parse(src);
+            var result = parser.Parse(src).ToList();
             Assert.Equal(2, result.Count);
             Assert.Equal("Hej", result[0].Phrase.Trim());
             Assert.Equal("Nej", result[1].Phrase.Trim());
@@ -61,7 +62,7 @@ Nej""
                       )
                       </a>";
             var parser = new L10nParser();
-            var result = parser.Parse(src);
+            var result = parser.Parse(src).ToList();
             Assert.Single(result);
             Assert.Equal(@"Hej\nNej", result[0].Phrase.Trim());
         }

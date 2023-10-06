@@ -15,9 +15,8 @@ namespace MN.L10n
             public char StringContainer { get; set; }
         }
 
-        public List<PhraseInvocation> Parse(string source, bool allowEscapedStrings = false)
+        public IEnumerable<PhraseInvocation> Parse(string source, bool allowEscapedStrings = false)
         {
-            List<PhraseInvocation> Invocations = new List<PhraseInvocation>();
             bool inToken = false;
             bool isVerbatim = false;
             bool isEscaped = false;
@@ -25,7 +24,7 @@ namespace MN.L10n
             char _stringContainer = '"';
             int row = 1;
             int startChar = 1;
-            
+
             for (int _pos = 0; _pos < source.Length; _pos++)
             {
 #pragma warning disable S1854 // Unused assignments should be removed
@@ -51,7 +50,7 @@ namespace MN.L10n
                             _tokenContent.Clear();
                             if (!TryPeek(1))
                             {
-                                return Invocations;
+                                break;
                             }
 
                             switch (peek)
@@ -62,13 +61,13 @@ namespace MN.L10n
                                     var modifier = 2;
                                     if (!TryPeek(modifier))
                                     {
-                                        return Invocations;
+                                        break;
                                     }
 
                                     // Special treatment for RawHtml-method
                                     if (peek == 'r' && !TryPeek(++modifier))
                                     {
-                                        return Invocations;
+                                        break;
                                     }
 
                                     if (peek == '(')
@@ -77,7 +76,7 @@ namespace MN.L10n
                                         {
                                             if (!TryPeek(++modifier))
                                             {
-                                                return Invocations;
+                                                break;
                                             }
                                         } while (char.IsWhiteSpace(peek));
 
@@ -85,7 +84,7 @@ namespace MN.L10n
                                         {
                                             if (!TryPeek(++modifier))
                                             {
-                                                return Invocations;
+                                                break;
                                             }
                                             isVerbatim = true;
                                         }
@@ -137,22 +136,22 @@ namespace MN.L10n
                                 if (source[_pos] == _stringContainer && validTail)
                                 {
                                     var phrase = _tokenContent.ToString();
-                                    
+
                                     // Hoppa över sista \ om den är escape:ad
                                     if (isEscaped)
                                     {
                                         phrase = phrase.Substring(0, phrase.Length - 1);
                                     }
-                                    
-                                    Invocations.Add(new PhraseInvocation
+
+                                    yield return new PhraseInvocation
                                     {
-                                        Phrase =  phrase,
+                                        Phrase = phrase,
                                         Row = row,
                                         StartChar = startChar,
                                         EndChar = _pos,
-                                        IsEscaped =  isEscaped,
+                                        IsEscaped = isEscaped,
                                         StringContainer = _stringContainer
-                                    });
+                                    };
                                     inToken = false;
                                 }
                             }
@@ -162,14 +161,22 @@ namespace MN.L10n
                                 var _peek = source[_pos + 1];
                                 if (source[_pos] == _stringContainer && _peek != _stringContainer && _tail != _stringContainer)
                                 {
-                                    Invocations.Add(new PhraseInvocation
+                                    var phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "").Replace("\"\"", "\\\"");
+
+                                    // Hoppa över sista \ om den är escape:ad
+                                    if (isEscaped)
                                     {
-                                        Phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "").Replace("\"\"", "\\\""),
+                                        phrase = phrase.Substring(0, phrase.Length - 1);
+                                    }
+
+                                    yield return new PhraseInvocation
+                                    {
+                                        Phrase = phrase,
                                         Row = row,
                                         StartChar = startChar,
-                                        EndChar =  _pos,
+                                        EndChar = _pos,
                                         StringContainer = _stringContainer
-                                    });
+                                    };
                                     inToken = false;
                                 }
                             }
@@ -179,8 +186,6 @@ namespace MN.L10n
                         break;
                 }
             }
-
-            return Invocations;
         }
     }
 }

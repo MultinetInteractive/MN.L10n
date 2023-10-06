@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace MN.L10n.JavascriptTranslationMiddleware
 {
@@ -15,7 +15,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         private readonly string _languageId;
         private readonly IJavascriptTranslationL10nLanguageProvider _languageProvider;
         private readonly IFileHandle _fileHandle;
-        private readonly Lazy<TranslatedFileInformation> _lazyFileInformation; 
+        private readonly Lazy<TranslatedFileInformation> _lazyFileInformation;
         private readonly SemaphoreSlim _translateSemaphor = new(1);
         private readonly ILogger _logger;
 
@@ -34,7 +34,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         {
             HandleTranslationsChangedAsync().GetAwaiter();
         }
-        
+
         public async Task<TranslatedFileInformation> TranslateFile(bool reuseExisting)
         {
             var fileInformation = _lazyFileInformation.Value;
@@ -65,20 +65,20 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             }
 
             var quote = stringContainer == '\'' ? '\'' : '"';
-            
+
             //This escapes quotes / special characters and adds surrounding quotes.
-            //We remove the surrounding quotes since the source already contain them. 
+            //We remove the surrounding quotes since the source already contain them.
             var quotedAndEscaped = JsonConvert.ToString(translation, quote);
             return quotedAndEscaped[1..^1];
         }
-        
+
         public string TranslateFileContents(string contents)
         {
             if (!_languageProvider.TryGetLanguage(_languageId, out var language)) return contents;
 
             var parser = new L10nParser();
-            List<L10nParser.PhraseInvocation>? invocations = parser.Parse(contents, true);
-            Dictionary<int, L10nParser.PhraseInvocation>? starts = invocations.ToDictionary(i => i.StartChar);
+            List<L10nParser.PhraseInvocation>? invocations = parser.Parse(contents, true)?.ToList();
+            Dictionary<int, L10nParser.PhraseInvocation>? starts = invocations?.ToDictionary(i => i.StartChar);
 
             var pluralPhrases = new Dictionary<string, L10nPhraseObject>();
 
@@ -147,7 +147,7 @@ namespace MN.L10n.JavascriptTranslationMiddleware
         {
             var parts = _fileHandle.Path.Split(Path.DirectorySeparatorChar);
             var tmpNameParts = _fileHandle.FileName.Split(".");
-            
+
             var extension = tmpNameParts[^1];
             var fileName = string.Join(".", tmpNameParts.SkipLast(1));
 

@@ -267,7 +267,7 @@ namespace MN.L10n.BuildTasks
                             phraseRewriter.unusedPhrases.Remove(_phrase.Phrase);
                         }
                     }
-                    if (config.ShowDetailedLog) Console.WriteLine("debug l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count + " phrases");
+                    if (config.ShowDetailedLog) Console.WriteLine("debug l10n: Checked phrases in: " + shortFile + ", found " + invocations.Count() + " phrases");
                 }
 
                 if (!string.IsNullOrWhiteSpace(config.SourceLanguage) && PhraseInstance.LanguagePhrases.Any(l => l.Key == config.SourceLanguage))
