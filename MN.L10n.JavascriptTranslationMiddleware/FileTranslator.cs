@@ -77,8 +77,10 @@ namespace MN.L10n.JavascriptTranslationMiddleware
             if (!_languageProvider.TryGetLanguage(_languageId, out var language)) return contents;
 
             var parser = new L10nParser();
-            List<L10nParser.PhraseInvocation>? invocations = parser.Parse(contents, true)?.ToList();
+            var invocations = parser.Parse(contents, true)?.ToList();
             Dictionary<int, L10nParser.PhraseInvocation>? starts = invocations?.ToDictionary(i => i.StartChar);
+
+            if (starts == null || starts.Count == 0) return contents;
 
             var pluralPhrases = new Dictionary<string, L10nPhraseObject>();
 

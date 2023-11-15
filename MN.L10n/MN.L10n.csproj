@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net472;netstandard2.0;net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net472;netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Company>MultiNet Interactive AB</Company>
 		<Authors>Chris Gårdenberg</Authors>
@@ -12,13 +12,13 @@ Translation package</Description>
 		<PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<Copyright>© 20XX MultiNet Interactive AB</Copyright>
-		<Version>3.0.2</Version>
+		<Version>4.0.0</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
 	<PackageReleaseNotes>Now includes analyzer</PackageReleaseNotes>
 	<ApplicationIcon />
 	<OutputType>Library</OutputType>
 	<StartupObject></StartupObject>
-	<AssemblyVersion>3.0.1</AssemblyVersion>
+	<AssemblyVersion>4.0.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -32,26 +32,27 @@ namespace MN.L10n.Analyzer.Test
 			  }
 		  }";
 
-            var expectations = new List<DiagnosticResult>();
-            expectations.Add(new DiagnosticResult
+            var expectations = new List<DiagnosticResult>
             {
-                Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                new DiagnosticResult
+                {
+                    Id = "MN0003",
+                    Message = "The string cannot start or end with whitespaces",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 14, 6)
                 }
-            });
-
-            expectations.Add(new DiagnosticResult
-            {
-                Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                },
+                new DiagnosticResult
+                {
+                    Id = "MN0003",
+                    Message = "The string cannot start or end with whitespaces",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
                 }
-            });
+                }
+            };
 
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
@@ -78,26 +79,27 @@ namespace MN.L10n.Analyzer.Test
 			  }
 		  }";
 
-            var expectations = new List<DiagnosticResult>();
-            expectations.Add(new DiagnosticResult
+            var expectations = new List<DiagnosticResult>
             {
-                Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                new DiagnosticResult
+                {
+                    Id = "MN0003",
+                    Message = "The string cannot start or end with whitespaces",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 14, 6)
                 }
-            });
-
-            expectations.Add(new DiagnosticResult
-            {
-                Id = "MN0003",
-                Message = "The string cannot start or end with whitespaces",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                },
+                new DiagnosticResult
+                {
+                    Id = "MN0003",
+                    Message = "The string cannot start or end with whitespaces",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
                 }
-            });
+                }
+            };
 
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
@@ -127,16 +129,18 @@ namespace MN.L10n.Analyzer.Test
 			  }
 		  }";
 
-            var expectations = new List<DiagnosticResult>();
-            expectations.Add(new DiagnosticResult
+            var expectations = new List<DiagnosticResult>
             {
-                Id = "MN0007",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                new DiagnosticResult
+                {
+                    Id = "MN0007",
+                    Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
                 }
-            });
+                }
+            };
 
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
@@ -165,16 +169,18 @@ namespace MN.L10n.Analyzer.Test
 			  }
 		  }";
 
-            var expectations = new List<DiagnosticResult>();
-            expectations.Add(new DiagnosticResult
+            var expectations = new List<DiagnosticResult>
             {
-                Id = "MN0007",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                new DiagnosticResult
+                {
+                    Id = "MN0007",
+                    Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
                 }
-            });
+                }
+            };
 
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
@@ -236,16 +242,18 @@ namespace MN.L10n.Analyzer.Test
 			  }
 		  }";
 
-            var expectations = new List<DiagnosticResult>();
-            expectations.Add(new DiagnosticResult
+            var expectations = new List<DiagnosticResult>
             {
-                Id = "MN0008",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                new DiagnosticResult
+                {
+                    Id = "MN0008",
+                    Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
                 }
-            });
+                }
+            };
 
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
@@ -272,16 +280,18 @@ namespace MN.L10n.Analyzer.Test
 			  }
 		  }";
 
-            var expectations = new List<DiagnosticResult>();
-            expectations.Add(new DiagnosticResult
+            var expectations = new List<DiagnosticResult>
             {
-                Id = "MN0008",
-                Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                new DiagnosticResult
+                {
+                    Id = "MN0008",
+                    Message = "L10n requires a class or anonymous type (or explicitly null) for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 15, 6)
                 }
-            });
+                }
+            };
 
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
@@ -354,55 +364,54 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
 			  }
 		  }";
 
-            var expectations = new List<DiagnosticResult>();
-            expectations.Add(new DiagnosticResult
+            var expectations = new List<DiagnosticResult>
             {
-                Id = "MN0009",
-                Message = "L10n is missing '$someParameter$' in the object for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                new DiagnosticResult
+                {
+                    Id = "MN0009",
+                    Message = "L10n is missing '$someParameter$' in the object for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 7, 6)
                 }
-            });
-            expectations.Add(new DiagnosticResult
-            {
-                Id = "MN0009",
-                Message = "L10n is missing '$someParameter$' in the object for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                },
+                new DiagnosticResult
+                {
+                    Id = "MN0009",
+                    Message = "L10n is missing '$someParameter$' in the object for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 8, 6)
                 }
-            });
-
-            expectations.Add(new DiagnosticResult
-            {
-                Id = "MN0009",
-                Message = "L10n is missing '$email$' in the object for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                },
+                new DiagnosticResult
+                {
+                    Id = "MN0009",
+                    Message = "L10n is missing '$email$' in the object for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 10, 21)
                 }
-            });
-
-            expectations.Add(new DiagnosticResult
-            {
-                Id = "MN0009",
-                Message = "L10n is missing '$verificationlink$' in the object for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                },
+                new DiagnosticResult
+                {
+                    Id = "MN0009",
+                    Message = "L10n is missing '$verificationlink$' in the object for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 10, 21)
                 }
-            });
-
-            expectations.Add(new DiagnosticResult
-            {
-                Id = "MN0009",
-                Message = "L10n is missing '$ipaddress$' in the object for keywords",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] {
+                },
+                new DiagnosticResult
+                {
+                    Id = "MN0009",
+                    Message = "L10n is missing '$ipaddress$' in the object for keywords",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] {
                     new DiagnosticResultLocation("Test0.cs", 10, 21)
                 }
-            });
+                }
+            };
 
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
