@@ -21,7 +21,7 @@
     <Copyright></Copyright>
     <PackageTags>MN.L10n.Analyzer, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>4.0.0</Version>
+    <Version>4.0.1</Version>
     <Company>MultiNet Interactive AB</Company>
   </PropertyGroup>
 
@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.8.0-3.final" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
 
