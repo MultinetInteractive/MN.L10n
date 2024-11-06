@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace MN.L10n.Tests
@@ -104,6 +105,15 @@ Ni kan också kontakta oss på <a href=""""https://support.semesterlistan.se""""
             var parser = new L10nParser();
             var result = parser.Parse(src);
             Assert.Single(result);
+        }
+
+        [Fact]
+        public void LineBreakCharInCall()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse("_s('Hello\\nBrother')");
+
+            Assert.Collection(result, x => Assert.Equal("Hello\nBrother", x.Phrase));
         }
     }
 }
