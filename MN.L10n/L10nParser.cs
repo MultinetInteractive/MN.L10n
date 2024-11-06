@@ -181,7 +181,15 @@ namespace MN.L10n
                                 }
                             }
 
-                            _tokenContent.Append(source[_pos]);
+                            if (inToken && !isVerbatim && source[_pos] == '\\' && TryPeek(1) && source[_pos + 1] == 'n')
+                            {
+                                _pos++;
+                                _tokenContent.Append('\n');
+                            }
+                            else
+                            {
+                                _tokenContent.Append(source[_pos]);
+                            }
                         }
                         break;
                 }

@@ -12,13 +12,13 @@ Translation package</Description>
 		<PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<Copyright>© 20XX MultiNet Interactive AB</Copyright>
-		<Version>4.0.0</Version>
+		<Version>4.0.1</Version>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
 	<PackageReleaseNotes>Now includes analyzer</PackageReleaseNotes>
 	<ApplicationIcon />
 	<OutputType>Library</OutputType>
 	<StartupObject></StartupObject>
-	<AssemblyVersion>4.0.0</AssemblyVersion>
+	<AssemblyVersion>4.0.1</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
