@@ -106,18 +106,6 @@ Ni kan också kontakta oss på <a href=""""https://support.semesterlistan.se""""
             var result = parser.Parse(src);
             Assert.Single(result);
         }
-        
-        [Fact]
-        public void FulTest()
-        {
-            var src = File.ReadAllText(
-                "D:\\git\\dm\\avtalshantering.app\\Scripts\\Webpack\\React\\Pages\\Settings\\Resources\\Tabs\\EditCompanyNotificationSettings.tsx");
-            
-            var parser = new L10nParser();
-            var result = parser.Parse(src).ToArray();
-            
-            Assert.Equal("Följande inställningar gäller som standard för nya användare.\nAnvändare kan välja vilka notifikationer de vill få under \"Mina inställningar\".", result[2].Phrase);
-        }
 
         [Fact]
         public void LineBreakCharInCall()
