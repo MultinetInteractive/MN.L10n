@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MN.L10n.PhraseMetadata;
 
 namespace MN.L10n
 {
@@ -177,7 +178,8 @@ namespace MN.L10n
                 }
             }
 
-            return FormatNamed(cleanedPhrase, args);
+            var withoutMetadata = PhraseMetadataReplacer.ReplaceMetadata(cleanedPhrase);
+            return FormatNamed(withoutMetadata, args);
         }
 
         public static bool IsPluralized(object args = null)
