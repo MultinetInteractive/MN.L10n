@@ -1,11 +1,15 @@
-const metaDataStartToken = " !ctx=";
+var metaDataStartToken = " !ctx=";
 
-export function replaceMetadata(phrase: string | null) {
-	if (phrase == null || typeof phrase != "string") {
+export function replaceMetadata(phrase: string | null): string {
+	if (phrase == null) {
+		return "";
+	}
+
+	if (typeof phrase != "string") {
 		return phrase;
 	}
 
-	const ioMetaStart = phrase.toLowerCase().indexOf(metaDataStartToken);
+	var ioMetaStart = phrase.toLowerCase().indexOf(metaDataStartToken);
 	if (ioMetaStart < 0) {
 		return phrase;
 	}
