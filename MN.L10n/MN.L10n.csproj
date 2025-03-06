@@ -19,7 +19,7 @@ Translation package</Description>
 	<ApplicationIcon />
 	<OutputType>Library</OutputType>
 	<StartupObject></StartupObject>
-	<AssemblyVersion>4.0.1</AssemblyVersion>
+	<AssemblyVersion>4.1.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
