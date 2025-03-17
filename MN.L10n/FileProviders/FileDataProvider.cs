@@ -24,6 +24,8 @@ namespace MN.L10n.FileProviders
         private string LanguageFile { get; set; }
         public bool SaveChangesToDisk { get; set; } = true;
 
+        public Action<string, string, Exception>? OnWriteError { get; set; }
+
         public FileDataProvider(string path, string l10nFileName = "phrases.json", string l10nPhraseFileNameFormat = "language-{0}.json", string l10nLanguagesFileName = "languages.json")
         {
             FilePath = path;
@@ -246,6 +248,12 @@ namespace MN.L10n.FileProviders
                     Console.WriteLine("error l10n: Unauthorized Access Exception");
                     Console.WriteLine($"error l10n: Got an error trying to save the file {pathAndFilename}");
                     Console.WriteLine(uae.ToString());
+
+                    OnWriteError?.Invoke(pathAndFilename, contents, uae);
+                }
+                catch (Exception ex)
+                {
+                    OnWriteError?.Invoke(pathAndFilename, contents, ex);
                 }
             }
         }
