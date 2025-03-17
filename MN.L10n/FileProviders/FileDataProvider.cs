@@ -23,7 +23,9 @@ namespace MN.L10n.FileProviders
         private string LanguagesFile { get; set; }
         private string LanguageFile { get; set; }
         public bool SaveChangesToDisk { get; set; } = true;
-        
+
+        public Action<string, string, Exception>? OnWriteError { get; set; }
+
         public FileDataProvider(string path, string l10nFileName = "phrases.json", string l10nPhraseFileNameFormat = "language-{0}.json", string l10nLanguagesFileName = "languages.json")
         {
             FilePath = path;
@@ -157,7 +159,7 @@ namespace MN.L10n.FileProviders
                     sources.Reverse();
 
                     // If we have sources, and the removeAllPhrases is true, remove all current phrases, to get rid of old ones as well
-                    if(sources.Count > 0 && removeAllPhrases)
+                    if (sources.Count > 0 && removeAllPhrases)
                     {
                         l10nLang.Phrases.Clear();
                     }
@@ -237,7 +239,22 @@ namespace MN.L10n.FileProviders
         {
             if (SaveChangesToDisk)
             {
-                File.WriteAllText(pathAndFilename, contents);
+                try
+                {
+                    File.WriteAllText(pathAndFilename, contents);
+                }
+                catch (UnauthorizedAccessException uae)
+                {
+                    Console.WriteLine("error l10n: Unauthorized Access Exception");
+                    Console.WriteLine($"error l10n: Got an error trying to save the file {pathAndFilename}");
+                    Console.WriteLine(uae.ToString());
+
+                    OnWriteError?.Invoke(pathAndFilename, contents, uae);
+                }
+                catch (Exception ex)
+                {
+                    OnWriteError?.Invoke(pathAndFilename, contents, ex);
+                }
             }
         }
     }
