@@ -181,10 +181,17 @@ namespace MN.L10n
                                 }
                             }
 
-                            if (inToken && !isVerbatim && source[_pos] == '\\' && TryPeek(1) && source[_pos + 1] == 'n')
+                            if (inToken && !isVerbatim && source[_pos] == '\\' && TryPeek(1) && (source[_pos + 1] == 'n' || source[_pos + 1] == _stringContainer))
                             {
+                                if (source[_pos + 1] == 'n')
+                                {
+                                    _tokenContent.Append('\n');
+                                }
+                                else if (source[_pos + 1] == _stringContainer)
+                                {
+                                    _tokenContent.Append(_stringContainer);
+                                }
                                 _pos++;
-                                _tokenContent.Append('\n');
                             }
                             else
                             {

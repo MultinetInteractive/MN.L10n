@@ -115,5 +115,32 @@ Ni kan också kontakta oss på <a href=""""https://support.semesterlistan.se""""
 
             Assert.Collection(result, x => Assert.Equal("Hello\nBrother", x.Phrase));
         }
+
+        [Fact]
+        public void TestEscapedStringContainerCharacter()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse(@"_s(""Hello \""friend\"". How it do?"")");
+
+            Assert.Collection(result, x => Assert.Equal(@"Hello ""friend"". How it do?", x.Phrase));            
+        }
+        
+        [Fact]
+        public void TestEscapedStringContainerCharacter2()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse(@"_s('Hello \""friend\"". How it do?')");
+
+            Assert.Collection(result, x => Assert.Equal(@"Hello \""friend\"". How it do?", x.Phrase));            
+        }
+        
+        [Fact]
+        public void TestEscapedStringContainerCharacter3()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse(@"_s('Hello \'friend\'. How it do?')");
+
+            Assert.Collection(result, x => Assert.Equal(@"Hello 'friend'. How it do?", x.Phrase));            
+        }
     }
 }
