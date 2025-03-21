@@ -115,5 +115,56 @@ Ni kan också kontakta oss på <a href=""""https://support.semesterlistan.se""""
 
             Assert.Collection(result, x => Assert.Equal("Hello\nBrother", x.Phrase));
         }
+
+        [Fact]
+        public void TestEscapedStringContainerCharacter()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse(@"_s(""Hello \""friend\"". How it do?"")");
+
+            Assert.Collection(result, x => Assert.Equal(@"Hello ""friend"". How it do?", x.Phrase));            
+        }
+        
+        [Fact]
+        public void TestEscapedStringContainerCharacter2()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse(@"_s('Hello \""friend\"". How it do?')");
+
+            Assert.Collection(result, x => Assert.Equal(@"Hello \""friend\"". How it do?", x.Phrase));            
+        }
+        
+        [Fact]
+        public void TestEscapedStringContainerCharacter3()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse(@"_s('Hello \'friend\'. How it do?')");
+
+            Assert.Collection(result, x => Assert.Equal(@"Hello 'friend'. How it do?", x.Phrase));            
+        }
+        
+        [Fact]
+        public void TestEscapedStringContainerCharacterFirstChar()
+        {
+            var parser = new L10nParser();
+            var result = parser.Parse(@"_s(""\""friend\""!"")");
+
+            Assert.Collection(result, x => Assert.Equal(@"""friend""!", x.Phrase));
+        }
+        
+        [Fact]
+        public void TestEscapedStringContainerCharacterVerbatim()
+        {
+            var src = @"<a href=javascript:void(0)>
+                      _s(
+                         @""Hej """"bror""""
+Nej""
+                      )
+                      </a>";
+            var parser = new L10nParser();
+            var result = parser.Parse(src).ToList();
+            Assert.Single(result);
+            Assert.Equal(@"Hej ""bror""\nNej", result[0].Phrase.Trim());
+        }
     }
 }
