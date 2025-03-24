@@ -86,6 +86,7 @@ namespace MN.L10n
                                             {
                                                 break;
                                             }
+
                                             isVerbatim = true;
                                         }
                                         else
@@ -115,6 +116,7 @@ namespace MN.L10n
                                     continue;
                             }
                         }
+
                         if (inToken)
                         {
                             _tokenContent.Append(source[_pos]);
@@ -143,7 +145,7 @@ namespace MN.L10n
                                         phrase = phrase.Substring(0, phrase.Length - 1);
                                     }
 
-                                    yield return new PhraseInvocation
+                                    yield return Unescape(new PhraseInvocation
                                     {
                                         Phrase = phrase,
                                         Row = row,
@@ -151,7 +153,7 @@ namespace MN.L10n
                                         EndChar = _pos,
                                         IsEscaped = isEscaped,
                                         StringContainer = _stringContainer
-                                    };
+                                    }, isVerbatim);
                                     inToken = false;
                                 }
                             }
@@ -159,9 +161,11 @@ namespace MN.L10n
                             {
                                 var _tail = source[_pos - 1];
                                 var _peek = source[_pos + 1];
-                                if (source[_pos] == _stringContainer && _peek != _stringContainer && _tail != _stringContainer)
+                                if (source[_pos] == _stringContainer && _peek != _stringContainer &&
+                                    _tail != _stringContainer)
                                 {
-                                    var phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "").Replace("\"\"", "\\\"");
+                                    var phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "")
+                                        .Replace("\"\"", "\\\"");
 
                                     // Hoppa över sista \ om den är escape:ad
                                     if (isEscaped)
@@ -169,31 +173,70 @@ namespace MN.L10n
                                         phrase = phrase.Substring(0, phrase.Length - 1);
                                     }
 
-                                    yield return new PhraseInvocation
+                                    yield return Unescape(new PhraseInvocation
                                     {
                                         Phrase = phrase,
                                         Row = row,
                                         StartChar = startChar,
                                         EndChar = _pos,
                                         StringContainer = _stringContainer
-                                    };
+                                    }, isVerbatim);
                                     inToken = false;
                                 }
                             }
-
-                            if (inToken && !isVerbatim && source[_pos] == '\\' && TryPeek(1) && source[_pos + 1] == 'n')
-                            {
-                                _pos++;
-                                _tokenContent.Append('\n');
-                            }
-                            else
-                            {
-                                _tokenContent.Append(source[_pos]);
-                            }
+                            _tokenContent.Append(source[_pos]);
                         }
+
                         break;
                 }
             }
+        }
+
+        private PhraseInvocation Unescape(PhraseInvocation phraseInvocation, bool isVerbatim)
+        {
+            if (isVerbatim)
+            {
+                for (var i = 0; i < phraseInvocation.Phrase.Length; i++)
+                {
+                    if (phraseInvocation.Phrase[i] == '\\' && i + 1 < phraseInvocation.Phrase.Length)
+                    {
+                        if (phraseInvocation.Phrase[i + 1] == phraseInvocation.StringContainer)
+                        {
+                            phraseInvocation.Phrase = phraseInvocation.Phrase.Remove(i, 1);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < phraseInvocation.Phrase.Length; i++)
+                {
+                    if (phraseInvocation.Phrase[i] == '\\' && i + 1 < phraseInvocation.Phrase.Length)
+                    {
+                        switch (phraseInvocation.Phrase[i + 1])
+                        {
+                            case 'n':
+                                phraseInvocation.Phrase = phraseInvocation.Phrase.Remove(i, 2).Insert(i, "\n");
+                                break;
+                            case 't':
+                                phraseInvocation.Phrase = phraseInvocation.Phrase.Remove(i, 2).Insert(i, "\t");
+                                break;
+                            case '\\':
+                                phraseInvocation.Phrase = phraseInvocation.Phrase.Remove(i, 2).Insert(i, "\\");
+                                break;
+                            default:
+                                if (phraseInvocation.Phrase[i + 1] == phraseInvocation.StringContainer)
+                                {
+                                    phraseInvocation.Phrase = phraseInvocation.Phrase.Remove(i, 1);
+                                }
+
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return phraseInvocation;
         }
     }
 }
