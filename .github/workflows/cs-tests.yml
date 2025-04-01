@@ -1,0 +1,15 @@
+name: C# tests
+on:
+  push:
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0'
+      - name: Run tests
+        run: dotnet test MN.L10n.Tests
