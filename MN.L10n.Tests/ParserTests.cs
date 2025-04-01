@@ -166,5 +166,15 @@ Nej""
             Assert.Single(result);
             Assert.Equal(@"Hej ""bror""\nNej", result[0].Phrase.Trim());
         }
+        
+        [Fact]
+        public void TestNewlineInJsTemplateString()
+        {
+            var src = "_s(`Hello\r\nbrother!`)";
+            var parser = new L10nParser();
+            var result = parser.Parse(src).ToList();
+            Assert.Single(result);
+            Assert.Equal("Hello\nbrother!", result[0].Phrase.Trim());
+        }
     }
 }

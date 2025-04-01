@@ -209,6 +209,12 @@ namespace MN.L10n
             }
             else
             {
+                if (phraseInvocation.StringContainer == '`')
+                {
+                    phraseInvocation.Phrase = phraseInvocation.Phrase
+                        .Replace("\r", "");
+                }
+                
                 for (var i = 0; i < phraseInvocation.Phrase.Length; i++)
                 {
                     if (phraseInvocation.Phrase[i] == '\\' && i + 1 < phraseInvocation.Phrase.Length)
