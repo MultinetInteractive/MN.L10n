@@ -41,7 +41,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
 
             var translation = translator.TranslateFileContents("_s(\"$__count$ minuter sedan\", {__count: 7});");
 
-            Assert.Equal($"(function(){{ var x = l10n.Phrases;x[\"{phrase}\"] = {{\"r\":{{\"0\":\"Now\",\"1\":\"$__count$ minutes ago\"}}}}; }})();\r\n_s(\"$__count$ minuter sedan\", {{__count: 7}});", translation);
+            Assert.Equal($"(function(){{ var x = l10n.Phrases;x[\"{phrase}\"] = {{\"r\":{{\"0\":\"Now\",\"1\":\"$__count$ minutes ago\"}}}}; }})();{Environment.NewLine}_s(\"$__count$ minuter sedan\", {{__count: 7}});", translation);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace MN.L10n.Tests.JavascriptTranslationMiddleware
 
             var translation = translator.TranslateFileContents("eval(\"_s(\\\"$__count$ minuter sedan\\\", {__count: 7});\");");
 
-            Assert.Equal($"(function(){{ var x = l10n.Phrases;x[\"{phrase}\"] = {{\"r\":{{\"0\":\"Now\",\"1\":\"$__count$ minutes ago\"}}}}; }})();\r\neval(\"_s(\\\"$__count$ minuter sedan\\\", {{__count: 7}});\");", translation);
+            Assert.Equal($"(function(){{ var x = l10n.Phrases;x[\"{phrase}\"] = {{\"r\":{{\"0\":\"Now\",\"1\":\"$__count$ minutes ago\"}}}}; }})();{Environment.NewLine}eval(\"_s(\\\"$__count$ minuter sedan\\\", {{__count: 7}});\");", translation);
         }
 
         [Fact]
