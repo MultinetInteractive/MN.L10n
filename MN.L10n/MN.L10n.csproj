@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net472;netstandard2.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net48;netstandard2.0;net8.0;net9.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Company>MultiNet Interactive AB</Company>
 		<Authors>Chris Gårdenberg</Authors>
@@ -29,7 +29,7 @@ Translation package</Description>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.Net.Http" />
 	</ItemGroup>
 	<ItemGroup>
