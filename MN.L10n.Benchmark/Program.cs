@@ -66,7 +66,9 @@ public class SpanTest
     public void GlobalSetup()
     {
         var dataProvider = new BenchmarkL10nDataProvider();
-        var l10n = L10n.CreateInstance(new BenchmarkL10nLanguageProvider(), dataProvider, null);
+
+        var items = new Dictionary<object, object>() { { "0", new Stack<string>() } };
+        var l10n = L10n.CreateInstance(new BenchmarkL10nLanguageProvider(), dataProvider, () => items);
         dataProvider.SaveL10n(l10n);
     }
 
