@@ -19,7 +19,7 @@ public class BenchmarkL10nLanguageProvider : IL10nLanguageProvider
 {
     public string GetLanguage()
     {
-        return "0";
+        return "1";
     }
 }
 
@@ -58,7 +58,7 @@ public class Foo
 [InvocationCount(1_000_000)]
 public class SpanTest
 {
-    [Params("$data$", "Hej $data$ $count$ $many$", "$den här texten inleds med $data$$data2$")]
+    [Params("$data$", "Hej $data$ $count$ $many$", "$den här texten inleds med $data$$data2$", "Här har vi en längre förklarande text utan dollartecken. Den här skulle t.ex. kunna finnas i ")]
     public string formatString { get; set; } = "";
     public static Foo args = new Foo { data = "Anders" };
 
@@ -68,7 +68,7 @@ public class SpanTest
         var dataProvider = new BenchmarkL10nDataProvider();
 
         var stack = new Stack<string>();
-        stack.Push("0");
+        stack.Push("1");
         var items = new Dictionary<object, object>() { { "___l10nlang",  stack } };
         var l10n = L10n.CreateInstance(new BenchmarkL10nLanguageProvider(), dataProvider, () => items);
         dataProvider.SaveL10n(l10n);
@@ -78,6 +78,12 @@ public class SpanTest
     public void GetPhase()
     {
         L10n._s(formatString, args);
+    }
+
+    [Benchmark]
+    public void GetPhaseWithoutArgs()
+    {
+        L10n._s(formatString);
     }
 
     [Benchmark]
