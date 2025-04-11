@@ -55,7 +55,7 @@ public class Foo
 }
 
 [MemoryDiagnoser(true)]
-[InvocationCount(100000)]
+[InvocationCount(1_000_000)]
 public class SpanTest
 {
     [Params("$data$", "Hej $data$ $count$ $many$", "$den här texten inleds med $data$$data2$")]
