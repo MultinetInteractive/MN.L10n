@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MN.L10n.PhraseMetadata;
+using System.Reflection;
+using System.Text;
+using System.Xml;
 
 namespace MN.L10n
 {
@@ -140,9 +143,11 @@ namespace MN.L10n
             {
                 if (lang.Phrases.TryGetValue(cleanedPhrase, out var phr))
                 {
-                    if (phr.r.ContainsKey("0"))
+                    string getVal;
+
+                    if (phr.r.TryGetValue("0", out getVal))
                     {
-                        cleanedPhrase = phr.r["0"];
+                        cleanedPhrase = getVal;
                     }
 
                     if (isPluralized && lang.AstPluralRule != null)
@@ -150,9 +155,9 @@ namespace MN.L10n
                         // Here there be dragons
                         // Dynamic evaluation to get the phrase to use, based on the pluralization rule specified
                         var phraseIndex = lang.AstPluralRule.Evaluate(GetCount(args)).ToString();
-                        if (phr.r.ContainsKey(phraseIndex))
+                        if (phr.r.TryGetValue(phraseIndex, out getVal))
                         {
-                            cleanedPhrase = phr.r[phraseIndex];
+                            cleanedPhrase = getVal;
                         }
                     }
                 }
@@ -182,33 +187,30 @@ namespace MN.L10n
             return FormatNamed(withoutMetadata, args);
         }
 
+        private static ConcurrentDictionary<Type, PropertyInfo> IsPluralizedCache = new ConcurrentDictionary<Type, PropertyInfo>();
+
         public static bool IsPluralized(object args = null)
         {
             if (args == null) return false;
-            var t = args.GetType();
-            foreach (var p in t.GetProperties())
-            {
-                if (p.Name == "__count") return true;
-            }
 
-            return false;
+            var t = args.GetType();
+            return IsPluralizedCache.GetOrAdd(t, t.GetProperty("__count")) is not null;
         }
 
         public static long GetCount(object args = null)
         {
-            if (args == null) return 0;
-            var t = args.GetType();
-            foreach (var p in t.GetProperties())
+            IsPluralizedCache.TryGetValue(args.GetType(), out var p);
+            
+            if(p is not null)
             {
-                if (p.Name == "__count")
-                {
-                    long.TryParse(p.GetValue(args).ToString(), out long __count);
-                    return __count;
-                }
+                return Convert.ToInt64(p.GetValue(args));
+                
             }
 
             return 0;
         }
+
+        private static ConcurrentDictionary<Type, PropertyInfo[]> propCache = new ConcurrentDictionary<Type, PropertyInfo[]>();
 
         public static L10nTranslatedString FormatNamed(string formatString, object args = null)
         {
@@ -216,7 +218,10 @@ namespace MN.L10n
 
             var t = args.GetType();
             var tmpVal = formatString;
-            foreach (var p in t.GetProperties())
+
+            var props = propCache.GetOrAdd(t, tp => tp.GetProperties());
+
+            foreach (var p in props)
             {
                 tmpVal = tmpVal.Replace("$" + p.Name + "$", p.GetValue(args)?.ToString());
             }
