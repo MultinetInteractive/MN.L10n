@@ -44,8 +44,14 @@ namespace MN.L10n.BuildTasks
 
             stw.Start();
 
-            while (!baseDir.EnumerateFiles().Any(x => x.Extension == ".sln" || x.Extension == L10nRoot))
+            var startDir = baseDir;
+            while (!baseDir.EnumerateFiles().Any(x => x.Extension is ".sln" or ".slnx" || x.Extension == L10nRoot))
             {
+                if(baseDir.Parent == null)
+                {
+                    Console.WriteLine($"Unable to find solution root, stopping L10n build task. Checked {startDir} and all parent directories up to {baseDir}");
+                    return -1;
+                }
                 baseDir = baseDir.Parent;
             }
 
