@@ -123,7 +123,7 @@ First of all, you need to install the NuGet-package `MN.L10n.BuildTask` in at le
 
 Currently, it will only run while the solution is being compiled in `Release`-config, so that we don't slow down local build times too much.
 
-When the solution is run in `Release`-mode, L10n will look for either a `.l10nconfig` or the `.sln`-file, as the root for where it should look for phrases.
+When the solution is run in `Release`-mode, L10n will look for either a `.l10nconfig` or the `.sln/.slnx`-file, as the root for where it should look for phrases.
 
 ---
 
