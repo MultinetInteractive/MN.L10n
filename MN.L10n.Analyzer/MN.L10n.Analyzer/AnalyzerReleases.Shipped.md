@@ -7,7 +7,6 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-MN0001 | L10n | Error | MNL10nAnalyzer
 MN0002 | L10n | Error | MNL10nAnalyzer
 MN0003 | L10n | Error | MNL10nAnalyzer
 MN0004 | L10n | Error | MNL10nAnalyzer

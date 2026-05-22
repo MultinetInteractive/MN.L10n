@@ -12,7 +12,6 @@ namespace MN.L10n.Analyzer;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class MNL10nAnalyzer : DiagnosticAnalyzer
 {
-    public static readonly DiagnosticDescriptor NoParamRule = new DiagnosticDescriptor("MN0001", "Missing arguments", "Need to send variables to '{0}'", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
     public static readonly DiagnosticDescriptor MemberAccessorRule = new DiagnosticDescriptor("MN0002", "Input is not a known string", "L10n can only evaluate string literals when finding used phrases. If the phrase is known you can ignore this, but you should only use L10n with known strings when possible.", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
     public static readonly DiagnosticDescriptor NoWhitespaceAtStartOrEndRule = new DiagnosticDescriptor("MN0003", "String starts/ends with whitespace", "The string cannot start or end with whitespaces", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
     public static readonly DiagnosticDescriptor NoEmptyStringsEndRule = new DiagnosticDescriptor("MN0004", "Input is an empty string", "The string cannot start or end with whitespace", "L10n", DiagnosticSeverity.Error, isEnabledByDefault: true);
@@ -27,7 +26,6 @@ public class MNL10nAnalyzer : DiagnosticAnalyzer
         get
         {
             return ImmutableArray.Create(
-                NoParamRule,
                 MemberAccessorRule,
                 NoWhitespaceAtStartOrEndRule,
                 NoEmptyStringsEndRule,
@@ -69,9 +67,7 @@ public class MNL10nAnalyzer : DiagnosticAnalyzer
         HashSet<string>? l10nParameters = null;
 
         var arguments = ies.ArgumentList.Arguments;
-        if (arguments.Count == 0)
-            obj.ReportDiagnostic(Diagnostic.Create(NoParamRule, obj.Node.GetLocation()));
-        else
+        if (arguments.Count > 0)
         {
             var supposedString = arguments.First();
             switch (supposedString.Expression)

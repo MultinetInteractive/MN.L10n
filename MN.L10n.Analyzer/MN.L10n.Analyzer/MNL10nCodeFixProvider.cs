@@ -14,7 +14,6 @@ namespace MN.L10n.Analyzer
         public sealed override ImmutableArray<string> FixableDiagnosticIds {
             get {
                 return ImmutableArray.Create(
-              MNL10nAnalyzer.NoParamRule.Id,
               MNL10nAnalyzer.MemberAccessorRule.Id,
               MNL10nAnalyzer.NoEmptyStringsEndRule.Id,
               MNL10nAnalyzer.NoWhitespaceAtStartOrEndRule.Id,
