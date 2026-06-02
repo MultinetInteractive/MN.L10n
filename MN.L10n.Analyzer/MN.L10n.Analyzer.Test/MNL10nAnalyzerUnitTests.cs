@@ -416,6 +416,32 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
             VerifyCSharpDiagnostic(test, expectations.ToArray());
         }
 
+        [Fact]
+        public void Test_MN0009_MissingKeywordsWhenArgumentIsNull()
+        {
+            var test = @"
+		  namespace ConsoleApplication1
+		  {
+			  class TypeName
+			  {
+				public void Main() {
+					_s(""Testing $someParameter$"", null);
+				}
+			  }
+		  }";
+            
+            VerifyCSharpDiagnostic(test, new DiagnosticResult
+            {
+                Id = "MN0009",
+                Message = "L10n is missing '$someParameter$' in the object for keywords",
+                Severity = DiagnosticSeverity.Error,
+                Locations =
+                [
+                    new DiagnosticResultLocation("Test0.cs", 7, 6)
+                ]
+            });
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new MNL10nCodeFixProvider();

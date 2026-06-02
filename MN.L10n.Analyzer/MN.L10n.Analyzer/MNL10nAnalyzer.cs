@@ -126,12 +126,8 @@ public class MNL10nAnalyzer : DiagnosticAnalyzer
 
                     var argumentAsObject = obj.SemanticModel.GetSymbolInfo(supposedArgument.Expression).Symbol;
 
-                    if (argumentAsObject == null)
-                    {
-                        return;
-                    }
-
-                    var missingParameters = l10nParameters.Except(argumentAsObject.ContainingType.MemberNames.Select(p => $"${p}$"))
+                    var missingParameters = argumentAsObject == null ? l10nParameters.ToArray() : 
+                        l10nParameters.Except(argumentAsObject.ContainingType.MemberNames.Select(p => $"${p}$"))
                         .ToArray();
 
                     if (missingParameters.Any())
