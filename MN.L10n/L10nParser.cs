@@ -164,7 +164,7 @@ namespace MN.L10n
                                 if (source[_pos] == _stringContainer && _peek != _stringContainer &&
                                     _tail != _stringContainer)
                                 {
-                                    var phrase = _tokenContent.ToString().Replace("\n", "\\n").Replace("\r", "")
+                                    var phrase = _tokenContent.ToString().Replace("\r", "")
                                         .Replace("\"\"", "\\\"");
 
                                     // Hoppa över sista \ om den är escape:ad

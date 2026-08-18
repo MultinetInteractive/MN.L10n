@@ -12,14 +12,14 @@ Translation package</Description>
 		<PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<Copyright>© 20XX MultiNet Interactive AB</Copyright>
-		<Version>4.1.4</Version>
+		<Version>4.1.5</Version>
         <LangVersion>latest</LangVersion>
 	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
 	<PackageReleaseNotes>Now includes analyzer</PackageReleaseNotes>
 	<ApplicationIcon />
 	<OutputType>Library</OutputType>
 	<StartupObject></StartupObject>
-	<AssemblyVersion>4.1.4</AssemblyVersion>
+	<AssemblyVersion>4.1.5</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
