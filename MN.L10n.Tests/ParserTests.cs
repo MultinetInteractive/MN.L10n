@@ -65,7 +65,7 @@ Nej""
             var parser = new L10nParser();
             var result = parser.Parse(src).ToList();
             Assert.Single(result);
-            Assert.Equal(@"Hej\nNej", result[0].Phrase.Trim());
+            Assert.Equal("Hej\nNej", result[0].Phrase.Trim());
         }
 
         [Fact]
@@ -164,7 +164,7 @@ Nej""
             var parser = new L10nParser();
             var result = parser.Parse(src).ToList();
             Assert.Single(result);
-            Assert.Equal(@"Hej ""bror""\nNej", result[0].Phrase.Trim());
+            Assert.Equal("Hej \"bror\"\nNej", result[0].Phrase.Trim());
         }
         
         [Fact]
@@ -175,6 +175,41 @@ Nej""
             var result = parser.Parse(src).ToList();
             Assert.Single(result);
             Assert.Equal("Hello\nbrother!", result[0].Phrase.Trim());
+        }
+        
+        [Fact]
+        public void TestNewLineInVerbatimString()
+        {
+            var src = @"
+var body = _s(@""(Detta är ett automatiserat meddelande)<br/><br/>
+<b>Användaruppgifter för $product$</b><br/><br/>
+Dessa uppgifter har registrerats i $product$. Du har möjlighet att ändra på uppgifterna genom att logga in.<br/><br/>
+Kontouppgifter<br/>
+Företagskonto: $companyName$
+<br/><br/>Namn: $fullname$
+<br/>Användarnamn: $username$
+<br/>E-post: $email$
+<br/>Adress: $address$
+<br/>Ort: $city$
+<br/>Postnr: $zip$
+<br/>Telefon: $phone$"", 
+            new
+            {
+				companyName = user.CompanyName,
+				fullname = mailToUser.Fullname,
+				username = mailToUser.Username,
+				email = mailToUser.Email,
+				address = mailToUser.Address1,
+				city = mailToUser.City,
+				zip = mailToUser.Zipcode,
+				phone = mailToUser.Phone,
+				product = productName,
+			});
+";
+            var parser = new L10nParser();
+            var result = parser.Parse(src).ToList();
+            Assert.Single(result);
+            Assert.Equal("(Detta är ett automatiserat meddelande)<br/><br/>\n<b>Användaruppgifter för $product$</b><br/><br/>\nDessa uppgifter har registrerats i $product$. Du har möjlighet att ändra på uppgifterna genom att logga in.<br/><br/>\nKontouppgifter<br/>\nFöretagskonto: $companyName$\n<br/><br/>Namn: $fullname$\n<br/>Användarnamn: $username$\n<br/>E-post: $email$\n<br/>Adress: $address$\n<br/>Ort: $city$\n<br/>Postnr: $zip$\n<br/>Telefon: $phone$", result[0].Phrase.Trim());
         }
     }
 }
