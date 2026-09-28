@@ -6,7 +6,8 @@
     <OutputType>Exe</OutputType>
     <StartupObject>MN.L10n.BuildTasks.Program</StartupObject>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.0.7</Version>
+    <Version>4.0.8</Version>
+    <RollForward>Major</RollForward>
     <Authors>Chris Gårdenberg</Authors>
     <Company>MultiNet Interactive AB</Company>
   </PropertyGroup>
