@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using TestHelper;
@@ -7,7 +6,7 @@ using Xunit;
 
 namespace MN.L10n.Analyzer.Test
 {
-    public class UnitTest : CodeFixVerifier
+    public class UnitTest : DiagnosticVerifier
     {
         //No diagnostics expected to show up
         [Fact]
@@ -440,11 +439,6 @@ Om du inte själv har gjort denna registrering, kan du anmäla detta till $abuse
                     new DiagnosticResultLocation("Test0.cs", 7, 6)
                 ]
             });
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new MNL10nCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

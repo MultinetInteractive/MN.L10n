@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net48;netstandard2.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net10.0;net11.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Company>MultiNet Interactive AB</Company>
 		<Authors>Chris Gårdenberg</Authors>
@@ -12,14 +12,11 @@ Translation package</Description>
 		<PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<Copyright>© 20XX MultiNet Interactive AB</Copyright>
-		<Version>4.1.5</Version>
+		<Version>5.0.0</Version>
         <LangVersion>latest</LangVersion>
-	<AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
-	<PackageReleaseNotes>Now includes analyzer</PackageReleaseNotes>
 	<ApplicationIcon />
 	<OutputType>Library</OutputType>
 	<StartupObject></StartupObject>
-	<AssemblyVersion>4.1.5</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,9 +26,6 @@ Translation package</Description>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<Reference Include="System.Net.Http" />
-	</ItemGroup>
 	<ItemGroup>
 	<PackageReference Include="CommonMark.NET" Version="0.15.1" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -52,13 +46,4 @@ Translation package</Description>
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
-	<ItemGroup>
-		<_PackageFiles Include="$(OutputPath)\*.*">
-		<PackagePath>build\%(RecursiveDir)</PackagePath>
-		<Visible>false</Visible>
-		<BuildAction>Content</BuildAction>
-		</_PackageFiles>
-	</ItemGroup>
-	</Target>
 </Project>
