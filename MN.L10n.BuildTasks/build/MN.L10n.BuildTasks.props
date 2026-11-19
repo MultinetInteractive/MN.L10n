@@ -8,11 +8,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <_L10nBuildTask>$(MSBuildThisFileDirectory)MN.L10n.BuildTasks.exe</_L10nBuildTask>
+    <_L10nBuildTask>$(MSBuildThisFileDirectory)MN.L10n.BuildTasks.dll</_L10nBuildTask>
+    <_L10nDotnetHost>$(DOTNET_HOST_PATH)</_L10nDotnetHost>
+    <_L10nDotnetHost Condition="'$(_L10nDotnetHost)' == ''">dotnet</_L10nDotnetHost>
   </PropertyGroup>
 
   <Target Name="L10n" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Release'">
-    <Exec Command="&quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;">
+    <Exec Command="&quot;$(_L10nDotnetHost)&quot; &quot;$(_L10nBuildTask)&quot; &quot;$(ProjectDir)&quot;">
     </Exec>
   </Target>
 </Project> 
