@@ -3,8 +3,6 @@ Translation-thingy for all our products
 
 You must implement your `IL10nLanguageProvider` and a custom `IFileResolver` (for javascript) yourself. :) (Basically just `string GetLanguage()` and `bool FileExists(string file)`)
 
-There's also a custom mvc webview `MN.L10n.Mvc.L10nWebView`.
-
 ## Example usage (C#)
 ```csharp
 using MN.L10n.NullProviders;

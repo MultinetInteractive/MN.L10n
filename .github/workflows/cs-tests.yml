@@ -10,6 +10,8 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0'
+          dotnet-version: '11.0'
       - name: Run tests
         run: dotnet test MN.L10n.Tests
+      - name: Run analyzer tests
+        run: dotnet test MN.L10n.Analyzer/MN.L10n.Analyzer.Test

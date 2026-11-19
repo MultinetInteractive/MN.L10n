@@ -337,20 +337,6 @@ namespace MN.L10n.BuildTasks
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-#if NET48
-                using (EventLog el = new EventLog("Application"))
-                {
-                    el.Source = "MN.L10n.BuildTasks";
-                    el.WriteEntry(ex.ToString(), EventLogEntryType.Error);
-
-                    if (ex is JsonSerializationException)
-                    {
-                        var jex = (JsonSerializationException)ex;
-                        var fdp = new FileDataProvider(solutionDir);
-                        var l = fdp.LoadLanguages();
-                    }
-                }
-#endif
 
                 RemoveLockFile(lockFile);
                 RemoveCacheFile(cacheFilePath);

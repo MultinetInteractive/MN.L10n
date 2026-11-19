@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/MultinetInteractive/MN.L10n</RepositoryUrl>
     <PackageProjectUrl>https://github.com/MultinetInteractive/MN.L10n</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>© 20XX MultiNet Interactive AB</Copyright>
-    <Version>2.0.1</Version>
-    <AutoIncrementPackageRevision>True</AutoIncrementPackageRevision>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
