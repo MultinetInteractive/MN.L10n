@@ -3,13 +3,17 @@
     Builds every NuGet package in MN.L10n.sln and collects them in one folder.
 
 .DESCRIPTION
-    Builds in Release and packs the solution. The output folder is emptied first, so it
-    only contains packages from this run and can be pushed as a whole without picking up
-    old versions.
+    Builds the solution in Release. The packable projects have GeneratePackageOnBuild
+    enabled, so the build itself creates the packages; PackageOutputPath sends them all
+    to one folder. The output folder is emptied first, so it only contains packages from
+    this run and can be pushed as a whole without picking up old versions.
 
-    Pack runs single-threaded (-m:1): the projects have GeneratePackageOnBuild enabled,
-    and a parallel pack of the solution races on build outputs that other projects copy
-    (BuildTasks and dotnet-l10n-buildtask).
+    This deliberately uses "dotnet build" and not "dotnet pack": with
+    GeneratePackageOnBuild enabled, NuGet's Pack target does not depend on Build, so
+    "dotnet pack" on a clean checkout fails with NU5026 (files to be packed not found).
+
+    The build runs single-threaded (-m:1) because a parallel build races on outputs that
+    other projects copy (MN.L10n.BuildTasks into dotnet-l10n-buildtask).
 
 .PARAMETER OutputDirectory
     Where the .nupkg files end up. Default: artifacts/packages in the repository root.
@@ -46,9 +50,11 @@ if (Test-Path -LiteralPath $OutputDirectory) {
 
 Write-Host "Packing $solution into $OutputDirectory" -ForegroundColor Cyan
 
-dotnet pack $solution --configuration Release --output $OutputDirectory -m:1
+$OutputDirectory = (Resolve-Path $OutputDirectory).Path
+
+dotnet build $solution --configuration Release -m:1 "-p:PackageOutputPath=$OutputDirectory"
 if ($LASTEXITCODE -ne 0) {
-    throw "dotnet pack failed with exit code $LASTEXITCODE"
+    throw "dotnet build failed with exit code $LASTEXITCODE"
 }
 
 $packages = Get-ChildItem -Path $OutputDirectory -Filter '*.nupkg' | Sort-Object Name
