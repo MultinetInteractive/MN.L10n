@@ -48,16 +48,16 @@ if (Test-Path -LiteralPath $OutputDirectory) {
     New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 }
 
-Write-Host "Packing $solution into $OutputDirectory" -ForegroundColor Cyan
+$OutputDirectory = (Resolve-Path -LiteralPath $OutputDirectory).Path
 
-$OutputDirectory = (Resolve-Path $OutputDirectory).Path
+Write-Host "Packing $solution into $OutputDirectory" -ForegroundColor Cyan
 
 dotnet build $solution --configuration Release -m:1 "-p:PackageOutputPath=$OutputDirectory"
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet build failed with exit code $LASTEXITCODE"
 }
 
-$packages = Get-ChildItem -Path $OutputDirectory -Filter '*.nupkg' | Sort-Object Name
+$packages = @(Get-ChildItem -LiteralPath $OutputDirectory -Filter '*.nupkg' | Sort-Object Name)
 if ($packages.Count -eq 0) {
     throw "No packages were created in $OutputDirectory"
 }
