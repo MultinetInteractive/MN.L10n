@@ -29,10 +29,20 @@ $ErrorActionPreference = 'Stop'
 
 $solution = Join-Path $PSScriptRoot 'MN.L10n.sln'
 
-if (Test-Path $OutputDirectory) {
-    Remove-Item -Path $OutputDirectory -Recurse -Force
+if (Test-Path -LiteralPath $OutputDirectory) {
+    if (-not (Test-Path -LiteralPath $OutputDirectory -PathType Container)) {
+        throw "OutputDirectory must be a directory: $OutputDirectory"
+    }
+    $existingItems = @(Get-ChildItem -LiteralPath $OutputDirectory -Force)
+    if (@($existingItems | Where-Object { $_.PSIsContainer -or $_.Extension -notin '.nupkg', '.snupkg' }).Count -gt 0) {
+        throw "Refusing to clear $OutputDirectory because it contains non-package files or subdirectories. Choose a dedicated package output directory."
+    }
+    foreach ($item in $existingItems) {
+        Remove-Item -LiteralPath $item.FullName -Force
+    }
+} else {
+    New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 }
-New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 
 Write-Host "Packing $solution into $OutputDirectory" -ForegroundColor Cyan
 
